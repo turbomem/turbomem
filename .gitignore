@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.turbo/
+.turbomem/
+coverage/
+*.log
+.DS_Store
+.env
+.env.local

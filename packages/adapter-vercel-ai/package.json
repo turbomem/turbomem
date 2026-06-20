@@ -1,0 +1,42 @@
+{
+  "name": "@turbomem/vercel-ai",
+  "version": "0.1.0",
+  "description": "Vercel AI SDK memory tools backed by turbomem (local-first agent memory).",
+  "license": "MIT",
+  "author": "arneesh aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git",
+    "directory": "packages/adapter-vercel-ai"
+  },
+  "keywords": ["vercel", "ai-sdk", "memory", "agent", "tools", "turbomem"],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run --passWithNoTests",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "turbomem": "workspace:*",
+    "zod": "^3.22.0"
+  },
+  "peerDependencies": {
+    "ai": ">=3.0.0"
+  },
+  "devDependencies": {
+    "ai": "^3.4.0"
+  }
+}

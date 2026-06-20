@@ -1,0 +1,42 @@
+{
+  "name": "turbomem-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first agent memory for TypeScript",
+  "license": "MIT",
+  "author": "arneesh aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git"
+  },
+  "scripts": {
+    "build": "turbo build --filter=\"./packages/*\"",
+    "test": "turbo test --filter=\"./packages/*\"",
+    "lint": "turbo lint --filter=\"./packages/*\"",
+    "typecheck": "turbo typecheck --filter=\"./packages/*\"",
+    "dev": "turbo dev --filter=\"./packages/*\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.0",
+    "tsup": "^8.1.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "vitepress": "^1.6.4",
+    "vitest": "^1.6.0"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

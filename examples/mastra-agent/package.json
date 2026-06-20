@@ -1,0 +1,16 @@
+{
+  "name": "@turbomem/example-mastra-agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "turbomem": "workspace:*",
+    "@turbomem/mastra": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.16.0"
+  }
+}

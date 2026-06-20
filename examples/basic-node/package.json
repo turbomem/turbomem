@@ -1,0 +1,15 @@
+{
+  "name": "@turbomem/example-basic-node",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "turbomem": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.16.0"
+  }
+}

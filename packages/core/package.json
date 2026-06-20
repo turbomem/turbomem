@@ -1,0 +1,65 @@
+{
+  "name": "turbomem",
+  "version": "0.1.0",
+  "description": "Local-first agent memory for TypeScript. No Python. No servers. Just npm install.",
+  "license": "MIT",
+  "author": "arneesh aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "memory",
+    "agent",
+    "llm",
+    "ai",
+    "embeddings",
+    "vector",
+    "pglite",
+    "pgvector",
+    "rag"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.0",
+    "openai": "^4.0.0",
+    "zod": "^3.22.0"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@huggingface/transformers": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@huggingface/transformers": {
+      "optional": true
+    },
+    "@anthropic-ai/sdk": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@huggingface/transformers": "^3.0.0"
+  }
+}

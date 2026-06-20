@@ -1,0 +1,43 @@
+{
+  "name": "@turbomem/mastra",
+  "version": "0.1.0",
+  "description": "Mastra memory provider backed by turbomem (local-first agent memory).",
+  "license": "MIT",
+  "author": "arneesh aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git",
+    "directory": "packages/adapter-mastra"
+  },
+  "keywords": ["mastra", "memory", "agent", "turbomem"],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run --passWithNoTests",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "turbomem": "workspace:*"
+  },
+  "peerDependencies": {
+    "@mastra/core": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@mastra/core": {
+      "optional": true
+    }
+  }
+}
