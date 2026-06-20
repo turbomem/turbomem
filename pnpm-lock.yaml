@@ -41,7 +41,7 @@ importers:
 
   examples/basic-node:
     dependencies:
-      '@turbomem/core':
+      turbomem:
         specifier: workspace:*
         version: link:../../packages/core
     devDependencies:
@@ -51,12 +51,12 @@ importers:
 
   examples/mastra-agent:
     dependencies:
-      '@turbomem/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@turbomem/mastra':
         specifier: workspace:*
         version: link:../../packages/adapter-mastra
+      turbomem:
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       tsx:
         specifier: ^4.16.0
@@ -67,9 +67,6 @@ importers:
       '@ai-sdk/openai':
         specifier: ^0.0.66
         version: 0.0.66(zod@3.25.76)
-      '@turbomem/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@turbomem/vercel-ai':
         specifier: workspace:*
         version: link:../../packages/adapter-vercel-ai
@@ -85,6 +82,9 @@ importers:
       react-dom:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
+      turbomem:
+        specifier: workspace:*
+        version: link:../../packages/core
       zod:
         specifier: ^3.22.0
         version: 3.25.76
@@ -98,13 +98,13 @@ importers:
       '@mastra/core':
         specifier: '>=0.1.0'
         version: 1.43.0(express@5.2.1)(zod@4.4.3)
-      '@turbomem/core':
+      turbomem:
         specifier: workspace:*
         version: link:../core
 
   packages/adapter-vercel-ai:
     dependencies:
-      '@turbomem/core':
+      turbomem:
         specifier: workspace:*
         version: link:../core
       zod:
