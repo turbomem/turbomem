@@ -1,5 +1,13 @@
 # @turbomem/vercel-ai
 
+## 0.2.1
+
+### Patch Changes
+
+- ad8d893: Added readme files
+- Updated dependencies [ad8d893]
+  - turbomem@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
