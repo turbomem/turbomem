@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.2.1
+
+### Patch Changes
+
+- ad8d893: Added readme files
+
 ## 0.2.0
 
 ### Minor Changes
