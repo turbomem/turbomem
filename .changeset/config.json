@@ -5,7 +5,11 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["@turbomem/example-basic-node", "@turbomem/example-mastra-agent", "@turbomem/example-vercel-ai-chatbot"]
+  "ignore": [
+    "@turbomem/example-basic-node",
+    "@turbomem/example-mastra-agent",
+    "@turbomem/example-vercel-ai-chatbot"
+  ]
 }
