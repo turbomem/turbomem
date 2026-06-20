@@ -2,7 +2,7 @@
   "name": "@turbomem/mastra",
   "version": "0.1.0",
   "description": "Mastra memory provider backed by turbomem (local-first agent memory).",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "arneesh aima",
   "repository": {
     "type": "git",

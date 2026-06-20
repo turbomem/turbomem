@@ -1,7 +1,6 @@
 # turbomem
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process, no separate memory server, no Python sidecar.
 
@@ -78,4 +77,4 @@ Node.js 20+ or Bun. TypeScript recommended.
 
 ## License
 
-MIT
+Apache License 2.0 — see [LICENSE](LICENSE) for details.

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Local-first agent memory for TypeScript",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "arneesh aima",
   "repository": {
     "type": "git",
