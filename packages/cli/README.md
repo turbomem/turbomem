@@ -68,6 +68,12 @@ Inside the shell:
 | `help`            | Show help                           |
 | `exit`            | Quit                                |
 
+## Documentation
+
+Adapter guide and Next.js example:
+
+**https://turbomem.dev/cli**
+
 ## License
 
 Apache License 2.0

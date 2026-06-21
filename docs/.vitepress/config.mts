@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "turbomem",
   description: "Local-first agent memory for TypeScript",
-  base: "/turbomem/",
+  base: "/",
   cleanUrls: true,
   themeConfig: {
     logo: { text: "turbomem" },

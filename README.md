@@ -69,7 +69,7 @@ npm install @turbomem/vercel-ai turbomem ai
 
 Full guides, configuration reference, and runnable examples:
 
-**https://turbomem.github.io/turbomem/**
+**https://turbomem.dev/**
 
 ## Requirements
 

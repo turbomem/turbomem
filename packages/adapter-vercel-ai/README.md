@@ -41,7 +41,7 @@ const result = await generateText({
 
 Adapter guide and Next.js example:
 
-**https://turbomem.github.io/turbomem/adapters/vercel-ai**
+**https://turbomem.dev/adapters/vercel-ai**
 
 ## License
 
