@@ -1,3 +1,8 @@
+---
+title: Getting started
+description: Install turbomem, set up OpenAI, and store your first agent memory in TypeScript.
+---
+
 # Getting started
 
 turbomem gives your LLM agents persistent, semantically-searchable memory that runs

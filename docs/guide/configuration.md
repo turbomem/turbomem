@@ -1,3 +1,8 @@
+---
+title: Configuration
+description: Configure embeddings, PGlite storage, LLM fact extraction, and memory scoping in turbomem.
+---
+
 # Configuration
 
 `TurboMemory` accepts a single config object. All adapters are resolved at

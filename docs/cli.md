@@ -1,3 +1,8 @@
+---
+title: CLI
+description: Add, search, and manage turbomem memories from your terminal with one-shot commands or an interactive shell.
+---
+
 # CLI
 
 Package: `@turbomem/cli`

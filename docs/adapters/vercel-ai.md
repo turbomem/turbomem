@@ -1,3 +1,8 @@
+---
+title: Vercel AI SDK adapter
+description: Give Vercel AI SDK agents long-term memory with turbomem rememberFact and recallMemories tools.
+---
+
 # Vercel AI SDK adapter
 
 Package: `@turbomem/vercel-ai`

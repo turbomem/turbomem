@@ -1,3 +1,8 @@
+---
+title: Architecture
+description: How turbomem's extraction, embedding, and PGlite storage pipeline works under the hood.
+---
+
 # Architecture
 
 turbomem is a small, embeddable agent-memory library. There is no server, no

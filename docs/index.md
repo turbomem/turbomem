@@ -1,5 +1,7 @@
 ---
 layout: home
+title: turbomem
+description: Local-first agent memory for TypeScript. No Python. No servers. Just npm install.
 
 hero:
   image:
