@@ -1,6 +1,6 @@
 {
   "name": "@turbomem/cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Command-line interface for turbomem (local-first agent memory). Add, search, and manage memories from your terminal.",
   "homepage": "https://turbomem.dev",
   "license": "Apache-2.0",

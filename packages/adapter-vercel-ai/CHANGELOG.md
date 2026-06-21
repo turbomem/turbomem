@@ -1,5 +1,13 @@
 # @turbomem/vercel-ai
 
+## 0.2.3
+
+### Patch Changes
+
+- c455932: Added SEO to all packages
+- Updated dependencies [c455932]
+  - turbomem@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes
