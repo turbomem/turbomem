@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/public/logo.svg" alt="turbomem" width="120" />
+</p>
+
 # turbomem
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)

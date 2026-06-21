@@ -32,7 +32,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "logo.svg"
   ],
   "scripts": {
     "build": "tsup",
