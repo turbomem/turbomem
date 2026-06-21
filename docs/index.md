@@ -22,6 +22,9 @@ features:
     details: Swap OpenAI or local WASM embeddings, PGlite storage, and Mastra or Vercel AI SDK integrations.
   - title: Type-safe
     details: Strict TypeScript with Zod-validated inputs. Works in Node 20+, Bun, and serverless.
+  - title: Terminal CLI
+    details: Add, search, and manage memories from your shell with one-shot commands or an interactive REPL.
+    link: /cli
 ---
 
 ## Quick example

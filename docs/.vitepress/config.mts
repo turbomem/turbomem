@@ -9,6 +9,7 @@ export default defineConfig({
     logo: { text: "turbomem" },
     nav: [
       { text: "Guide", link: "/guide/getting-started", activeMatch: "/guide/" },
+      { text: "CLI", link: "/cli" },
       { text: "Adapters", link: "/adapters/mastra", activeMatch: "/adapters/" },
       { text: "API", link: "/api/reference" },
       { text: "Examples", link: "/examples" },
@@ -25,6 +26,10 @@ export default defineConfig({
           { text: "Configuration", link: "/guide/configuration" },
           { text: "Architecture", link: "/guide/architecture" },
         ],
+      },
+      {
+        text: "CLI",
+        items: [{ text: "Overview", link: "/cli" }],
       },
       {
         text: "Adapters",
