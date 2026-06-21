@@ -1,11 +1,22 @@
 import chalk from "chalk";
 import type { Memory, MemoryScope, MemorySearchResult } from "turbomem";
-import { gradientText, sampleGradient, theme } from "./theme.js";
+import { gradientText, PALETTE, sampleGradient, theme } from "./theme.js";
 
-/** Print the gradient brand banner. */
+/** Print the gradient brand banner inside a brand-colored rectangle. */
 export function printBanner(): void {
-  const word = gradientText("turbomem");
-  process.stdout.write(`\n  ${chalk.bold(word)}  ${theme.dim("local-first agent memory")}\n\n`);
+  const brand = chalk.hex(PALETTE.base);
+  const label = "turbomem";
+  const tagline = "local-first agent memory";
+  const plain = `${label}  ${tagline}`;
+  const padding = 2;
+  const innerWidth = plain.length + padding * 2;
+
+  const content = `${chalk.bold(gradientText(label))}  ${theme.dim(tagline)}`;
+  const top = `╭${"─".repeat(innerWidth)}╮`;
+  const middle = `│${" ".repeat(padding)}${content}${" ".repeat(padding)}│`;
+  const bottom = `╰${"─".repeat(innerWidth)}╯`;
+
+  process.stdout.write(`\n  ${brand(top)}\n  ${brand(middle)}\n  ${brand(bottom)}\n\n`);
 }
 
 /** First segment of a UUID, for compact display. */
