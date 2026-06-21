@@ -1,5 +1,11 @@
 # @turbomem/cli
 
+## 0.3.2
+
+### Patch Changes
+
+- 64edf6d: CLI updates - completer, styling, layout
+
 ## 0.3.1
 
 ### Patch Changes
