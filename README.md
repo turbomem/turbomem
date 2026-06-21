@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/public/logo.svg" alt="turbomem" width="120" />
+</p>
+
 # turbomem
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
@@ -69,7 +73,7 @@ npm install @turbomem/vercel-ai turbomem ai
 
 Full guides, configuration reference, and runnable examples:
 
-**https://turbomem.github.io/turbomem/**
+**https://turbomem.dev/**
 
 ## Requirements
 

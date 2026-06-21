@@ -2,6 +2,9 @@
 layout: home
 
 hero:
+  image:
+    src: /logo.svg
+    alt: turbomem
   name: turbomem
   text: Local-first agent memory for TypeScript
   tagline: No Python. No servers. Just npm install.

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./logo.svg" alt="turbomem" width="120" />
+</p>
+
 # turbomem
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
@@ -54,7 +58,7 @@ await memory.close();
 
 Full guides, configuration reference, and runnable examples:
 
-**https://turbomem.github.io/turbomem/**
+**https://turbomem.dev/**
 
 ## Requirements
 
