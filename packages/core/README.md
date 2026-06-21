@@ -58,7 +58,7 @@ await memory.close();
 
 Full guides, configuration reference, and runnable examples:
 
-**https://turbomem.dev/**
+**https://turbomem.dev**
 
 ## Requirements
 
