@@ -29,15 +29,12 @@ await memory.init();
 
 const provider = createMastraMemory(memory);
 
-await provider.remember(
-  [{ role: "user", content: "I prefer dark mode." }],
-  { userId: "user_123" },
-);
+await provider.remember([{ role: "user", content: "I prefer dark mode." }], { userId: "user_123" });
 
 const context = await provider.recall("UI preferences", { userId: "user_123" });
 ```
 
-Check your installed `@mastra/core` version's `MastraMemoryProvider` interface — the shape exported here is intentionally minimal and structurally compatible.
+Check your installed `@mastra/core` version's `MastraMemoryProvider` interface, the shape exported here is intentionally minimal and structurally compatible.
 
 ## Documentation
 

@@ -6,7 +6,7 @@
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
 
-Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process — no separate memory server, no Python sidecar.
+Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process, no separate memory server, no Python sidecar.
 
 ## Install
 
@@ -49,10 +49,10 @@ await memory.close();
 
 ## Framework adapters
 
-| Package | Use case |
-| --- | --- |
-| [`@turbomem/mastra`](https://www.npmjs.com/package/@turbomem/mastra) | Mastra memory provider |
-| [`@turbomem/vercel-ai`](https://www.npmjs.com/package/@turbomem/vercel-ai) | Vercel AI SDK tools |
+| Package                                                                    | Use case               |
+| -------------------------------------------------------------------------- | ---------------------- |
+| [`@turbomem/mastra`](https://www.npmjs.com/package/@turbomem/mastra)       | Mastra memory provider |
+| [`@turbomem/vercel-ai`](https://www.npmjs.com/package/@turbomem/vercel-ai) | Vercel AI SDK tools    |
 
 ## Documentation
 

@@ -22,7 +22,7 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 npm install turbomem
 ```
 
-Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included — no extra database setup.
+Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup.
 
 ## Quick start
 
@@ -81,4 +81,4 @@ Node.js 20+ or Bun. TypeScript recommended.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) for details.
+Apache License 2.0 see [LICENSE](LICENSE) for details.
