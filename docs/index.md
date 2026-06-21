@@ -30,6 +30,46 @@ features:
     link: /cli
 ---
 
+## Why embedded memory?
+
+Many agent-memory setups rely on a separate service, a Python server, hosted platform, or
+self-managed vector DB. For TypeScript apps that means another process, extra infra, and
+an HTTP hop on every memory call. **turbomem runs entirely in-process** as a library you
+`npm install`.
+
+## Embedded vs server-based
+
+|             | turbomem (embedded)                     | Server-based memory             |
+| ----------- | --------------------------------------- | ------------------------------- |
+| Runtime     | TypeScript, in-process                  | Separate server / hosted API    |
+| Deployment  | `npm install`                           | Run or host a service           |
+| Network hop | None (local)                            | HTTP per call                   |
+| Storage     | PGlite (WASM Postgres)                  | External vector store           |
+| Best for    | TS apps, edge, embedding into a product | Multi-language or managed infra |
+
+If you need a cross-language managed platform, a dedicated memory service may fit better.
+If you're shipping a TypeScript app and want memory as a _library_, that's turbomem.
+
+## How it works
+
+```
+messages → Extractor (LLM) → facts → Embeddings → vectors → PGlite
+query    → Embeddings → vector search (scoped) → ranked results
+```
+
+- **`add(messages, scope)`**: extracts discrete facts from conversation, embeds them, and stores each fact with its vector and scope.
+- **`search(query, scope)`**: embeds the query and returns the closest matching facts, filtered by scope.
+- **Scoping** — every memory is tagged with optional `userId`, `agentId`, and `sessionId` for multi-tenant isolation.
+
+See [Architecture](/guide/architecture) for the full component breakdown.
+
+## When turbomem fits
+
+- **[TypeScript agents](/guide/getting-started)** (Node, Bun, serverless) that need memory without a sidecar
+- **Products embedding memory** into an app, not operating a memory platform
+- **[Local-first / edge](/guide/configuration)** where PGlite on disk beats a remote vector DB
+- **Framework integrations** via [`@turbomem/mastra`](/adapters/mastra) or [`@turbomem/vercel-ai`](/adapters/vercel-ai) when you already use those stacks
+
 ## Quick example
 
 ```ts
@@ -55,4 +95,15 @@ const results = await memory.search("What outdoor activities is the user into?",
 });
 
 console.log(results.map((r) => r.memory.content));
+
+await memory.close();
 ```
+
+## Explore the docs
+
+- [Getting started](/guide/getting-started) - install, env setup, and first memory
+- [Configuration](/guide/configuration) - embeddings, storage, extraction, and scoping
+- [Architecture](/guide/architecture) - pipeline, adapters, and error handling
+- [CLI](/cli) - manage memories from your terminal
+- [Examples](/examples) - runnable projects in the repo
+- [API reference](/api/reference) - types, methods, and error codes
