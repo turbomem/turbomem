@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.2.2
+
+### Patch Changes
+
+- bdefc49: Switched to custom domain
+
 ## 0.2.1
 
 ### Patch Changes
