@@ -76,7 +76,7 @@ new TurboMemory({
 
 ### PGlite (default, v0.1)
 
-WASM Postgres with `pgvector` — no native compilation, runs anywhere Node runs.
+WASM Postgres with `pgvector`, no native compilation, runs anywhere Node runs.
 Data persists to `.turbomem` in your CWD by default:
 
 ```ts

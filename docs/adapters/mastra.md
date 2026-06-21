@@ -31,7 +31,7 @@ const provider = createMastraMemory(memory);
 // provider.recall(query, ctx)
 ```
 
-Check your installed `@mastra/core` version's `MastraMemoryProvider` interface —
+Check your installed `@mastra/core` version's `MastraMemoryProvider` interface,
 the structural shape exported here is intentionally minimal.
 
 See the [mastra-agent example](/examples#mastra-agent) for a runnable project.

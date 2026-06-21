@@ -3,7 +3,7 @@
 Package: `@turbomem/cli`
 
 A command-line interface for turbomem. Add, search, and manage memories directly
-from your terminal — with one-shot commands and an interactive shell.
+from your terminal, with one-shot commands and an interactive shell.
 
 ## Install
 

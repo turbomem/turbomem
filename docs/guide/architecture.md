@@ -1,7 +1,7 @@
 # Architecture
 
 turbomem is a small, embeddable agent-memory library. There is no server, no
-sidecar process, and no native compilation in v0.1 — everything runs inside your
+sidecar process, and no native compilation in v0.2, everything runs inside your
 Node/Bun process.
 
 ## High-level flow
@@ -41,7 +41,7 @@ Implement `EmbeddingAdapter` (`embed`, `embedBatch`, `dimensions`):
 Implement `StorageAdapter` (`init`, `insert`, `search`, `getAll`, `delete`,
 `deleteAll`):
 
-- **PGlite** (default) — WASM Postgres + `pgvector`. The vector column dimension
+- **PGlite** (default), WASM Postgres + `pgvector`. The vector column dimension
   is set from the embedding adapter's `dimensions` at `init()`. A `turbomem_meta`
   table records the dimension so a later dimension change fails loudly with
   `DimensionMismatchError`. Similarity search uses the cosine distance operator
@@ -57,7 +57,7 @@ log a warning and yield `[]` rather than throwing.
 
 Every memory is tagged with optional `userId`, `agentId`, and `sessionId`.
 Reads and deletes filter by whatever scope fields are provided. This is the
-extent of multi-tenancy — there is no auth layer.
+extent of multi-tenancy, there is no auth layer.
 
 ## Error handling
 

@@ -18,7 +18,7 @@ hero:
 
 features:
   - title: Fully embedded
-    details: Runs inside your Node or Bun process — no sidecar server, no HTTP hop per memory call.
+    details: Runs inside your Node or Bun process. No sidecar server, no HTTP hop per memory call.
   - title: Semantic search
     details: LLM fact extraction plus vector embeddings with PGlite and pgvector (WASM Postgres).
   - title: Adapter-based
