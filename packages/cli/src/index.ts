@@ -7,8 +7,7 @@ import { registerList } from "./commands/list.js";
 import { registerSearch } from "./commands/search.js";
 import { printError } from "./output.js";
 import { startRepl } from "./repl.js";
-
-const VERSION = "0.2.1";
+import { VERSION } from "./version.js";
 
 const program = new Command();
 

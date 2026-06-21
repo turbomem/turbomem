@@ -15,23 +15,30 @@ const CLEAR_LINE = "\x1B[2K";
  * bright band of the brand gradient sweeps from left to right across its
  * letters. Falls back to plain status lines when stdout is not a TTY.
  */
+/** Frames a single status label lingers before rotating to the next one. */
+const LABEL_HOLD_FRAMES = 14;
+
 export class Loader {
   private timer: NodeJS.Timeout | null = null;
   private frame = 0;
-  private label = "";
+  private labels: string[] = [];
   private readonly isTTY: boolean;
 
   constructor(private readonly stream: NodeJS.WriteStream = process.stdout) {
     this.isTTY = Boolean(stream.isTTY);
   }
 
-  /** Begin the animation with an optional dim status label (e.g. "searching"). */
-  start(label = ""): this {
-    this.label = label;
+  /**
+   * Begin the animation with an optional dim status label. Pass an array to
+   * cycle through hints (e.g. `["searching", "scoring matches"]`) for longer
+   * operations.
+   */
+  start(label: string | string[] = ""): this {
+    this.labels = (Array.isArray(label) ? label : [label]).filter(Boolean);
     this.frame = 0;
 
     if (!this.isTTY) {
-      this.stream.write(`${theme.accent(WORD)} ${theme.dim(label)}\n`);
+      this.stream.write(`${theme.accent(WORD)} ${theme.dim(this.labels[0] ?? "")}\n`);
       return this;
     }
 
@@ -45,9 +52,16 @@ export class Loader {
     return this;
   }
 
-  /** Update the status label without restarting the animation. */
-  setLabel(label: string): void {
-    this.label = label;
+  /** Update the status label(s) without restarting the animation. */
+  setLabel(label: string | string[]): void {
+    this.labels = (Array.isArray(label) ? label : [label]).filter(Boolean);
+  }
+
+  /** The status hint shown for the current frame, rotating when several exist. */
+  private currentLabel(): string {
+    if (this.labels.length <= 1) return this.labels[0] ?? "";
+    const index = Math.floor(this.frame / LABEL_HOLD_FRAMES) % this.labels.length;
+    return this.labels[index];
   }
 
   private render(): void {
@@ -63,7 +77,8 @@ export class Loader {
         return chalk.hex(sampleGradient(proximity, GRADIENT_STOPS))(char);
       })
       .join("");
-    const suffix = this.label ? ` ${theme.dim(this.label + "…")}` : "";
+    const label = this.currentLabel();
+    const suffix = label ? ` ${theme.dim(label + "…")}` : "";
     this.stream.write(`\r${CLEAR_LINE}${colored}${suffix}`);
   }
 

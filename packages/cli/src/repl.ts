@@ -1,6 +1,15 @@
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import readline from "node:readline";
 import type { MemoryScope } from "turbomem";
-import { buildMemory, type ConfigOverrides } from "./config.js";
+import {
+  buildMemory,
+  hasConfigFile,
+  resolveConfig,
+  TURBOMEM_HOME,
+  type ConfigOverrides,
+} from "./config.js";
 import { Loader } from "./loader.js";
 import {
   formatScope,
@@ -11,6 +20,7 @@ import {
   renderSearchResults,
 } from "./output.js";
 import { gradientText, theme } from "./theme.js";
+import { VERSION } from "./version.js";
 
 const HELP = `
 ${theme.label("Commands")}
@@ -26,19 +36,94 @@ ${theme.label("Commands")}
   ${theme.accent("clear")}               clear the screen
   ${theme.accent("help")}                show this help
   ${theme.accent("exit")}                quit
+
+${theme.dim("Tip: commands also work with a leading slash (e.g. /help), Tab completes,")}
+${theme.dim("and ↑/↓ recall history.")}
 `;
 
+/** Commands offered by Tab-completion in the shell. */
+const COMMANDS = [
+  "add",
+  "fact",
+  "search",
+  "list",
+  "delete",
+  "scope",
+  "clear",
+  "help",
+  "exit",
+];
+const SCOPE_SUBCOMMANDS = ["user", "agent", "session", "clear"];
+
+const HISTORY_PATH = join(TURBOMEM_HOME, "history");
+const HISTORY_LIMIT = 200;
+
+/** Load shell history (most-recent-first), tolerating a missing file. */
+function loadHistory(): string[] {
+  try {
+    return readFileSync(HISTORY_PATH, "utf8").split("\n").filter(Boolean).slice(0, HISTORY_LIMIT);
+  } catch {
+    return [];
+  }
+}
+
+/** Persist shell history (most-recent-first) to disk. */
+function saveHistory(history: string[]): void {
+  try {
+    mkdirSync(TURBOMEM_HOME, { recursive: true });
+    writeFileSync(HISTORY_PATH, history.slice(0, HISTORY_LIMIT).join("\n") + "\n", "utf8");
+  } catch {
+    // History is best-effort; ignore write failures.
+  }
+}
+
+/** Tab-completion for top-level commands and `scope` sub-commands. */
+function completer(line: string): [string[], string] {
+  const parts = line.split(/\s+/);
+  const lead = parts[0] ?? "";
+  const slash = lead.startsWith("/") ? "/" : "";
+  const bare = lead.slice(slash.length).toLowerCase();
+
+  if (parts.length <= 1) {
+    const hits = COMMANDS.filter((c) => c.startsWith(bare)).map((c) => slash + c);
+    return [hits.length ? hits : COMMANDS.map((c) => slash + c), line];
+  }
+
+  if (bare === "scope" && parts.length === 2) {
+    const frag = parts[1].toLowerCase();
+    const hits = SCOPE_SUBCOMMANDS.filter((s) => s.startsWith(frag));
+    return [hits.length ? hits : SCOPE_SUBCOMMANDS, parts[1]];
+  }
+
+  return [[], line];
+}
+
+/** Display the home directory as `~` for a tidier banner. */
+function tildify(path: string): string {
+  const home = homedir();
+  return path.startsWith(home) ? `~${path.slice(home.length)}` : path;
+}
+
 function prompt(scope: MemoryScope): string {
-  const scopeLabel =
-    scope.userId || scope.agentId || scope.sessionId ? theme.dim(`(${formatScope(scope)})`) : "";
-  return `${gradientText("turbomem")} ${scopeLabel}${theme.accent(" › ")}`;
+  const active = scope.userId || scope.agentId || scope.sessionId;
+  const chip = active
+    ? `${theme.dim("[")}${theme.accent(formatScope(scope))}${theme.dim("]")} `
+    : "";
+  return `${chip}${gradientText("turbomem")}${theme.accent(" › ")}`;
 }
 
 export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> {
-  printBanner();
+  const resolved = resolveConfig(overrides);
+  printBanner({
+    version: VERSION,
+    embeddings: resolved.embeddings,
+    extraction: `${resolved.extractionProvider} (${resolved.extractionModel})`,
+    dataDir: tildify(resolved.dataDir),
+    needsInit: !hasConfigFile(),
+  });
 
   const loader = new Loader();
-  loader.start("connecting");
+  loader.start(["connecting", "warming up store"]);
   let memory;
   try {
     ({ memory } = await buildMemory(overrides));
@@ -50,10 +135,15 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
     return;
   }
 
-  console.log(theme.dim("Type `help` for commands, `exit` to quit.\n"));
-
   const scope: MemoryScope = {};
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    completer,
+    history: loadHistory(),
+    historySize: HISTORY_LIMIT,
+    removeHistoryDuplicates: true,
+  });
   const ask = (q: string): Promise<string> => new Promise((resolve) => rl.question(q, resolve));
 
   let running = true;
@@ -61,11 +151,12 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
     const line = (await ask(prompt(scope))).trim();
     if (!line) continue;
 
-    const [command, ...rest] = line.split(/\s+/);
+    const [rawCommand, ...rest] = line.split(/\s+/);
+    const command = rawCommand.replace(/^\//, "").toLowerCase();
     const arg = rest.join(" ");
 
     try {
-      switch (command.toLowerCase()) {
+      switch (command) {
         case "help":
         case "?":
           console.log(HELP);
@@ -80,6 +171,13 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
         case "clear":
         case "cls":
           console.clear();
+          printBanner({
+            version: VERSION,
+            embeddings: resolved.embeddings,
+            extraction: `${resolved.extractionProvider} (${resolved.extractionModel})`,
+            dataDir: tildify(resolved.dataDir),
+            needsInit: !hasConfigFile(),
+          });
           break;
 
         case "scope":
@@ -92,7 +190,9 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
             console.log(theme.warn("Usage: add <text>"));
             break;
           }
-          loader.start(command === "fact" ? "storing" : "extracting");
+          loader.start(
+            command === "fact" ? "storing" : ["extracting facts", "embedding", "saving"],
+          );
           const created =
             command === "fact"
               ? await memory.addFacts([arg], scope)
@@ -108,7 +208,7 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
             console.log(theme.warn("Usage: search <query>"));
             break;
           }
-          loader.start("searching");
+          loader.start(["searching", "scoring matches"]);
           const results = await memory.search(arg, { ...scope, limit: 10 });
           loader.stop();
           console.log(renderSearchResults(results));
@@ -142,7 +242,7 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
         }
 
         default:
-          console.log(theme.warn(`Unknown command: ${command}. Type \`help\`.`));
+          console.log(theme.warn(`Unknown command: ${command}. Type \`/help\`.`));
       }
     } catch (err) {
       loader.stop();
@@ -150,6 +250,7 @@ export async function startRepl(overrides: ConfigOverrides = {}): Promise<void> 
     }
   }
 
+  saveHistory((rl as unknown as { history?: string[] }).history ?? []);
   rl.close();
   await memory.close();
   console.log(theme.dim("\nGoodbye."));
