@@ -58,10 +58,13 @@ query    → Embeddings → vector search (scoped) → ranked results
 ```
 
 - **`add(messages, scope)`**: extracts discrete facts from conversation, embeds them, and stores each fact with its vector and scope.
+- **`addFacts(facts, scope)`**: store explicit fact strings directly, skipping LLM extraction.
 - **`search(query, scope)`**: embeds the query and returns the closest matching facts, filtered by scope.
-- **Scoping** — every memory is tagged with optional `userId`, `agentId`, and `sessionId` for multi-tenant isolation.
+- **`getAll(scope)`**: list every memory in a scope (newest first). The [CLI](/cli) exposes this as `turbomem list`.
+- **`delete(id)`** / **`deleteAll(scope)`**: remove one memory or wipe a scope.
+- **Scoping**: every memory is tagged with optional `userId`, `agentId`, and `sessionId` for multi-tenant isolation.
 
-See [Architecture](/guide/architecture) for the full component breakdown.
+See [Architecture](/guide/architecture) for the pipeline and [API reference](/api/reference) for the full method list.
 
 ## When turbomem fits
 
