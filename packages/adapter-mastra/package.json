@@ -1,6 +1,6 @@
 {
   "name": "@turbomem/mastra",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Mastra memory provider backed by turbomem (local-first agent memory).",
   "homepage": "https://turbomem.dev",
   "license": "Apache-2.0",

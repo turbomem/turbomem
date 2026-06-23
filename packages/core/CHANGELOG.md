@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.3.0
+
+### Minor Changes
+
+- 48e705b: add Voyage and Google embedding adapters and Google extraction
+
 ## 0.2.3
 
 ### Patch Changes
