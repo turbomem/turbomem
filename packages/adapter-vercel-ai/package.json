@@ -1,6 +1,6 @@
 {
   "name": "@turbomem/vercel-ai",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Vercel AI SDK memory tools backed by turbomem (local-first agent memory).",
   "homepage": "https://turbomem.dev",
   "license": "Apache-2.0",

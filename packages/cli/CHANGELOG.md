@@ -1,5 +1,16 @@
 # @turbomem/cli
 
+## 0.4.0
+
+### Minor Changes
+
+- 48e705b: add Voyage and Google embedding adapters and Google extraction
+
+### Patch Changes
+
+- Updated dependencies [48e705b]
+  - turbomem@0.3.0
+
 ## 0.3.2
 
 ### Patch Changes
