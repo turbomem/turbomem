@@ -17,12 +17,12 @@ credentials each provider needs.
 
 Select with `embeddings: "openai" | "local" | "voyage" | "google"`.
 
-| Provider | Preset | Models | Default dims | Supported dims | API key / env var |
-| --- | --- | --- | --- | --- | --- |
-| OpenAI | `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002` | 1536 (`3-small`) | 1536 / 3072 | `OPENAI_API_KEY` |
-| Local (transformers) | `"local"` | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5` | 384 | 384 | none (runs on-device) |
-| Voyage AI | `"voyage"` | `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large`, `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3` | 1024 | 256 / 512 / 1024 / 2048 | `VOYAGE_API_KEY` |
-| Google Gemini | `"google"` | `gemini-embedding-001` | 3072 | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+| Provider             | Preset     | Models                                                                                                            | Default dims     | Supported dims                         | API key / env var                      |
+| -------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------- | ---------------- | -------------------------------------- | -------------------------------------- |
+| OpenAI               | `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`                                      | 1536 (`3-small`) | 1536 / 3072                            | `OPENAI_API_KEY`                       |
+| Local (transformers) | `"local"`  | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5`                                                             | 384              | 384                                    | none (runs on-device)                  |
+| Voyage AI            | `"voyage"` | `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large`, `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3` | 1024             | 256 / 512 / 1024 / 2048                | `VOYAGE_API_KEY`                       |
+| Google Gemini        | `"google"` | `gemini-embedding-001`                                                                                            | 3072             | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ::: tip Dimensions are fixed per store
 The vector column dimension is derived from your embedding adapter at `init()`.
@@ -104,11 +104,11 @@ new TurboMemory({ embeddings: myCustomAdapter /* ... */ });
 
 Select with `extraction.provider: "openai" | "anthropic" | "google"`.
 
-| Provider | Preset | Example models | API key / env var |
-| --- | --- | --- | --- |
-| OpenAI | `"openai"` | `gpt-4o-mini`, `gpt-4o` | `OPENAI_API_KEY` |
-| Anthropic | `"anthropic"` | `claude-3-5-haiku-latest`, `claude-3-5-sonnet-latest` | `ANTHROPIC_API_KEY` |
-| Google Gemini | `"google"` | `gemini-2.5-flash`, `gemini-2.5-pro` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+| Provider          | Preset                 | Example models                                           | API key / env var                                 |
+| ----------------- | ---------------------- | -------------------------------------------------------- | ------------------------------------------------- |
+| OpenAI            | `"openai"`             | `gpt-4o-mini`, `gpt-4o`                                  | `OPENAI_API_KEY`                                  |
+| Anthropic         | `"anthropic"`          | `claude-3-5-haiku-latest`, `claude-3-5-sonnet-latest`    | `ANTHROPIC_API_KEY`                               |
+| Google Gemini     | `"google"`             | `gemini-2.5-flash`, `gemini-2.5-pro`                     | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)            |
 | OpenAI-compatible | `"openai"` + `baseURL` | Groq, OpenRouter, Together, Mistral, DeepSeek, Ollama, … | provider-specific (passed as `extraction.apiKey`) |
 
 ::: tip Any OpenAI-compatible endpoint works
@@ -131,6 +131,13 @@ extraction: {
   model: "llama-3.3-70b-versatile",
   apiKey: process.env.GROQ_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
+}
+
+// Anthropic extraction - needs npm install @anthropic-ai/sdk
+extraction: {
+  provider: "anthropic",
+  model: "claude-3-5-haiku-latest",
+  apiKey: process.env.ANTHROPIC_API_KEY,
 }
 ```
 
