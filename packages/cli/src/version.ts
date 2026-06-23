@@ -1,2 +1,7 @@
-/** The published CLI version, shared by the `--version` flag and the banner. */
-export const VERSION = "0.3.2";
+import pkg from "../package.json";
+
+/**
+ * The published CLI version, read from package.json so it always matches what
+ * `changeset version` bumps. Inlined at build time by tsup/esbuild.
+ */
+export const VERSION: string = pkg.version;

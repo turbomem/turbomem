@@ -24,10 +24,13 @@ export function registerConfig(program: Command): void {
       console.log("");
       console.log(row("embeddings", resolved.embeddings));
       if (resolved.localModel) console.log(row("local model", resolved.localModel));
+      if (resolved.embeddingModel) console.log(row("embedding model", resolved.embeddingModel));
       console.log(row("extraction", `${resolved.extractionProvider} (${resolved.extractionModel})`));
       console.log(row("data dir", resolved.dataDir));
       console.log(row("openai key", mask(resolved.openaiApiKey)));
       console.log(row("anthropic key", mask(resolved.anthropicApiKey)));
+      console.log(row("voyage key", mask(resolved.voyageApiKey)));
+      console.log(row("google key", mask(resolved.googleApiKey)));
       console.log("");
     });
 }

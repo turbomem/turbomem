@@ -59,6 +59,7 @@ export default defineConfig({
         items: [
           { text: "Getting started", link: "/guide/getting-started" },
           { text: "Configuration", link: "/guide/configuration" },
+          { text: "Providers", link: "/guide/providers" },
           { text: "Architecture", link: "/guide/architecture" },
         ],
       },
@@ -85,6 +86,10 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/turbomem/turbomem" },
     ],
+    footer: {
+      message: 'Questions or feedback? Contact <a href="mailto:arneesh@turbomem.dev">arneesh@turbomem.dev</a>.',
+      copyright: "Apache-2.0 Licensed | Copyright © turbomem",
+    },
     search: {
       provider: "local",
     },

@@ -16,6 +16,8 @@ npm install turbomem
 
 Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included; no extra database setup.
 
+**Providers:** embeddings via OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), or Google Gemini (`GEMINI_API_KEY`); fact extraction via OpenAI, Anthropic, or Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://turbomem.dev/guide/providers).
+
 ## Quick start
 
 ```ts

@@ -8,14 +8,20 @@ description: Configure embeddings, PGlite storage, LLM fact extraction, and memo
 `TurboMemory` accepts a single config object. All adapters are resolved at
 construction time from string presets or custom adapter instances.
 
+::: tip Looking for the full provider list?
+See the [Providers reference](/guide/providers) for a side-by-side comparison of
+every embedding and extraction provider, their models, dimensions, and required
+API keys.
+:::
+
 ## Full config shape
 
 ```ts
 const memory = new TurboMemory({
-  embeddings: "openai", // or "local" | EmbeddingAdapter
+  embeddings: "openai", // or "local" | "voyage" | "google" | EmbeddingAdapter
   storage: "pglite", // or StorageAdapter (default: "pglite")
   extraction: {
-    provider: "openai", // or "anthropic"
+    provider: "openai", // or "anthropic" | "google"
     model: "gpt-4o-mini",
     apiKey: process.env.OPENAI_API_KEY, // optional if openai.apiKey is set
     baseURL: undefined, // optional custom endpoint
@@ -23,6 +29,14 @@ const memory = new TurboMemory({
   openai: {
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: undefined,
+  },
+  voyage: {
+    apiKey: process.env.VOYAGE_API_KEY, // used when embeddings: "voyage"
+    model: "voyage-3.5",
+  },
+  google: {
+    apiKey: process.env.GEMINI_API_KEY, // used when embeddings/extraction is "google"
+    model: "gemini-embedding-001",
   },
   pglite: {
     dataDir: ".turbomem", // defaults to .turbomem in process.cwd()
@@ -65,6 +79,35 @@ new TurboMemory({
 ```
 
 The model (~25MB) downloads on first use and is cached for the rest of the process.
+
+### Voyage AI (optional)
+
+Hosted embeddings via plain `fetch` (no extra dependency). Defaults to
+`voyage-3.5` at 1024 dimensions:
+
+```ts
+new TurboMemory({
+  embeddings: "voyage",
+  voyage: { apiKey: process.env.VOYAGE_API_KEY, model: "voyage-4" },
+  // ...
+});
+```
+
+### Google Gemini (optional)
+
+Hosted embeddings via plain `fetch`. Defaults to `gemini-embedding-001` at 3072
+dimensions; vectors are always L2-normalized:
+
+```ts
+new TurboMemory({
+  embeddings: "google",
+  google: { apiKey: process.env.GEMINI_API_KEY, dimensions: 768 },
+  // ...
+});
+```
+
+See the [Providers reference](/guide/providers) for all models and supported
+dimensions.
 
 ### Custom adapter
 
@@ -112,11 +155,14 @@ new TurboMemory({
 ## Fact extraction
 
 Extraction uses an LLM to turn conversations into discrete, third-person facts.
-Supported providers: `openai` and `anthropic`.
+Supported providers: `openai`, `anthropic`, and `google`. Any OpenAI-compatible
+endpoint (Groq, OpenRouter, Together, Mistral, Ollama, …) also works via the
+`openai` provider with a custom `baseURL` — see the
+[Providers reference](/guide/providers).
 
 ```ts
 extraction: {
-  provider: "openai",
+  provider: "openai", // or "anthropic" | "google"
   model: "gpt-4o-mini",
 }
 ```

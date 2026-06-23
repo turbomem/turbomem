@@ -80,7 +80,7 @@ export interface StorageAdapter {
 }
 
 /** Supported providers for LLM-based fact extraction. */
-export type ExtractionProvider = "openai" | "anthropic";
+export type ExtractionProvider = "openai" | "anthropic" | "google";
 
 export interface ExtractionConfig {
   provider: ExtractionProvider;
@@ -94,14 +94,34 @@ export interface OpenAIConfig {
   baseURL?: string;
 }
 
+/** Options for the Voyage embedding adapter. */
+export interface VoyageConfig {
+  apiKey?: string;
+  baseURL?: string;
+  model?: string;
+  dimensions?: number;
+}
+
+/** Options for the Google (Gemini) embedding adapter. */
+export interface GoogleConfig {
+  apiKey?: string;
+  baseURL?: string;
+  model?: string;
+  dimensions?: number;
+}
+
 /**
  * Configuration for the {@link TurboMemory} class.
  */
 export interface TurboMemoryConfig {
-  embeddings: "openai" | "local" | EmbeddingAdapter;
+  embeddings: "openai" | "local" | "voyage" | "google" | EmbeddingAdapter;
   storage?: "pglite" | StorageAdapter;
   extraction: ExtractionConfig;
   openai?: OpenAIConfig;
+  /** Options forwarded to the Voyage embedding adapter. */
+  voyage?: VoyageConfig;
+  /** Options forwarded to the Google embedding adapter. */
+  google?: GoogleConfig;
   pglite?: {
     /** Defaults to `.turbomem` in `process.cwd()`. */
     dataDir?: string;

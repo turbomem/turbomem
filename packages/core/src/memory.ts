@@ -12,6 +12,8 @@ import { MessagesSchema } from "./types.js";
 import { ConfigError, NotInitialisedError } from "./errors.js";
 import { OpenAIEmbeddingAdapter } from "./embeddings/openai.js";
 import { TransformersEmbeddingAdapter } from "./embeddings/transformers.js";
+import { VoyageEmbeddingAdapter } from "./embeddings/voyage.js";
+import { GoogleEmbeddingAdapter } from "./embeddings/google.js";
 import { PGliteStorageAdapter } from "./storage/pglite.js";
 import { Extractor } from "./extraction/extractor.js";
 
@@ -34,12 +36,16 @@ export class TurboMemory {
     this.extractor = new Extractor({
       config: {
         ...config.extraction,
-        apiKey:
-          config.extraction.apiKey ??
-          (config.extraction.provider === "openai" ? config.openai?.apiKey : undefined),
+        apiKey: config.extraction.apiKey ?? TurboMemory.fallbackExtractionKey(config),
         baseURL: config.extraction.baseURL ?? config.openai?.baseURL,
       },
     });
+  }
+
+  private static fallbackExtractionKey(config: TurboMemoryConfig): string | undefined {
+    if (config.extraction.provider === "openai") return config.openai?.apiKey;
+    if (config.extraction.provider === "google") return config.google?.apiKey;
+    return undefined;
   }
 
   private static resolveEmbeddingAdapter(config: TurboMemoryConfig): EmbeddingAdapter {
@@ -52,6 +58,22 @@ export class TurboMemory {
     }
     if (embeddings === "local") {
       return new TransformersEmbeddingAdapter({ model: config.local?.model });
+    }
+    if (embeddings === "voyage") {
+      return new VoyageEmbeddingAdapter({
+        apiKey: config.voyage?.apiKey,
+        baseURL: config.voyage?.baseURL,
+        model: config.voyage?.model,
+        dimensions: config.voyage?.dimensions,
+      });
+    }
+    if (embeddings === "google") {
+      return new GoogleEmbeddingAdapter({
+        apiKey: config.google?.apiKey,
+        baseURL: config.google?.baseURL,
+        model: config.google?.model,
+        dimensions: config.google?.dimensions,
+      });
     }
     if (typeof embeddings === "object" && embeddings !== null) {
       return embeddings;
