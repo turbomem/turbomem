@@ -18,7 +18,14 @@ export default defineConfig({
   sitemap: {
     hostname: SITE,
   },
-  head: [["link", { rel: "icon", href: "/logo.svg", type: "image/svg+xml" }]],
+  head: [
+    ["link", { rel: "icon", href: "/favicon.ico", sizes: "48x48" }],
+    ["link", { rel: "icon", type: "image/png", href: "/favicon-96x96.png", sizes: "96x96" }],
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    ["link", { rel: "apple-touch-icon", href: "/apple-touch-icon.png" }],
+    ["link", { rel: "manifest", href: "/site.webmanifest" }],
+    ["meta", { name: "theme-color", content: "#ffffff" }],
+  ],
   transformHead({ pageData }) {
     const title =
       pageData.title && pageData.title !== "turbomem" ? `${pageData.title} | turbomem` : "turbomem";
