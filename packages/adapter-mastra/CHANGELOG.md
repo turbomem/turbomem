@@ -1,5 +1,12 @@
 # @turbomem/mastra
 
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies [ae50482]
+  - turbomem@0.3.1
+
 ## 0.2.4
 
 ### Patch Changes
