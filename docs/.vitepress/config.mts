@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 
 const SITE = "https://turbomem.dev";
 const DEFAULT_DESC = "Local-first agent memory for TypeScript";
-const OG_IMAGE = `${SITE}/logo.svg`;
+const OG_IMAGE = `${SITE}/web-app-manifest-512x512.png`;
 
 function pageUrl(relativePath: string): string {
   const path = relativePath.replace(/index\.md$/, "").replace(/\.md$/, "");
@@ -39,6 +39,10 @@ export default defineConfig({
       ["meta", { property: "og:type", content: "website" }],
       ["meta", { property: "og:site_name", content: "turbomem" }],
       ["meta", { property: "og:image", content: OG_IMAGE }],
+      ["meta", { property: "og:image:width", content: "512" }],
+      ["meta", { property: "og:image:height", content: "512" }],
+      ["meta", { property: "og:image:type", content: "image/png" }],
+      ["meta", { property: "og:image:alt", content: "turbomem logo" }],
       ["meta", { name: "twitter:card", content: "summary" }],
       ["meta", { name: "twitter:title", content: title }],
       ["meta", { name: "twitter:description", content: description }],
