@@ -11,6 +11,8 @@ export type {
   ExtractionConfig,
   ExtractionProvider,
   OpenAIConfig,
+  VoyageConfig,
+  GoogleConfig,
 } from "./types.js";
 export { MessageSchema, MessagesSchema, MemoryScopeSchema } from "./types.js";
 
@@ -28,11 +30,16 @@ export type { TurboMemErrorCode } from "./errors.js";
 export {
   OpenAIEmbeddingAdapter,
   TransformersEmbeddingAdapter,
+  VoyageEmbeddingAdapter,
+  GoogleEmbeddingAdapter,
 } from "./embeddings/index.js";
 export type {
   OpenAIEmbeddingOptions,
   OpenAIEmbeddingModel,
   TransformersEmbeddingOptions,
+  VoyageEmbeddingOptions,
+  VoyageEmbeddingModel,
+  GoogleEmbeddingOptions,
 } from "./embeddings/index.js";
 
 export { PGliteStorageAdapter } from "./storage/index.js";

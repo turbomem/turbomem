@@ -29,6 +29,8 @@ export function registerInit(program: Command): void {
         options: [
           { value: "openai", label: "OpenAI", hint: "text-embedding-3-small, needs an API key" },
           { value: "local", label: "Local (transformers)", hint: "runs on-device, no API key" },
+          { value: "voyage", label: "Voyage AI", hint: "voyage-3.5 / voyage-4, needs an API key" },
+          { value: "google", label: "Google Gemini", hint: "gemini-embedding-001, needs an API key" },
         ],
       })) as EmbeddingsProvider;
       if (isCancel(embeddings)) bail();
@@ -44,19 +46,35 @@ export function registerInit(program: Command): void {
         localModel = (model as string).trim() || undefined;
       }
 
+      let embeddingModel = existing.embeddingModel;
+      if (embeddings === "voyage" || embeddings === "google") {
+        const placeholder = embeddings === "voyage" ? "voyage-3.5" : "gemini-embedding-001";
+        const model = await text({
+          message: `Embedding model (leave blank for default)`,
+          initialValue: existing.embeddingModel ?? "",
+          placeholder,
+        });
+        if (isCancel(model)) bail();
+        embeddingModel = (model as string).trim() || undefined;
+      }
+
       const extractionProvider = (await select({
         message: "Fact-extraction provider",
         initialValue: existing.extractionProvider ?? "openai",
         options: [
           { value: "openai", label: "OpenAI", hint: "e.g. gpt-4o-mini" },
           { value: "anthropic", label: "Anthropic", hint: "e.g. claude-3-5-haiku-latest" },
+          { value: "google", label: "Google Gemini", hint: "e.g. gemini-2.5-flash" },
         ],
       })) as ExtractionProvider;
       if (isCancel(extractionProvider)) bail();
 
-      const defaultModel =
-        existing.extractionModel ??
-        (extractionProvider === "openai" ? "gpt-4o-mini" : "claude-3-5-haiku-latest");
+      const defaultExtractionModel: Record<ExtractionProvider, string> = {
+        openai: "gpt-4o-mini",
+        anthropic: "claude-3-5-haiku-latest",
+        google: "gemini-2.5-flash",
+      };
+      const defaultModel = existing.extractionModel ?? defaultExtractionModel[extractionProvider];
       const extractionModel = await text({
         message: "Extraction model",
         initialValue: defaultModel,
@@ -81,6 +99,24 @@ export function registerInit(program: Command): void {
         if ((key as string).trim()) anthropicApiKey = (key as string).trim();
       }
 
+      let voyageApiKey = existing.voyageApiKey;
+      if (embeddings === "voyage") {
+        const key = await password({
+          message: `Voyage API key${existing.voyageApiKey ? " (leave blank to keep existing)" : ""}`,
+        });
+        if (isCancel(key)) bail();
+        if ((key as string).trim()) voyageApiKey = (key as string).trim();
+      }
+
+      let googleApiKey = existing.googleApiKey;
+      if (embeddings === "google" || extractionProvider === "google") {
+        const key = await password({
+          message: `Google (Gemini) API key${existing.googleApiKey ? " (leave blank to keep existing)" : ""}`,
+        });
+        if (isCancel(key)) bail();
+        if ((key as string).trim()) googleApiKey = (key as string).trim();
+      }
+
       const dataDir = await text({
         message: "Data directory",
         initialValue: existing.dataDir ?? DEFAULT_DATA_DIR,
@@ -90,10 +126,13 @@ export function registerInit(program: Command): void {
       const config: CliConfig = {
         embeddings,
         localModel,
+        embeddingModel,
         extractionProvider,
         extractionModel: (extractionModel as string).trim(),
         openaiApiKey,
         anthropicApiKey,
+        voyageApiKey,
+        googleApiKey,
         dataDir: (dataDir as string).trim(),
       };
 

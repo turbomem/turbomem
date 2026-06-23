@@ -103,6 +103,9 @@ export class Extractor {
     if (this.config.provider === "anthropic") {
       return this.anthropicCompletion(system, user);
     }
+    if (this.config.provider === "google") {
+      return this.googleCompletion(system, user);
+    }
     throw new ConfigError(`Unsupported extraction provider: ${this.config.provider as string}`);
   }
 
@@ -148,5 +151,40 @@ export class Extractor {
     const block = response.content[0];
     if (block && block.type === "text") return block.text;
     return "";
+  }
+
+  private async googleCompletion(system: string, user: string): Promise<string> {
+    const apiKey =
+      this.config.apiKey ?? process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
+    if (!apiKey) {
+      throw new ConfigError("Google API key missing for extraction provider.");
+    }
+    const baseURL = (
+      this.config.baseURL ?? "https://generativelanguage.googleapis.com/v1beta"
+    ).replace(/\/$/, "");
+    const url = `${baseURL}/models/${this.config.model}:generateContent`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "x-goog-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: system }] },
+        contents: [{ role: "user", parts: [{ text: user }] }],
+        generationConfig: { temperature: 0 },
+      }),
+    });
+
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(`Google extraction request failed with status ${response.status}: ${detail}`);
+    }
+
+    const json = (await response.json()) as {
+      candidates?: { content?: { parts?: { text?: string }[] } }[];
+    };
+    return json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
   }
 }

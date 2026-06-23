@@ -11,7 +11,7 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 ## Features
 
 - **Embedded runtime**: in-process memory with no HTTP hop per call
-- **Semantic search**: LLM fact extraction plus vector embeddings (OpenAI or local WASM)
+- **Semantic search**: LLM fact extraction plus vector embeddings (OpenAI, local WASM, Voyage AI, or Google Gemini)
 - **PGlite storage**: WASM Postgres with pgvector; data stays on disk in your app
 - **Scoped by user, agent, or session**: multi-tenant friendly out of the box
 - **Framework adapters**: Mastra and Vercel AI SDK integrations ship as separate packages
@@ -23,6 +23,8 @@ npm install turbomem
 ```
 
 Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup.
+
+Prefer another provider? Embeddings support OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), and Google Gemini (`GEMINI_API_KEY`); fact extraction supports OpenAI, Anthropic, and Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://turbomem.dev/guide/providers).
 
 ## Quick start
 

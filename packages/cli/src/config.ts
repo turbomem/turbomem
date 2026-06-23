@@ -11,17 +11,20 @@ export const CONFIG_PATH = join(TURBOMEM_HOME, "config.json");
 /** Default on-disk location for the PGlite database. */
 export const DEFAULT_DATA_DIR = join(TURBOMEM_HOME, "data");
 
-export type EmbeddingsProvider = "openai" | "local";
-export type ExtractionProvider = "openai" | "anthropic";
+export type EmbeddingsProvider = "openai" | "local" | "voyage" | "google";
+export type ExtractionProvider = "openai" | "anthropic" | "google";
 
 /** Shape persisted to `~/.turbomem/config.json`. All fields optional. */
 export interface CliConfig {
   embeddings?: EmbeddingsProvider;
   localModel?: string;
+  embeddingModel?: string;
   extractionProvider?: ExtractionProvider;
   extractionModel?: string;
   openaiApiKey?: string;
   anthropicApiKey?: string;
+  voyageApiKey?: string;
+  googleApiKey?: string;
   dataDir?: string;
 }
 
@@ -29,10 +32,13 @@ export interface CliConfig {
 export interface ResolvedConfig {
   embeddings: EmbeddingsProvider;
   localModel?: string;
+  embeddingModel?: string;
   extractionProvider: ExtractionProvider;
   extractionModel: string;
   openaiApiKey?: string;
   anthropicApiKey?: string;
+  voyageApiKey?: string;
+  googleApiKey?: string;
   dataDir: string;
 }
 
@@ -44,11 +50,14 @@ export interface ConfigOverrides {
   extractionModel?: string;
   openaiApiKey?: string;
   anthropicApiKey?: string;
+  voyageApiKey?: string;
+  googleApiKey?: string;
 }
 
 const DEFAULT_EXTRACTION_MODEL: Record<ExtractionProvider, string> = {
   openai: "gpt-4o-mini",
   anthropic: "claude-3-5-haiku-latest",
+  google: "gemini-2.5-flash",
 };
 
 /** Read the saved config file, returning an empty object when none exists. */
@@ -97,29 +106,51 @@ export function resolveConfig(overrides: ConfigOverrides = {}): ResolvedConfig {
   return {
     embeddings,
     localModel: process.env.TURBOMEM_LOCAL_MODEL ?? file.localModel,
+    embeddingModel: process.env.TURBOMEM_EMBEDDING_MODEL ?? file.embeddingModel,
     extractionProvider,
     extractionModel,
     openaiApiKey: overrides.openaiApiKey ?? process.env.OPENAI_API_KEY ?? file.openaiApiKey,
     anthropicApiKey:
       overrides.anthropicApiKey ?? process.env.ANTHROPIC_API_KEY ?? file.anthropicApiKey,
+    voyageApiKey: overrides.voyageApiKey ?? process.env.VOYAGE_API_KEY ?? file.voyageApiKey,
+    googleApiKey:
+      overrides.googleApiKey ??
+      process.env.GEMINI_API_KEY ??
+      process.env.GOOGLE_API_KEY ??
+      file.googleApiKey,
     dataDir: overrides.dataDir ?? process.env.TURBOMEM_DATA_DIR ?? file.dataDir ?? DEFAULT_DATA_DIR,
   };
 }
 
 /** Map the resolved CLI config to a core {@link TurboMemoryConfig}. */
 export function toMemoryConfig(resolved: ResolvedConfig): TurboMemoryConfig {
+  const extractionApiKey =
+    resolved.extractionProvider === "anthropic"
+      ? resolved.anthropicApiKey
+      : resolved.extractionProvider === "google"
+        ? resolved.googleApiKey
+        : resolved.openaiApiKey;
+
   return {
     embeddings: resolved.embeddings,
     local: resolved.localModel ? { model: resolved.localModel } : undefined,
+    voyage:
+      resolved.embeddings === "voyage"
+        ? { apiKey: resolved.voyageApiKey, model: resolved.embeddingModel }
+        : undefined,
+    google:
+      resolved.embeddings === "google" || resolved.extractionProvider === "google"
+        ? {
+            apiKey: resolved.googleApiKey,
+            model: resolved.embeddings === "google" ? resolved.embeddingModel : undefined,
+          }
+        : undefined,
     storage: "pglite",
     pglite: { dataDir: resolved.dataDir },
     extraction: {
       provider: resolved.extractionProvider,
       model: resolved.extractionModel,
-      apiKey:
-        resolved.extractionProvider === "anthropic"
-          ? resolved.anthropicApiKey
-          : resolved.openaiApiKey,
+      apiKey: extractionApiKey,
     },
     openai: { apiKey: resolved.openaiApiKey },
   };
@@ -133,11 +164,20 @@ export function checkCredentials(resolved: ResolvedConfig): string | null {
   if (resolved.embeddings === "openai" && !resolved.openaiApiKey) {
     return "OpenAI embeddings selected but no API key found. Run `turbomem init` or set OPENAI_API_KEY.";
   }
+  if (resolved.embeddings === "voyage" && !resolved.voyageApiKey) {
+    return "Voyage embeddings selected but no API key found. Run `turbomem init` or set VOYAGE_API_KEY.";
+  }
+  if (resolved.embeddings === "google" && !resolved.googleApiKey) {
+    return "Google embeddings selected but no API key found. Run `turbomem init` or set GEMINI_API_KEY.";
+  }
   if (resolved.extractionProvider === "openai" && !resolved.openaiApiKey) {
     return "OpenAI extraction selected but no API key found. Run `turbomem init` or set OPENAI_API_KEY.";
   }
   if (resolved.extractionProvider === "anthropic" && !resolved.anthropicApiKey) {
     return "Anthropic extraction selected but no API key found. Run `turbomem init` or set ANTHROPIC_API_KEY.";
+  }
+  if (resolved.extractionProvider === "google" && !resolved.googleApiKey) {
+    return "Google extraction selected but no API key found. Run `turbomem init` or set GEMINI_API_KEY.";
   }
   return null;
 }
