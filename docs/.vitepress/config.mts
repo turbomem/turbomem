@@ -21,9 +21,7 @@ export default defineConfig({
   head: [["link", { rel: "icon", href: "/logo.svg", type: "image/svg+xml" }]],
   transformHead({ pageData }) {
     const title =
-      pageData.title && pageData.title !== "turbomem"
-        ? `${pageData.title} | turbomem`
-        : "turbomem";
+      pageData.title && pageData.title !== "turbomem" ? `${pageData.title} | turbomem` : "turbomem";
     const description = pageData.description || DEFAULT_DESC;
     const url = pageUrl(pageData.relativePath);
 
@@ -80,14 +78,16 @@ export default defineConfig({
       },
       {
         text: "More",
-        items: [{ text: "Examples", link: "/examples" }],
+        items: [
+          { text: "Examples", link: "/examples" },
+          { text: "Contact", link: "/contact" },
+        ],
       },
     ],
-    socialLinks: [
-      { icon: "github", link: "https://github.com/turbomem/turbomem" },
-    ],
+    socialLinks: [{ icon: "github", link: "https://github.com/turbomem/turbomem" }],
     footer: {
-      message: 'Questions or feedback? Contact <a href="mailto:arneesh@turbomem.dev">arneesh@turbomem.dev</a>.',
+      message:
+        'Questions or feedback? <a href="/contact">Contact us</a> or email <a href="mailto:arneesh@turbomem.dev">arneesh@turbomem.dev</a>.',
       copyright: "Apache-2.0 Licensed | Copyright © turbomem",
     },
     search: {

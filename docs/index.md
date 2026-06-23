@@ -112,9 +112,9 @@ await memory.close();
 - [CLI](/cli) - manage memories from your terminal
 - [Examples](/examples) - runnable projects in the repo
 - [API reference](/api/reference) - types, methods, and error codes
+- [Contact](/contact) - questions, feedback, and bug reports
 
 ## Contact
 
-Questions, feedback, or want to report an issue? Reach out at
-[arneesh@turbomem.dev](mailto:arneesh@turbomem.dev) or open an issue on
-[GitHub](https://github.com/turbomem/turbomem).
+Questions, feedback, or want to report an issue? See the [Contact](/contact)
+page or email [arneesh@turbomem.dev](mailto:arneesh@turbomem.dev).
