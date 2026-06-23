@@ -62,6 +62,12 @@ Run `turbomem` with no arguments (or `turbomem shell`) to open the REPL:
 turbomem ›
 ```
 
+or
+
+```
+npx @turbomem/cli
+```
+
 Inside the shell:
 
 | Command           | Description                         |
