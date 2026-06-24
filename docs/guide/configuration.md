@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Configure embeddings, PGlite or sqlite-vec storage, LLM fact extraction, and memory scoping in turbomem.
+description: Configure embeddings, PGlite, sqlite-vec, or Upstash Vector storage, LLM fact extraction, and memory scoping in turbomem.
 ---
 
 # Configuration
@@ -15,8 +15,8 @@ API keys.
 :::
 
 ::: tip Choosing a storage backend?
-See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec, install steps,
-and custom adapters.
+See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec vs Upstash Vector,
+install steps, and custom adapters. Deploying to edge? See the [Edge guide](/guide/edge).
 :::
 
 ## Full config shape
@@ -24,7 +24,7 @@ and custom adapters.
 ```ts
 const memory = new TurboMemory({
   embeddings: "openai", // or "local" | "voyage" | "google" | EmbeddingAdapter
-  storage: "pglite", // or "sqlite-vec" | StorageAdapter (default: "pglite")
+  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | StorageAdapter (default: "pglite")
   extraction: {
     provider: "openai", // or "anthropic" | "google"
     model: "gpt-4o-mini",
@@ -49,6 +49,11 @@ const memory = new TurboMemory({
   sqliteVec: {
     dbPath: ".turbomem.sqlite", // defaults to .turbomem.sqlite in process.cwd()
     inMemory: false, // set true for ephemeral storage (tests)
+  },
+  upstashVector: {
+    url: process.env.UPSTASH_VECTOR_REST_URL, // or UPSTASH_VECTOR_REST_URL env var
+    token: process.env.UPSTASH_VECTOR_REST_TOKEN,
+    namespace: undefined, // optional Upstash namespace
   },
   local: {
     model: undefined, // defaults to Xenova/all-MiniLM-L6-v2
@@ -131,20 +136,21 @@ new TurboMemory({
 
 ## Storage adapters
 
-Select with `storage: "pglite" | "sqlite-vec"` or pass a custom `StorageAdapter`.
-PGlite (WASM Postgres + pgvector) is the default and requires no extra install.
-sqlite-vec (SQLite + native extension) is optional and needs
-`better-sqlite3` and `sqlite-vec` as peer dependencies.
+Select with `storage: "pglite" | "sqlite-vec" | "upstash-vector"` or pass a custom
+`StorageAdapter`. PGlite (WASM Postgres + pgvector) is the default and requires no extra
+install. sqlite-vec (SQLite + native extension) is optional and needs `better-sqlite3`
+and `sqlite-vec` as peer dependencies. Upstash Vector (HTTP) is optional for edge
+deployments and needs `@upstash/vector` as a peer dependency.
 
-See the [Storage guide](/guide/storage) for a full comparison, setup steps, and
-when to use each backend.
+See the [Storage guide](/guide/storage) for a full comparison, setup steps, and when to
+use each backend. For edge deployment, see the [Edge guide](/guide/edge).
 
 ## Fact extraction
 
 Extraction uses an LLM to turn conversations into discrete, third-person facts.
 Supported providers: `openai`, `anthropic`, and `google`. Any OpenAI-compatible
 endpoint (Groq, OpenRouter, Together, Mistral, Ollama, …) also works via the
-`openai` provider with a custom `baseURL` — see the
+`openai` provider with a custom `baseURL` see the
 [Providers reference](/guide/providers).
 
 ```ts
@@ -167,12 +173,6 @@ Every memory is tagged with optional scope fields:
 ```
 
 Reads and deletes filter by whatever scope fields are provided. This is the
-extent of multi-tenancy — there is no auth layer.
+extent of multi-tenancy, there is no auth layer.
 
 Provide at least `userId` or `agentId` when storing memories.
-
-## Roadmap
-
-- Edge runtime support
-- Browser support (IndexedDB-backed PGlite)
-- Memory deduplication / update-in-place

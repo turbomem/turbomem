@@ -14,6 +14,7 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 - **Semantic search**: LLM fact extraction plus vector embeddings (OpenAI, local WASM, Voyage AI, or Google Gemini)
 - **PGlite storage**: WASM Postgres with pgvector; data stays on disk in your app (default)
 - **sqlite-vec storage**: optional SQLite backend via `better-sqlite3` + `sqlite-vec`
+- **Upstash Vector storage**: optional HTTP backend for edge runtimes (Cloudflare Workers, Vercel Edge)
 - **Scoped by user, agent, or session**: multi-tenant friendly out of the box
 - **Framework adapters**: Mastra and Vercel AI SDK integrations ship as separate packages
 
@@ -23,7 +24,7 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 npm install turbomem
 ```
 
-Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`.
+Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`. For edge: `npm install @upstash/vector` — see the [Edge guide](https://turbomem.dev/guide/edge).
 
 Prefer another provider? Embeddings support OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), and Google Gemini (`GEMINI_API_KEY`); fact extraction supports OpenAI, Anthropic, and Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://turbomem.dev/guide/providers).
 

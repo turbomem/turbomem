@@ -1,7 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { PGliteStorageAdapter } from "../src/storage/pglite.js";
 import { SqliteVecStorageAdapter } from "../src/storage/sqlite-vec.js";
+import {
+  UpstashVectorStorageAdapter,
+  type UpstashMemoryMetadata,
+  type UpstashVectorIndex,
+} from "../src/storage/upstash-vector.js";
 import { DimensionMismatchError } from "../src/errors.js";
+import type { MemoryScope } from "../src/types.js";
 
 const DIM = 8;
 
@@ -14,12 +20,161 @@ function vec(seed: number): number[] {
   return new Array(DIM).fill(0).map((_, i) => Math.abs(Math.sin(seed + i)) + 0.01);
 }
 
+class MockUpstashIndex implements UpstashVectorIndex {
+  readonly dimension: number;
+  private readonly store = new Map<
+    string,
+    { vector: number[]; metadata: UpstashMemoryMetadata }
+  >();
+
+  constructor(dimension = DIM) {
+    this.dimension = dimension;
+  }
+
+  async info(): Promise<{ dimension: number }> {
+    return { dimension: this.dimension };
+  }
+
+  async upsert(
+    args:
+      | {
+          id: string | number;
+          vector: number[];
+          metadata?: UpstashMemoryMetadata;
+        }
+      | Array<{
+          id: string | number;
+          vector: number[];
+          metadata?: UpstashMemoryMetadata;
+        }>,
+  ): Promise<string> {
+    const items = Array.isArray(args) ? args : [args];
+    for (const item of items) {
+      if (!item.metadata) continue;
+      this.store.set(String(item.id), { vector: item.vector, metadata: item.metadata });
+    }
+    return "OK";
+  }
+
+  async query(args: {
+    vector: number[];
+    topK: number;
+    filter?: string;
+    includeMetadata?: boolean;
+    includeVectors?: boolean;
+  }): Promise<
+    Array<{
+      id: string | number;
+      score: number;
+      vector?: number[];
+      metadata?: UpstashMemoryMetadata;
+    }>
+  > {
+    const scope = parseFilter(args.filter);
+    const scored = [...this.store.entries()]
+      .filter(([, row]) => matchesParsedScope(scope, row.metadata))
+      .map(([id, row]) => ({
+        id,
+        score: cosineScore(args.vector, row.vector),
+        vector: row.vector,
+        metadata: row.metadata,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, args.topK);
+    return scored;
+  }
+
+  async range(args: {
+    cursor: number | string;
+    limit: number;
+    includeMetadata?: boolean;
+    includeVectors?: boolean;
+  }): Promise<{
+    nextCursor: string;
+    vectors: Array<{
+      id: string | number;
+      vector?: number[];
+      metadata?: UpstashMemoryMetadata;
+    }>;
+  }> {
+    const start = Number(args.cursor) || 0;
+    const entries = [...this.store.entries()].slice(start, start + args.limit);
+    const nextStart = start + entries.length;
+    return {
+      nextCursor: nextStart >= this.store.size ? "" : String(nextStart),
+      vectors: entries.map(([id, row]) => ({
+        id,
+        vector: row.vector,
+        metadata: row.metadata,
+      })),
+    };
+  }
+
+  async delete(
+    payload: string | number | Array<string | number> | { filter: string },
+  ): Promise<{ deleted: number }> {
+    if (typeof payload === "object" && !Array.isArray(payload) && "filter" in payload) {
+      const scope = parseFilter(payload.filter);
+      let deleted = 0;
+      for (const [id, row] of this.store.entries()) {
+        if (matchesParsedScope(scope, row.metadata)) {
+          this.store.delete(id);
+          deleted++;
+        }
+      }
+      return { deleted };
+    }
+
+    const ids = Array.isArray(payload) ? payload.map(String) : [String(payload)];
+    let deleted = 0;
+    for (const id of ids) {
+      if (this.store.delete(id)) deleted++;
+    }
+    return { deleted };
+  }
+}
+
+function parseFilter(filter?: string): MemoryScope {
+  if (!filter) return {};
+  const scope: MemoryScope = {};
+  for (const part of filter.split(" AND ")) {
+    const match = part.match(/^(\w+) = "(.*)"$/);
+    if (!match) continue;
+    const [, key, value] = match;
+    const unescaped = value.replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+    if (key === "userId") scope.userId = unescaped;
+    if (key === "agentId") scope.agentId = unescaped;
+    if (key === "sessionId") scope.sessionId = unescaped;
+  }
+  return scope;
+}
+
+function matchesParsedScope(scope: MemoryScope, metadata: UpstashMemoryMetadata): boolean {
+  if (scope.userId !== undefined && metadata.userId !== scope.userId) return false;
+  if (scope.agentId !== undefined && metadata.agentId !== scope.agentId) return false;
+  if (scope.sessionId !== undefined && metadata.sessionId !== scope.sessionId) return false;
+  return true;
+}
+
+function cosineScore(a: number[], b: number[]): number {
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  if (normA === 0 || normB === 0) return 0;
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
 function runStorageAdapterTests(
   name: string,
-  createStorage: () => PGliteStorageAdapter | SqliteVecStorageAdapter,
+  createStorage: () => PGliteStorageAdapter | SqliteVecStorageAdapter | UpstashVectorStorageAdapter,
 ) {
   describe(name, () => {
-    let storage: PGliteStorageAdapter | SqliteVecStorageAdapter;
+    let storage: PGliteStorageAdapter | SqliteVecStorageAdapter | UpstashVectorStorageAdapter;
 
     beforeEach(async () => {
       storage = createStorage();
@@ -98,3 +253,14 @@ function runStorageAdapterTests(
 
 runStorageAdapterTests("PGliteStorageAdapter", () => new PGliteStorageAdapter({ inMemory: true }));
 runStorageAdapterTests("SqliteVecStorageAdapter", () => new SqliteVecStorageAdapter({ inMemory: true }));
+runStorageAdapterTests("UpstashVectorStorageAdapter", () => {
+  const index = new MockUpstashIndex();
+  return new UpstashVectorStorageAdapter({ index });
+});
+
+describe("UpstashVectorStorageAdapter dimension guard", () => {
+  it("throws DimensionMismatchError when index dimensions differ", async () => {
+    const storage = new UpstashVectorStorageAdapter({ index: new MockUpstashIndex(4) });
+    await expect(storage.init(DIM)).rejects.toBeInstanceOf(DimensionMismatchError);
+  });
+});

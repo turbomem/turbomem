@@ -9,6 +9,10 @@ turbomem gives your LLM agents persistent, semantically-searchable memory that r
 entirely inside your Node/Bun process. Type-safe, adapter-based, and dependency-light.
 No separate memory server required.
 
+::: tip Deploying to edge?
+See the [Edge guide](/guide/edge) for Upstash Vector setup on Cloudflare Workers, Vercel Edge, and other stateless runtimes.
+:::
+
 ## Install
 
 ```bash
@@ -88,6 +92,7 @@ If you're shipping a TypeScript app and want memory as a _library_, that's turbo
 ## Next steps
 
 - [Configuration](/guide/configuration) - embeddings, extraction, scoping
-- [Storage](/guide/storage) - PGlite vs sqlite-vec
+- [Storage](/guide/storage) - PGlite, sqlite-vec, and Upstash Vector
+- [Edge](/guide/edge) - deploy on Workers and Vercel Edge
 - [Architecture](/guide/architecture) - how the pipeline works
 - [Examples](/examples) - runnable projects in the repo

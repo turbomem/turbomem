@@ -1,0 +1,25 @@
+---
+title: Roadmap
+description: Planned features and future direction for turbomem.
+---
+
+# Roadmap
+
+This page tracks what we're planning next. For what's already available today,
+see the [Guide](/guide/getting-started).
+
+## Planned
+
+- **Browser support (IndexedDB-backed PGlite)** - run turbomem in the browser with client-side persistence, no remote database required.
+- **Memory deduplication / update-in-place** - merge or update existing memories when new facts overlap, instead of always inserting new rows.
+
+## Recently shipped
+
+- **Edge runtime support** - opt-in [Upstash Vector](/guide/edge) storage for Cloudflare Workers, Vercel Edge, and other stateless runtimes.
+- **sqlite-vec storage** - optional local SQLite backend alongside the default PGlite adapter. See [Storage](/guide/storage).
+
+## Feedback
+
+Have a feature request or want to influence the roadmap? Open a
+[GitHub issue](https://github.com/turbomem/turbomem/issues) or
+[contact us](/contact).
