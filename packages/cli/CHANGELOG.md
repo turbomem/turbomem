@@ -1,5 +1,16 @@
 # @turbomem/cli
 
+## 0.5.0
+
+### Minor Changes
+
+- 175ea28: Added edge support and upstash vector support
+
+### Patch Changes
+
+- Updated dependencies [175ea28]
+  - turbomem@0.5.0
+
 ## 0.4.2
 
 ### Patch Changes
