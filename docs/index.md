@@ -31,7 +31,7 @@ features:
     details: Add, search, and manage memories from your shell with one-shot commands or an interactive REPL.
     link: /cli
   - title: Edge-ready
-    details: Deploy on Cloudflare Workers and Vercel Edge with Upstash Vector over HTTP — no local filesystem required.
+    details: Deploy on Cloudflare Workers and Vercel Edge with Upstash Vector over HTTP, no local filesystem required.
     link: /guide/edge
   - title: Multi-tenant scoping
     details: Tag memories with userId, agentId, or sessionId. Search, list, and delete respect scope out of the box.

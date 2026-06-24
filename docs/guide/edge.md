@@ -5,16 +5,16 @@ description: Deploy turbomem on edge runtimes with Upstash Vector storage — se
 
 # Edge
 
-turbomem supports **opt-in edge deployment** via [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) — a remote vector database over HTTP. PGlite and sqlite-vec remain the default local backends for Node/Bun; you only need this guide when deploying to stateless edge runtimes.
+turbomem supports **opt-in edge deployment** via [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) - a remote vector database over HTTP. PGlite and sqlite-vec remain the default local backends for Node/Bun; you only need this guide when deploying to stateless edge runtimes.
 
 ## When to use edge vs local storage
 
-| Runtime | Recommended storage |
-| ------- | ------------------- |
-| Node, Bun, local-first apps | `"pglite"` (default) or `"sqlite-vec"` |
-| Cloudflare Workers, Vercel Edge, Deno Deploy | `"upstash-vector"` |
+| Runtime                                      | Recommended storage                    |
+| -------------------------------------------- | -------------------------------------- |
+| Node, Bun, local-first apps                  | `"pglite"` (default) or `"sqlite-vec"` |
+| Cloudflare Workers, Vercel Edge, Deno Deploy | `"upstash-vector"`                     |
 
-Edge runtimes are **stateless** — there is no writable filesystem, and memory in an isolate does not survive between requests. Local PGlite or sqlite-vec paths will not persist on edge. Use a remote vector store instead.
+Edge runtimes are **stateless**, there is no writable filesystem, and memory in an isolate does not survive between requests. Local PGlite or sqlite-vec paths will not persist on edge. Use a remote vector store instead.
 
 ::: tip No migration required
 Existing PGlite or sqlite-vec setups keep working unchanged. Edge storage is an additional opt-in path.
@@ -40,8 +40,8 @@ Before writing code:
 
 - [ ] An [Upstash](https://upstash.com/) account (free tier available)
 - [ ] A Vector index created in the console (see below)
-- [ ] An embedding provider API key — [Google](/guide/providers) or [Voyage](/guide/providers) recommended
-- [ ] An extraction provider API key — Google recommended for edge
+- [ ] An embedding provider API key - [Google](/guide/providers) or [Voyage](/guide/providers) recommended
+- [ ] An extraction provider API key - Google recommended for edge
 
 ## Step 1: Create an Upstash Vector index
 
@@ -60,13 +60,13 @@ The index dimension count is fixed at creation time. If it does not match your e
 
 ### Dimensions reference
 
-| Embeddings preset | Default dimensions | Set Upstash index to |
-| ----------------- | ------------------ | -------------------- |
-| `"openai"` (`text-embedding-3-small`) | 1536 | **1536** |
-| `"openai"` (`text-embedding-3-large`) | 3072 | **3072** |
-| `"google"` (`gemini-embedding-001`) | 3072 | **768**, **1536**, or **3072** (match your `google.dimensions` config) |
-| `"voyage"` | 1024 | **1024** (or match your `voyage.dimensions`) |
-| `"local"` | 384 | Not recommended on edge |
+| Embeddings preset                     | Default dimensions | Set Upstash index to                                                   |
+| ------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `"openai"` (`text-embedding-3-small`) | 1536               | **1536**                                                               |
+| `"openai"` (`text-embedding-3-large`) | 3072               | **3072**                                                               |
+| `"google"` (`gemini-embedding-001`)   | 3072               | **768**, **1536**, or **3072** (match your `google.dimensions` config) |
+| `"voyage"`                            | 1024               | **1024** (or match your `voyage.dimensions`)                           |
+| `"local"`                             | 384                | Not recommended on edge                                                |
 
 See [Providers](/guide/providers) for the full embedding reference.
 
@@ -76,7 +76,7 @@ See [Providers](/guide/providers) for the full embedding reference.
 npm install turbomem @upstash/vector
 ```
 
-`@upstash/vector` is an optional peer dependency — only required when using `storage: "upstash-vector"`.
+`@upstash/vector` is an optional peer dependency - only required when using `storage: "upstash-vector"`.
 
 ## Step 3: Environment variables
 
@@ -89,12 +89,12 @@ export UPSTASH_VECTOR_REST_TOKEN=...
 export GEMINI_API_KEY=...
 ```
 
-| Variable | Required | Used by |
-| -------- | -------- | ------- |
-| `UPSTASH_VECTOR_REST_URL` | Yes (unless set in config) | Upstash storage |
-| `UPSTASH_VECTOR_REST_TOKEN` | Yes (unless set in config) | Upstash storage |
-| `GEMINI_API_KEY` | Yes (Google stack) | Embeddings + extraction |
-| `VOYAGE_API_KEY` | Yes (Voyage embeddings) | Embeddings |
+| Variable                    | Required                   | Used by                 |
+| --------------------------- | -------------------------- | ----------------------- |
+| `UPSTASH_VECTOR_REST_URL`   | Yes (unless set in config) | Upstash storage         |
+| `UPSTASH_VECTOR_REST_TOKEN` | Yes (unless set in config) | Upstash storage         |
+| `GEMINI_API_KEY`            | Yes (Google stack)         | Embeddings + extraction |
+| `VOYAGE_API_KEY`            | Yes (Voyage embeddings)    | Embeddings              |
 
 ## Step 4: Configure turbomem
 
@@ -143,17 +143,17 @@ const memory = new TurboMemory({
 
 ## Recommended provider stack
 
-| Component | Recommended | Avoid on edge |
-| --------- | ----------- | ------------- |
-| Storage | `"upstash-vector"` | `"pglite"`, `"sqlite-vec"` |
+| Component  | Recommended            | Avoid on edge                     |
+| ---------- | ---------------------- | --------------------------------- |
+| Storage    | `"upstash-vector"`     | `"pglite"`, `"sqlite-vec"`        |
 | Embeddings | `"google"`, `"voyage"` | `"local"` (heavy WASM cold start) |
-| Extraction | `"google"` | — |
+| Extraction | `"google"`             | -                                 |
 
 ## Runtime notes
 
 ### Cloudflare Workers
 
-Set secrets with `wrangler secret put UPSTASH_VECTOR_REST_URL` (and token, API keys). No filesystem access — Upstash over HTTP is the right fit.
+Set secrets with `wrangler secret put UPSTASH_VECTOR_REST_URL` (and token, API keys). No filesystem access, Upstash over HTTP is the right fit.
 
 ### Vercel Edge Functions
 
@@ -161,28 +161,28 @@ Add environment variables in your project settings. If using Next.js App Router,
 
 ### Node / serverless (not edge)
 
-PGlite is usually simpler for Node deployments with disk access. Upstash is optional here too — useful when you want shared remote storage across serverless instances.
+PGlite is usually simpler for Node deployments with disk access. Upstash is optional here too, useful when you want shared remote storage across serverless instances.
 
 ## Limitations
 
-- **`getAll()`** — paginates the full index and filters client-side. Can be slow on large indexes.
-- **`deleteAll()`** — Upstash metadata filter deletes perform a full index scan (O(n)).
-- **Eventual consistency** — newly upserted vectors may take a moment before appearing in search results.
-- **Cost** — Upstash charges per request; PGlite uses free local disk.
-- **CLI** — the turbomem CLI targets local PGlite. Edge users integrate via the SDK.
+- **`getAll()`** - paginates the full index and filters client-side. Can be slow on large indexes.
+- **`deleteAll()`** - Upstash metadata filter deletes perform a full index scan (O(n)).
+- **Eventual consistency** - newly upserted vectors may take a moment before appearing in search results.
+- **Cost** - Upstash charges per request; PGlite uses free local disk.
+- **CLI** - the turbomem CLI targets local PGlite. Edge users integrate via the SDK.
 
 ## Troubleshooting
 
-| Error | Cause | Fix |
-| ----- | ----- | --- |
-| `DimensionMismatchError` | Index dimensions ≠ embedding model | Create a new index with correct dimensions, or adjust `google.dimensions` |
-| `ConfigError` (missing `@upstash/vector`) | Peer not installed | `npm install @upstash/vector` |
-| Upsert/query fails (401) | Wrong URL or token | Re-copy credentials from Upstash Connect tab |
-| Empty search results right after insert | Eventual consistency | Retry after a brief delay |
+| Error                                     | Cause                              | Fix                                                                       |
+| ----------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------- |
+| `DimensionMismatchError`                  | Index dimensions ≠ embedding model | Create a new index with correct dimensions, or adjust `google.dimensions` |
+| `ConfigError` (missing `@upstash/vector`) | Peer not installed                 | `npm install @upstash/vector`                                             |
+| Upsert/query fails (401)                  | Wrong URL or token                 | Re-copy credentials from Upstash Connect tab                              |
+| Empty search results right after insert   | Eventual consistency               | Retry after a brief delay                                                 |
 
 ## Next steps
 
-- [Storage](/guide/storage) — full backend comparison
-- [Configuration](/guide/configuration) — `upstashVector` config reference
-- [Providers](/guide/providers) — embedding dimensions and API keys
-- [Architecture](/guide/architecture) — pipeline overview
+- [Storage](/guide/storage) - full backend comparison
+- [Configuration](/guide/configuration) - `upstashVector` config reference
+- [Providers](/guide/providers) - embedding dimensions and API keys
+- [Architecture](/guide/architecture) - pipeline overview
