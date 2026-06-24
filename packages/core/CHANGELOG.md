@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.4.0
+
+### Minor Changes
+
+- cc0e722: Add optional sqlite-vec storage backend (`storage: "sqlite-vec"`) alongside the default PGlite backend. Requires optional peer dependencies `better-sqlite3` and `sqlite-vec`.
+
 ## 0.3.1
 
 ### Patch Changes
