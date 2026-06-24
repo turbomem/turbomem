@@ -29,6 +29,10 @@ providers, API keys, data directory). Environment variables (`OPENAI_API_KEY`,
 `ANTHROPIC_API_KEY`, `TURBOMEM_DATA_DIR`) and command flags override the saved
 config.
 
+The CLI always uses **PGlite** storage on disk (default: `~/.turbomem/data`).
+For edge deployments or [Upstash Vector](/guide/edge) storage, use the turbomem SDK
+instead of the CLI.
+
 ## Commands
 
 ```bash
