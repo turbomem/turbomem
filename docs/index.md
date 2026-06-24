@@ -22,14 +22,20 @@ features:
   - title: Fully embedded
     details: Runs inside your Node or Bun process. No sidecar server, no HTTP hop per memory call.
   - title: Semantic search
-    details: LLM fact extraction plus vector embeddings with PGlite and pgvector (WASM Postgres).
+    details: LLM fact extraction plus vector embeddings. Local PGlite/pgvector by default, or remote Upstash on edge.
   - title: Adapter-based
-    details: Swap OpenAI or local WASM embeddings, PGlite storage, and Mastra or Vercel AI SDK integrations.
+    details: Swap embeddings (OpenAI, local WASM, Voyage, Gemini), storage (PGlite, sqlite-vec, Upstash), and Mastra or Vercel AI SDK adapters.
   - title: Type-safe
     details: Strict TypeScript with Zod-validated inputs. Works in Node 20+, Bun, and serverless.
   - title: Terminal CLI
     details: Add, search, and manage memories from your shell with one-shot commands or an interactive REPL.
     link: /cli
+  - title: Edge-ready
+    details: Deploy on Cloudflare Workers and Vercel Edge with Upstash Vector over HTTP — no local filesystem required.
+    link: /guide/edge
+  - title: Multi-tenant scoping
+    details: Tag memories with userId, agentId, or sessionId. Search, list, and delete respect scope out of the box.
+    link: /guide/configuration#scoping
 ---
 
 ## Why embedded memory?
