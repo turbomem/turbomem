@@ -1,5 +1,12 @@
 # @turbomem/vercel-ai
 
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies [175ea28]
+  - turbomem@0.5.0
+
 ## 0.2.6
 
 ### Patch Changes
