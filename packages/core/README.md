@@ -56,6 +56,12 @@ await memory.close();
 | [`@turbomem/mastra`](https://www.npmjs.com/package/@turbomem/mastra)       | Mastra memory provider |
 | [`@turbomem/vercel-ai`](https://www.npmjs.com/package/@turbomem/vercel-ai) | Vercel AI SDK tools    |
 
+## CLI
+
+| Package                                                              | Use case                    |
+| -------------------------------------------------------------------- | --------------------------- |
+| [`@turbomem/cli`](https://www.npmjs.com/package/@turbomem/cli)       | Terminal memory management  |
+
 ## Documentation
 
 Full guides, configuration reference, and runnable examples:
