@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type {
   EmbeddingAdapter,
   Memory,
@@ -14,8 +13,6 @@ import { OpenAIEmbeddingAdapter } from "./embeddings/openai.js";
 import { TransformersEmbeddingAdapter } from "./embeddings/transformers.js";
 import { VoyageEmbeddingAdapter } from "./embeddings/voyage.js";
 import { GoogleEmbeddingAdapter } from "./embeddings/google.js";
-import { PGliteStorageAdapter } from "./storage/pglite.js";
-import { SqliteVecStorageAdapter } from "./storage/sqlite-vec.js";
 import { Extractor } from "./extraction/extractor.js";
 
 const DEFAULT_SEARCH_LIMIT = 10;
@@ -25,15 +22,19 @@ const DEFAULT_SEARCH_LIMIT = 10;
  * storage adapter, and an LLM-based fact extractor.
  */
 export class TurboMemory {
+  private readonly config: TurboMemoryConfig;
   private readonly embeddingAdapter: EmbeddingAdapter;
-  private readonly storageAdapter: StorageAdapter;
+  private storageAdapter: StorageAdapter | null = null;
   private readonly extractor: Extractor;
   private initialised = false;
   private initPromise: Promise<void> | null = null;
 
   constructor(config: TurboMemoryConfig) {
+    this.config = config;
     this.embeddingAdapter = TurboMemory.resolveEmbeddingAdapter(config);
-    this.storageAdapter = TurboMemory.resolveStorageAdapter(config);
+    if (typeof config.storage === "object" && config.storage !== null) {
+      this.storageAdapter = config.storage;
+    }
     this.extractor = new Extractor({
       config: {
         ...config.extraction,
@@ -82,21 +83,40 @@ export class TurboMemory {
     throw new ConfigError(`Invalid embeddings config: ${String(embeddings)}`);
   }
 
-  private static resolveStorageAdapter(config: TurboMemoryConfig): StorageAdapter {
-    const storage = config.storage ?? "pglite";
+  private async ensureStorageAdapter(): Promise<StorageAdapter> {
+    if (this.storageAdapter) return this.storageAdapter;
+
+    const storage = this.config.storage ?? "pglite";
     if (storage === "pglite") {
-      return new PGliteStorageAdapter({ dataDir: config.pglite?.dataDir });
+      const { PGliteStorageAdapter } = await import("./storage/pglite.js");
+      this.storageAdapter = new PGliteStorageAdapter({ dataDir: this.config.pglite?.dataDir });
+      return this.storageAdapter;
     }
     if (storage === "sqlite-vec") {
-      return new SqliteVecStorageAdapter({
-        dbPath: config.sqliteVec?.dbPath,
-        inMemory: config.sqliteVec?.inMemory,
+      const { SqliteVecStorageAdapter } = await import("./storage/sqlite-vec.js");
+      this.storageAdapter = new SqliteVecStorageAdapter({
+        dbPath: this.config.sqliteVec?.dbPath,
+        inMemory: this.config.sqliteVec?.inMemory,
       });
+      return this.storageAdapter;
     }
-    if (typeof storage === "object" && storage !== null) {
-      return storage;
+    if (storage === "upstash-vector") {
+      const { UpstashVectorStorageAdapter } = await import("./storage/upstash-vector.js");
+      this.storageAdapter = new UpstashVectorStorageAdapter({
+        url: this.config.upstashVector?.url,
+        token: this.config.upstashVector?.token,
+        namespace: this.config.upstashVector?.namespace,
+      });
+      return this.storageAdapter;
     }
     throw new ConfigError(`Invalid storage config: ${String(storage)}`);
+  }
+
+  private requireStorageAdapter(): StorageAdapter {
+    if (!this.storageAdapter) {
+      throw new NotInitialisedError();
+    }
+    return this.storageAdapter;
   }
 
   /**
@@ -109,7 +129,8 @@ export class TurboMemory {
     if (this.initPromise) return this.initPromise;
 
     this.initPromise = (async () => {
-      await this.storageAdapter.init(this.embeddingAdapter.dimensions);
+      const adapter = await this.ensureStorageAdapter();
+      await adapter.init(this.embeddingAdapter.dimensions);
       this.initialised = true;
     })();
 
@@ -133,9 +154,10 @@ export class TurboMemory {
 
     const embeddings = await this.embeddingAdapter.embedBatch(facts);
 
+    const storage = this.requireStorageAdapter();
     const created: Memory[] = [];
     for (let i = 0; i < facts.length; i++) {
-      const memory = await this.storageAdapter.insert({
+      const memory = await storage.insert({
         content: facts[i],
         embedding: embeddings[i],
         userId: scope.userId,
@@ -158,10 +180,11 @@ export class TurboMemory {
     if (cleaned.length === 0) return [];
 
     const embeddings = await this.embeddingAdapter.embedBatch(cleaned);
+    const storage = this.requireStorageAdapter();
     const created: Memory[] = [];
     for (let i = 0; i < cleaned.length; i++) {
       created.push(
-        await this.storageAdapter.insert({
+        await storage.insert({
           content: cleaned[i],
           embedding: embeddings[i],
           userId: scope.userId,
@@ -185,30 +208,30 @@ export class TurboMemory {
     this.assertInitialised();
     const { limit = DEFAULT_SEARCH_LIMIT, ...rest } = scope;
     const embedding = await this.embeddingAdapter.embed(query);
-    return this.storageAdapter.search(embedding, rest, limit);
+    return this.requireStorageAdapter().search(embedding, rest, limit);
   }
 
   /** Return every memory for the given scope (newest first). */
   async getAll(scope: MemoryScope): Promise<Memory[]> {
     this.assertInitialised();
-    return this.storageAdapter.getAll(scope);
+    return this.requireStorageAdapter().getAll(scope);
   }
 
   /** Delete a single memory by id. */
   async delete(id: string): Promise<void> {
     this.assertInitialised();
-    return this.storageAdapter.delete(id);
+    return this.requireStorageAdapter().delete(id);
   }
 
   /** Delete every memory matching the given scope. */
   async deleteAll(scope: MemoryScope): Promise<void> {
     this.assertInitialised();
-    return this.storageAdapter.deleteAll(scope);
+    return this.requireStorageAdapter().deleteAll(scope);
   }
 
   /** Release underlying resources (e.g. the database connection). */
   async close(): Promise<void> {
-    if (this.storageAdapter.close) {
+    if (this.storageAdapter?.close) {
       await this.storageAdapter.close();
     }
     this.initialised = false;
@@ -216,7 +239,7 @@ export class TurboMemory {
 
   /** Generate a fresh id (exposed for adapters/tests). */
   static newId(): string {
-    return randomUUID();
+    return globalThis.crypto.randomUUID();
   }
 
   private assertInitialised(): void {

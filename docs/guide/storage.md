@@ -14,15 +14,15 @@ adapter instance.
 
 ## Quick comparison
 
-|                | PGlite (default)                                                 | sqlite-vec                                                  |
-| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- |
-| Preset         | `"pglite"`                                                       | `"sqlite-vec"`                                              |
-| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) |
-| Native compile | No                                                               | Yes (`better-sqlite3`)                                      |
-| Extra install  | None (bundled)                                                   | `npm install better-sqlite3 sqlite-vec`                     |
-| Default path   | `.turbomem/` (directory)                                         | `.turbomem.sqlite` (file)                                   |
-| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | `vec0` KNN, cosine distance                                 |
-| Best for       | Default, zero native deps, broad Node compatibility              | Teams already on SQLite, familiar `.db` files               |
+|                | PGlite (default)                                                 | sqlite-vec                                                  | Upstash Vector (edge)                                       |
+| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| Preset         | `"pglite"`                                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          |
+| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) |
+| Native compile | No                                                               | Yes (`better-sqlite3`)                                      | No                                                          |
+| Extra install  | None (bundled)                                                   | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               |
+| Default path   | `.turbomem/` (directory)                                         | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        |
+| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            |
+| Best for       | Default, zero native deps, broad Node compatibility              | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               |
 
 Both backends share the same API surface: scoped insert/search/delete, dimension
 guards at `init()`, and cosine similarity scores in the 0–1 range.
@@ -31,14 +31,13 @@ guards at `init()`, and cosine similarity scores in the 0–1 range.
 
 ```ts
 new TurboMemory({
-  storage: "pglite", // or "sqlite-vec" | StorageAdapter
+  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | StorageAdapter
   // ...
 });
 ```
 
-Omit `storage` to use PGlite. Backend-specific options live under `pglite` or
-`sqliteVec` in the config object, they are ignored when another backend is
-selected.
+Omit `storage` to use PGlite. Backend-specific options live under `pglite`, `sqliteVec`, or
+`upstashVector` in the config object; they are ignored when another backend is selected.
 
 ::: tip Dimensions are fixed per store
 The vector column dimension is set from your embedding adapter at `init()`. A
@@ -164,6 +163,54 @@ sqlite-vec uses a two-table layout:
 Search runs cosine KNN inside SQLite (`distance_metric=cosine`); results are
 joined back to `memories` and scored as `1 - distance` to match PGlite semantics.
 
+## Upstash Vector (edge, optional)
+
+[Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) stores vectors in a
+remote index over HTTP. Use it on edge runtimes where local disk is unavailable.
+
+### Setup
+
+Install the optional peer dependency:
+
+```bash
+npm install @upstash/vector
+```
+
+Create an Upstash Vector index in the [Upstash Console](https://console.upstash.com/) with
+dimensions matching your embedding model and **cosine** similarity. See the
+[Edge guide](/guide/edge) for the full step-by-step walkthrough.
+
+### Configuration
+
+```ts
+new TurboMemory({
+  storage: "upstash-vector",
+  upstashVector: {
+    url: process.env.UPSTASH_VECTOR_REST_URL,
+    token: process.env.UPSTASH_VECTOR_REST_TOKEN,
+    namespace: "my-app", // optional
+  },
+  // ...
+});
+```
+
+Credentials fall back to `UPSTASH_VECTOR_REST_URL` and `UPSTASH_VECTOR_REST_TOKEN` when
+omitted. If `@upstash/vector` is not installed, turbomem throws a `ConfigError` with
+install instructions.
+
+### How it works
+
+On `init()`, turbomem verifies the Upstash index dimension count matches your embedding
+adapter. Each memory is upserted as a vector with metadata fields for content, scope,
+timestamps, and user metadata. Search uses Upstash metadata filters for scoping and
+returns cosine similarity scores in the 0–1 range.
+
+::: warning Operational notes
+`getAll()` paginates the full index and filters client-side. `deleteAll()` uses
+Upstash metadata filter deletes, which perform a full index scan. See
+[Edge limitations](/guide/edge#limitations) for details.
+:::
+
 ## Custom adapter
 
 Implement the `StorageAdapter` interface to plug in any vector store - Pinecone,
@@ -205,6 +252,12 @@ vector column or index can be created with a matching size.
 - Your team is comfortable managing `better-sqlite3` native builds.
 - You prefer the sqlite-vec extension over embedded Postgres.
 
+**Use Upstash Vector when:**
+
+- You deploy to edge runtimes (Cloudflare Workers, Vercel Edge, Deno Deploy).
+- You need shared remote storage across stateless serverless instances.
+- See the [Edge guide](/guide/edge) for setup.
+
 **Use a custom adapter when:**
 
 - You need a hosted or cloud vector database.
@@ -213,5 +266,6 @@ vector column or index can be created with a matching size.
 ## Next steps
 
 - [Configuration](/guide/configuration) - full config object
+- [Edge](/guide/edge) - deploy on Workers and Vercel Edge
 - [Architecture](/guide/architecture) - how storage fits in the pipeline
 - [Providers](/guide/providers) - embedding models and dimensions

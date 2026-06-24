@@ -115,7 +115,7 @@ export interface GoogleConfig {
  */
 export interface TurboMemoryConfig {
   embeddings: "openai" | "local" | "voyage" | "google" | EmbeddingAdapter;
-  storage?: "pglite" | "sqlite-vec" | StorageAdapter;
+  storage?: "pglite" | "sqlite-vec" | "upstash-vector" | StorageAdapter;
   extraction: ExtractionConfig;
   openai?: OpenAIConfig;
   /** Options forwarded to the Voyage embedding adapter. */
@@ -131,6 +131,14 @@ export interface TurboMemoryConfig {
     dbPath?: string;
     /** Use an in-memory database. Handy for tests. */
     inMemory?: boolean;
+  };
+  upstashVector?: {
+    /** Upstash Vector REST URL. Falls back to `UPSTASH_VECTOR_REST_URL`. */
+    url?: string;
+    /** Upstash Vector REST token. Falls back to `UPSTASH_VECTOR_REST_TOKEN`. */
+    token?: string;
+    /** Optional Upstash namespace. */
+    namespace?: string;
   };
   /** Options forwarded to the local (transformers) embedding adapter. */
   local?: {

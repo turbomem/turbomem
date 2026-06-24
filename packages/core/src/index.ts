@@ -46,6 +46,12 @@ export { PGliteStorageAdapter } from "./storage/index.js";
 export type { PGliteStorageOptions } from "./storage/index.js";
 export { SqliteVecStorageAdapter } from "./storage/index.js";
 export type { SqliteVecStorageOptions } from "./storage/index.js";
+export { UpstashVectorStorageAdapter, buildScopeFilter } from "./storage/index.js";
+export type {
+  UpstashVectorStorageOptions,
+  UpstashMemoryMetadata,
+  UpstashVectorIndex,
+} from "./storage/index.js";
 
 export { Extractor, EXTRACTION_SYSTEM_PROMPT, parseFacts } from "./extraction/index.js";
 export type { ExtractorOptions } from "./extraction/index.js";

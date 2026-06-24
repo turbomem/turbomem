@@ -48,10 +48,12 @@ Implement `StorageAdapter` (`init`, `insert`, `search`, `getAll`, `delete`,
 `deleteAll`):
 
 - **PGlite** (default), WASM Postgres + `pgvector`. See [Storage](/guide/storage)
-  for setup and comparison with sqlite-vec.
+  for setup and comparison with sqlite-vec and Upstash Vector.
 - **sqlite-vec** (optional), SQLite + the `sqlite-vec` extension via
   `better-sqlite3`. Uses a `vec0` virtual table with cosine distance for KNN
   search, linked to a regular `memories` table by rowid.
+- **Upstash Vector** (optional, edge), remote vector store over HTTP. See
+  [Edge](/guide/edge) for deployment setup.
 
 ### Extractor
 

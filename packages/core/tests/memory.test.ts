@@ -177,3 +177,101 @@ describe("TurboMemory with sqlite-vec storage", () => {
     expect(results[0].memory.content).toBe("The user prefers sqlite for local storage");
   });
 });
+
+describe("TurboMemory with upstash-vector storage", () => {
+  let memory: TurboMemory;
+
+  beforeEach(async () => {
+    chatCreate.mockReset();
+    const { UpstashVectorStorageAdapter } = await import("../src/storage/upstash-vector.js");
+
+    class MockUpstashIndex {
+      readonly dimension = DIM;
+      private readonly store = new Map<
+        string,
+        { vector: number[]; metadata: import("../src/storage/upstash-vector.js").UpstashMemoryMetadata }
+      >();
+
+      async info() {
+        return { dimension: this.dimension };
+      }
+
+      async upsert(
+        args: {
+          id: string | number;
+          vector: number[];
+          metadata?: import("../src/storage/upstash-vector.js").UpstashMemoryMetadata;
+        },
+      ) {
+        if (args.metadata) {
+          this.store.set(String(args.id), { vector: args.vector, metadata: args.metadata });
+        }
+        return "OK";
+      }
+
+      async query(args: { vector: number[]; topK: number; filter?: string }) {
+        const userId = args.filter?.match(/userId = "([^"]+)"/)?.[1];
+        return [...this.store.entries()]
+          .filter(([, row]) => !userId || row.metadata.userId === userId)
+          .map(([id, row]) => ({
+            id,
+            score: 0.9,
+            vector: row.vector,
+            metadata: row.metadata,
+          }))
+          .slice(0, args.topK);
+      }
+
+      async range(args: { cursor: number | string; limit: number }) {
+        const start = Number(args.cursor) || 0;
+        const entries = [...this.store.entries()].slice(start, start + args.limit);
+        return {
+          nextCursor: start + entries.length >= this.store.size ? "" : String(start + entries.length),
+          vectors: entries.map(([id, row]) => ({
+            id,
+            vector: row.vector,
+            metadata: row.metadata,
+          })),
+        };
+      }
+
+      async delete(payload: string | { filter: string }) {
+        if (typeof payload === "object" && "filter" in payload) {
+          const userId = payload.filter.match(/userId = "([^"]+)"/)?.[1];
+          let deleted = 0;
+          for (const [id, row] of this.store.entries()) {
+            if (!userId || row.metadata.userId === userId) {
+              this.store.delete(id);
+              deleted++;
+            }
+          }
+          return { deleted };
+        }
+        return { deleted: this.store.delete(String(payload)) ? 1 : 0 };
+      }
+    }
+
+    memory = new TurboMemory({
+      embeddings: new FakeEmbeddingAdapter(),
+      storage: new UpstashVectorStorageAdapter({ index: new MockUpstashIndex() as never }),
+      extraction: { provider: "openai", model: "gpt-4o-mini", apiKey: "test-key" },
+    });
+    await memory.init();
+  });
+
+  afterEach(async () => {
+    await memory.close();
+  });
+
+  it("addFacts() stores and searches memories", async () => {
+    await memory.addFacts(["The user deploys to Cloudflare Workers"], { userId: "user_edge" });
+
+    const results = await memory.search("edge deployment", {
+      userId: "user_edge",
+      limit: 5,
+    });
+
+    expect(results.length).toBe(1);
+    expect(results[0].memory.content).toBe("The user deploys to Cloudflare Workers");
+  });
+});
