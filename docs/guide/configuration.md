@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Configure embeddings, PGlite storage, LLM fact extraction, and memory scoping in turbomem.
+description: Configure embeddings, PGlite or sqlite-vec storage, LLM fact extraction, and memory scoping in turbomem.
 ---
 
 # Configuration
@@ -14,12 +14,17 @@ every embedding and extraction provider, their models, dimensions, and required
 API keys.
 :::
 
+::: tip Choosing a storage backend?
+See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec, install steps,
+and custom adapters.
+:::
+
 ## Full config shape
 
 ```ts
 const memory = new TurboMemory({
   embeddings: "openai", // or "local" | "voyage" | "google" | EmbeddingAdapter
-  storage: "pglite", // or StorageAdapter (default: "pglite")
+  storage: "pglite", // or "sqlite-vec" | StorageAdapter (default: "pglite")
   extraction: {
     provider: "openai", // or "anthropic" | "google"
     model: "gpt-4o-mini",
@@ -40,6 +45,10 @@ const memory = new TurboMemory({
   },
   pglite: {
     dataDir: ".turbomem", // defaults to .turbomem in process.cwd()
+  },
+  sqliteVec: {
+    dbPath: ".turbomem.sqlite", // defaults to .turbomem.sqlite in process.cwd()
+    inMemory: false, // set true for ephemeral storage (tests)
   },
   local: {
     model: undefined, // defaults to Xenova/all-MiniLM-L6-v2
@@ -122,35 +131,13 @@ new TurboMemory({
 
 ## Storage adapters
 
-### PGlite (default, v0.1)
+Select with `storage: "pglite" | "sqlite-vec"` or pass a custom `StorageAdapter`.
+PGlite (WASM Postgres + pgvector) is the default and requires no extra install.
+sqlite-vec (SQLite + native extension) is optional and needs
+`better-sqlite3` and `sqlite-vec` as peer dependencies.
 
-WASM Postgres with `pgvector`, no native compilation, runs anywhere Node runs.
-Data persists to `.turbomem` in your CWD by default:
-
-```ts
-new TurboMemory({
-  storage: "pglite",
-  pglite: { dataDir: "./my-memory" },
-  // ...
-});
-```
-
-The vector column dimension is derived from your embedding adapter at `init()`.
-Switching to an embedding model with different dimensions against an existing store
-throws `DimensionMismatchError`.
-
-> **Planned:** a `sqlite-vec` backend in v0.2.
-
-### Custom adapter
-
-Pass any object implementing `StorageAdapter`:
-
-```ts
-new TurboMemory({
-  storage: myCustomStorage,
-  // ...
-});
-```
+See the [Storage guide](/guide/storage) for a full comparison, setup steps, and
+when to use each backend.
 
 ## Fact extraction
 
@@ -186,7 +173,6 @@ Provide at least `userId` or `agentId` when storing memories.
 
 ## Roadmap
 
-- `sqlite-vec` storage backend (v0.2)
 - Edge runtime support
 - Browser support (IndexedDB-backed PGlite)
 - Memory deduplication / update-in-place

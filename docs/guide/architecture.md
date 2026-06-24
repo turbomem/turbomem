@@ -1,13 +1,14 @@
 ---
 title: Architecture
-description: How turbomem's extraction, embedding, and PGlite storage pipeline works under the hood.
+description: How turbomem's extraction, embedding, and storage pipeline works under the hood.
 ---
 
 # Architecture
 
 turbomem is a small, embeddable agent-memory library. There is no server, no
-sidecar process, and no native compilation in v0.2, everything runs inside your
-Node/Bun process.
+sidecar process — storage defaults to WASM Postgres (PGlite) with no native
+compilation. An optional sqlite-vec backend is available for users who prefer
+SQLite.
 
 ## High-level flow
 
@@ -46,11 +47,11 @@ Implement `EmbeddingAdapter` (`embed`, `embedBatch`, `dimensions`):
 Implement `StorageAdapter` (`init`, `insert`, `search`, `getAll`, `delete`,
 `deleteAll`):
 
-- **PGlite** (default), WASM Postgres + `pgvector`. The vector column dimension
-  is set from the embedding adapter's `dimensions` at `init()`. A `turbomem_meta`
-  table records the dimension so a later dimension change fails loudly with
-  `DimensionMismatchError`. Similarity search uses the cosine distance operator
-  (`<=>`) with an HNSW index.
+- **PGlite** (default), WASM Postgres + `pgvector`. See [Storage](/guide/storage)
+  for setup and comparison with sqlite-vec.
+- **sqlite-vec** (optional), SQLite + the `sqlite-vec` extension via
+  `better-sqlite3`. Uses a `vec0` virtual table with cosine distance for KNN
+  search, linked to a regular `memories` table by rowid.
 
 ### Extractor
 

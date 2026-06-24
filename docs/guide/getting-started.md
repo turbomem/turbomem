@@ -87,6 +87,7 @@ If you're shipping a TypeScript app and want memory as a _library_, that's turbo
 
 ## Next steps
 
-- [Configuration](/guide/configuration) - embeddings, storage, extraction, scoping
+- [Configuration](/guide/configuration) - embeddings, extraction, scoping
+- [Storage](/guide/storage) - PGlite vs sqlite-vec
 - [Architecture](/guide/architecture) - how the pipeline works
 - [Examples](/examples) - runnable projects in the repo

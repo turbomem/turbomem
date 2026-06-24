@@ -115,7 +115,7 @@ export interface GoogleConfig {
  */
 export interface TurboMemoryConfig {
   embeddings: "openai" | "local" | "voyage" | "google" | EmbeddingAdapter;
-  storage?: "pglite" | StorageAdapter;
+  storage?: "pglite" | "sqlite-vec" | StorageAdapter;
   extraction: ExtractionConfig;
   openai?: OpenAIConfig;
   /** Options forwarded to the Voyage embedding adapter. */
@@ -125,6 +125,12 @@ export interface TurboMemoryConfig {
   pglite?: {
     /** Defaults to `.turbomem` in `process.cwd()`. */
     dataDir?: string;
+  };
+  sqliteVec?: {
+    /** Defaults to `.turbomem.sqlite` in `process.cwd()`. */
+    dbPath?: string;
+    /** Use an in-memory database. Handy for tests. */
+    inMemory?: boolean;
   };
   /** Options forwarded to the local (transformers) embedding adapter. */
   local?: {

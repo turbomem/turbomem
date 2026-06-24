@@ -19,6 +19,8 @@
     "vector",
     "pglite",
     "pgvector",
+    "sqlite-vec",
+    "sqlite",
     "rag"
   ],
   "type": "module",
@@ -50,7 +52,9 @@
   },
   "peerDependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
-    "@huggingface/transformers": "^3.0.0"
+    "@huggingface/transformers": "^3.0.0",
+    "better-sqlite3": "^11.0.0",
+    "sqlite-vec": "^0.1.0"
   },
   "peerDependenciesMeta": {
     "@huggingface/transformers": {
@@ -58,10 +62,19 @@
     },
     "@anthropic-ai/sdk": {
       "optional": true
+    },
+    "better-sqlite3": {
+      "optional": true
+    },
+    "sqlite-vec": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
-    "@huggingface/transformers": "^3.0.0"
+    "@huggingface/transformers": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "better-sqlite3": "^11.0.0",
+    "sqlite-vec": "^0.1.6"
   }
 }

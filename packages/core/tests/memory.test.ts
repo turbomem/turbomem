@@ -146,3 +146,34 @@ describe("TurboMemory before init", () => {
     await expect(memory.getAll({ userId: "u" })).rejects.toBeInstanceOf(NotInitialisedError);
   });
 });
+
+describe("TurboMemory with sqlite-vec storage", () => {
+  let memory: TurboMemory;
+
+  beforeEach(async () => {
+    chatCreate.mockReset();
+    memory = new TurboMemory({
+      embeddings: new FakeEmbeddingAdapter(),
+      storage: "sqlite-vec",
+      sqliteVec: { inMemory: true },
+      extraction: { provider: "openai", model: "gpt-4o-mini", apiKey: "test-key" },
+    });
+    await memory.init();
+  });
+
+  afterEach(async () => {
+    await memory.close();
+  });
+
+  it("addFacts() stores and searches memories", async () => {
+    await memory.addFacts(["The user prefers sqlite for local storage"], { userId: "user_sqlite" });
+
+    const results = await memory.search("local database preference", {
+      userId: "user_sqlite",
+      limit: 5,
+    });
+
+    expect(results.length).toBe(1);
+    expect(results[0].memory.content).toBe("The user prefers sqlite for local storage");
+  });
+});

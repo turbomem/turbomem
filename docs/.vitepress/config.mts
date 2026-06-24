@@ -68,6 +68,7 @@ export default defineConfig({
         items: [
           { text: "Getting started", link: "/guide/getting-started" },
           { text: "Configuration", link: "/guide/configuration" },
+          { text: "Storage", link: "/guide/storage" },
           { text: "Providers", link: "/guide/providers" },
           { text: "Architecture", link: "/guide/architecture" },
         ],
