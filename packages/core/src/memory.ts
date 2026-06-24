@@ -15,6 +15,7 @@ import { TransformersEmbeddingAdapter } from "./embeddings/transformers.js";
 import { VoyageEmbeddingAdapter } from "./embeddings/voyage.js";
 import { GoogleEmbeddingAdapter } from "./embeddings/google.js";
 import { PGliteStorageAdapter } from "./storage/pglite.js";
+import { SqliteVecStorageAdapter } from "./storage/sqlite-vec.js";
 import { Extractor } from "./extraction/extractor.js";
 
 const DEFAULT_SEARCH_LIMIT = 10;
@@ -85,6 +86,12 @@ export class TurboMemory {
     const storage = config.storage ?? "pglite";
     if (storage === "pglite") {
       return new PGliteStorageAdapter({ dataDir: config.pglite?.dataDir });
+    }
+    if (storage === "sqlite-vec") {
+      return new SqliteVecStorageAdapter({
+        dbPath: config.sqliteVec?.dbPath,
+        inMemory: config.sqliteVec?.inMemory,
+      });
     }
     if (typeof storage === "object" && storage !== null) {
       return storage;

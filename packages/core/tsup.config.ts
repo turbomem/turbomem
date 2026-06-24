@@ -7,4 +7,5 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   treeshake: true,
+  external: ["better-sqlite3", "sqlite-vec"],
 });
