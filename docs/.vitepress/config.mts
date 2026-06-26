@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 
 const SITE = "https://turbomem.dev";
 const DEFAULT_DESC = "Local-first agent memory for TypeScript";
-const OG_IMAGE = `${SITE}/web-app-manifest-512x512.png`;
+const OG_IMAGE = `${SITE}/web-app-manifest-full-512x512.png`;
 
 function pageUrl(relativePath: string): string {
   const path = relativePath.replace(/index\.md$/, "").replace(/\.md$/, "");
