@@ -1,19 +1,25 @@
-import { existsSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 import type { Memory, MemoryScope, MemorySearchResult, StorageAdapter } from "../types.js";
 import { DimensionMismatchError, StorageError } from "../errors.js";
+import { ensureDiskDirectory } from "./pglite-disk.js";
 
 export interface PGliteStorageOptions {
   /**
    * Directory to persist the database. Defaults to `.turbomem` in
-   * `process.cwd()`. Pass `"memory://"` (or leave the default and set
-   * `inMemory`) for an ephemeral, in-memory database.
+   * `process.cwd()` on Node, or `idb://turbomem` in the browser.
+   *
+   * Prefix with `idb://` for IndexedDB persistence in the browser.
+   * Pass `"memory://"` (or set `inMemory`) for an ephemeral database.
    */
   dataDir?: string;
   /** Use an in-memory database (ignores `dataDir`). Handy for tests. */
   inMemory?: boolean;
+  /**
+   * When true, PGlite returns query results before IndexedDB flushes complete.
+   * Defaults to `true` for `idb://` paths; otherwise `false`.
+   */
+  relaxedDurability?: boolean;
 }
 
 interface MemoryRow {
@@ -27,6 +33,26 @@ interface MemoryRow {
   created_at: string | Date;
   updated_at: string | Date;
   score?: number;
+}
+
+function isIndexedDbPath(dataDir: string): boolean {
+  return dataDir.startsWith("idb://");
+}
+
+function defaultDataDir(): string {
+  if (typeof process !== "undefined" && typeof process.cwd === "function") {
+    return `${process.cwd()}/.turbomem`;
+  }
+  return "idb://turbomem";
+}
+
+function resolveRelaxedDurability(
+  dataDir: string | undefined,
+  explicit: boolean | undefined,
+): boolean | undefined {
+  if (explicit !== undefined) return explicit;
+  if (dataDir && isIndexedDbPath(dataDir)) return true;
+  return undefined;
 }
 
 function parseEmbedding(value: string | number[]): number[] {
@@ -70,10 +96,12 @@ export class PGliteStorageAdapter implements StorageAdapter {
   private dimensions = 0;
   private readonly dataDir: string | undefined;
   private readonly inMemory: boolean;
+  private readonly relaxedDurability: boolean | undefined;
 
   constructor(options: PGliteStorageOptions = {}) {
     this.inMemory = options.inMemory ?? options.dataDir === "memory://";
-    this.dataDir = this.inMemory ? undefined : options.dataDir ?? join(process.cwd(), ".turbomem");
+    this.dataDir = this.inMemory ? undefined : (options.dataDir ?? defaultDataDir());
+    this.relaxedDurability = resolveRelaxedDurability(this.dataDir, options.relaxedDurability);
   }
 
   async init(dimensions: number): Promise<void> {
@@ -83,13 +111,20 @@ export class PGliteStorageAdapter implements StorageAdapter {
     this.dimensions = dimensions;
 
     try {
-      if (this.dataDir && !existsSync(this.dataDir)) {
-        mkdirSync(this.dataDir, { recursive: true });
+      if (this.dataDir && !isIndexedDbPath(this.dataDir)) {
+        await ensureDiskDirectory(this.dataDir);
       }
 
+      const pgOptions = {
+        extensions: { vector },
+        ...(this.relaxedDurability !== undefined
+          ? { relaxedDurability: this.relaxedDurability }
+          : {}),
+      };
+
       this.db = this.inMemory
-        ? new PGlite({ extensions: { vector } })
-        : new PGlite(this.dataDir, { extensions: { vector } });
+        ? new PGlite(pgOptions)
+        : new PGlite(this.dataDir!, pgOptions);
 
       await this.db.exec(`CREATE EXTENSION IF NOT EXISTS vector;`);
 

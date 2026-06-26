@@ -251,7 +251,35 @@ function runStorageAdapterTests(
   });
 }
 
+describe("PGliteStorageAdapter disk persistence", () => {
+  it("creates the data directory on init when using a disk path", async () => {
+    const { mkdtempSync, rmSync, existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+
+    const base = mkdtempSync(join(tmpdir(), "turbomem-pglite-"));
+    const dataDir = join(base, "nested", "store");
+
+    const storage = new PGliteStorageAdapter({ dataDir });
+    try {
+      await storage.init(DIM);
+      expect(existsSync(dataDir)).toBe(true);
+    } finally {
+      await storage.close();
+      rmSync(base, { recursive: true, force: true });
+    }
+  });
+});
+
 runStorageAdapterTests("PGliteStorageAdapter", () => new PGliteStorageAdapter({ inMemory: true }));
+runStorageAdapterTests(
+  "PGliteStorageAdapter (IndexedDB)",
+  () =>
+    new PGliteStorageAdapter({
+      dataDir: `idb://turbomem-test-${crypto.randomUUID()}`,
+      relaxedDurability: false,
+    }),
+);
 runStorageAdapterTests("SqliteVecStorageAdapter", () => new SqliteVecStorageAdapter({ inMemory: true }));
 runStorageAdapterTests("UpstashVectorStorageAdapter", () => {
   const index = new MockUpstashIndex();

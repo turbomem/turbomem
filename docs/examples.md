@@ -54,3 +54,18 @@ Key files:
 > PGlite writes to a local directory. On serverless platforms, point
 > `TURBOMEM_DATA_DIR` at a writable, persistent volume (or swap in a hosted
 > storage adapter).
+
+## browser-vite {#browser-vite}
+
+A Vite SPA showing turbomem running **entirely in the browser** with IndexedDB-backed
+PGlite storage. Add facts, search, and reload — memories persist in IndexedDB.
+
+```bash
+pnpm --filter turbomem build
+pnpm --filter @turbomem/example-browser-vite dev
+```
+
+You'll need a [Google AI API key](https://aistudio.google.com/apikey) for Gemini
+embeddings. The demo stores the key in `sessionStorage` for convenience only.
+
+Source: [examples/browser-vite/src/main.ts](https://github.com/turbomem/turbomem/blob/main/examples/browser-vite/src/main.ts)

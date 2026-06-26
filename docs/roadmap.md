@@ -10,12 +10,12 @@ see the [Guide](/guide/getting-started).
 
 ## Planned
 
-- **Browser support (IndexedDB-backed PGlite)** - run turbomem in the browser with client-side persistence, no remote database required.
 - **Memory deduplication / update-in-place** - merge or update existing memories when new facts overlap, instead of always inserting new rows.
 - **CLI storage backend selection** - optional sqlite-vec or Upstash Vector support in `@turbomem/cli` for managing remote indexes from the terminal.
 
 ## Recently shipped
 
+- **Browser support (IndexedDB-backed PGlite)** - run turbomem in the browser with client-side persistence via `idb://` PGlite. See [Browser](/guide/browser).
 - **Edge runtime support** - opt-in [Upstash Vector](/guide/edge) storage for Cloudflare Workers, Vercel Edge, and other stateless runtimes.
 - **sqlite-vec storage** - optional local SQLite backend alongside the default PGlite adapter. See [Storage](/guide/storage).
 

@@ -123,8 +123,18 @@ export interface TurboMemoryConfig {
   /** Options forwarded to the Google embedding adapter. */
   google?: GoogleConfig;
   pglite?: {
-    /** Defaults to `.turbomem` in `process.cwd()`. */
+    /**
+     * Persistence location. Defaults to `.turbomem` in `process.cwd()` on Node,
+     * or `idb://turbomem` in the browser. Prefix with `idb://` for IndexedDB.
+     */
     dataDir?: string;
+    /** Use an in-memory database (ignores `dataDir`). Handy for tests. */
+    inMemory?: boolean;
+    /**
+     * When true, PGlite returns before IndexedDB flushes complete. Defaults to
+     * `true` for `idb://` paths.
+     */
+    relaxedDurability?: boolean;
   };
   sqliteVec?: {
     /** Defaults to `.turbomem.sqlite` in `process.cwd()`. */
