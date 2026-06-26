@@ -4,9 +4,9 @@
 
 # turbomem
 
-[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
+[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem) · [Documentation](https://turbomem.dev)
 
-Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process — or in the browser with IndexedDB-backed PGlite — no separate memory server, no Python sidecar.
+Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process or in the browser with IndexedDB-backed PGlite. No separate memory server, no Python sidecar.
 
 ## Install
 
@@ -24,7 +24,7 @@ Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack
 import { TurboMemory } from "turbomem";
 
 const memory = new TurboMemory({
-  embeddings: "openai",
+  embeddings: "openai", // or "local" | "voyage" | "google"
   storage: "pglite",
   extraction: { provider: "openai", model: "gpt-4.1-mini" },
   openai: { apiKey: process.env.OPENAI_API_KEY },
@@ -49,6 +49,8 @@ for (const { memory: m, score } of results) {
 await memory.close();
 ```
 
+The example above uses OpenAI (`text-embedding-3-small` by default). You can also use local transformers, Voyage AI, or Google Gemini via the `embeddings` preset, or pass a custom adapter for a specific model — see the [Providers reference](https://turbomem.dev/guide/providers).
+
 ## Framework adapters
 
 | Package                                                                    | Use case               |
@@ -58,9 +60,9 @@ await memory.close();
 
 ## CLI
 
-| Package                                                              | Use case                    |
-| -------------------------------------------------------------------- | --------------------------- |
-| [`@turbomem/cli`](https://www.npmjs.com/package/@turbomem/cli)       | Terminal memory management  |
+| Package                                                        | Use case                   |
+| -------------------------------------------------------------- | -------------------------- |
+| [`@turbomem/cli`](https://www.npmjs.com/package/@turbomem/cli) | Terminal memory management |
 
 ## Documentation
 
