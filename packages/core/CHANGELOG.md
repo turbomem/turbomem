@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.6.0
+
+### Minor Changes
+
+- 7a9961d: Add browser support via IndexedDB-backed PGlite and example for the same
+
 ## 0.5.0
 
 ### Minor Changes
