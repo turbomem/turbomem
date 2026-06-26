@@ -14,7 +14,7 @@ export interface CreateMemoryToolsOptions {
  *
  * ```ts
  * const result = await generateText({
- *   model: openai("gpt-4o-mini"),
+ *   model: openai("gpt-4.1-mini"),
  *   tools: createMemoryTools(memory, { userId: "user_123" }),
  *   prompt: "...",
  * });

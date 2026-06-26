@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const tools = createMemoryTools(memory, { userId: userId ?? "anonymous" });
 
   const result = await streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-4.1-mini"),
     system:
       "You are a helpful assistant with long-term memory. " +
       "Use `recallMemories` to look up what you know about the user before answering, " +

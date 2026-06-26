@@ -57,7 +57,7 @@ async function initMemory(apiKey: string): Promise<TurboMemory> {
     },
     extraction: {
       provider: "google",
-      model: "gemini-2.0-flash",
+      model: "gemini-3.5-flash",
       apiKey,
     },
   });

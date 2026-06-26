@@ -17,17 +17,21 @@ credentials each provider needs.
 
 Select with `embeddings: "openai" | "local" | "voyage" | "google"`.
 
-| Provider             | Preset     | Models                                                                                                            | Default dims     | Supported dims                         | API key / env var                      |
-| -------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------- | ---------------- | -------------------------------------- | -------------------------------------- |
-| OpenAI               | `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`                                      | 1536 (`3-small`) | 1536 / 3072                            | `OPENAI_API_KEY`                       |
-| Local (transformers) | `"local"`  | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5`                                                             | 384              | 384                                    | none (runs on-device)                  |
-| Voyage AI            | `"voyage"` | `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large`, `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3` | 1024             | 256 / 512 / 1024 / 2048                | `VOYAGE_API_KEY`                       |
-| Google Gemini        | `"google"` | `gemini-embedding-001`                                                                                            | 3072             | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+::: tip Recommended defaults
+**OpenAI** - `text-embedding-3-small` (1536d) · **Voyage** - `voyage-4` (1024d) · **Google** - `gemini-embedding-001` (3072d, recommend truncating to 768 / 1536)
+:::
+
+| Provider | Models | Default dims | Supported dims | API key / env var |
+| -------- | ------ | ------------ | -------------- | ----------------- |
+| OpenAI<br>Preset: `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002` (legacy) | 1536 (`3-small`) | 1536 / 3072 | `OPENAI_API_KEY` |
+| Local (transformers)<br>Preset: `"local"` | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5` | 384 | 384 | none (runs on-device) |
+| Voyage AI<br>Preset: `"voyage"` | `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3`, `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large` | 1024 | 256 / 512 / 1024 / 2048 | `VOYAGE_API_KEY` |
+| Google Gemini<br>Preset: `"google"` | `gemini-embedding-001` | 3072 | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ::: tip Dimensions are fixed per store
 The vector column dimension is derived from your embedding adapter at `init()`.
 Switching to a model with different dimensions against an existing store throws
-`DimensionMismatchError` — start a fresh data directory when you change models.
+`DimensionMismatchError` - start a fresh data directory when you change models.
 :::
 
 ### OpenAI
@@ -58,8 +62,9 @@ new TurboMemory({
 ### Voyage AI
 
 Calls `https://api.voyageai.com/v1/embeddings` over plain `fetch` (no extra
-dependency). Defaults to `voyage-3.5` at 1024 dimensions; set `dimensions` to one
-of 256 / 512 / 1024 / 2048 to use Matryoshka truncation.
+dependency). Defaults to `voyage-4` at 1024 dimensions; set `dimensions` to one
+of 256 / 512 / 1024 / 2048 to use Matryoshka truncation. Voyage 3.x models remain
+supported but Voyage 4 is recommended for new projects.
 
 ```ts
 new TurboMemory({
@@ -104,24 +109,35 @@ new TurboMemory({ embeddings: myCustomAdapter /* ... */ });
 
 Select with `extraction.provider: "openai" | "anthropic" | "google"`.
 
-| Provider          | Preset                 | Example models                                           | API key / env var                                 |
-| ----------------- | ---------------------- | -------------------------------------------------------- | ------------------------------------------------- |
-| OpenAI            | `"openai"`             | `gpt-4o-mini`, `gpt-4o`                                  | `OPENAI_API_KEY`                                  |
-| Anthropic         | `"anthropic"`          | `claude-3-5-haiku-latest`, `claude-3-5-sonnet-latest`    | `ANTHROPIC_API_KEY`                               |
-| Google Gemini     | `"google"`             | `gemini-2.5-flash`, `gemini-2.5-pro`                     | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)            |
-| OpenAI-compatible | `"openai"` + `baseURL` | Groq, OpenRouter, Together, Mistral, DeepSeek, Ollama, … | provider-specific (passed as `extraction.apiKey`) |
+::: tip Recommended defaults
+**OpenAI** - `gpt-4.1-mini` · **Anthropic** - `claude-haiku-4-5` · **Google** `gemini-3.5-flash`
+:::
+
+| Provider          | Preset                 | Example models                                                                    | API key / env var                                 |
+| ----------------- | ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------- |
+| OpenAI            | `"openai"`             | `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o`                                          | `OPENAI_API_KEY`                                  |
+| Anthropic         | `"anthropic"`          | `claude-haiku-4-5`, `claude-sonnet-4-6`, `claude-opus-4-8`                        | `ANTHROPIC_API_KEY`                               |
+| Google Gemini     | `"google"`             | `gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-2.5-flash`, `gemini-2.5-pro` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)            |
+| OpenAI-compatible | `"openai"` + `baseURL` | Groq, OpenRouter, Together, Mistral, DeepSeek, Ollama, …                          | provider-specific (passed as `extraction.apiKey`) |
 
 ::: tip Any OpenAI-compatible endpoint works
 Providers that expose an OpenAI-compatible chat completions API (Groq,
 OpenRouter, Together, Mistral, Ollama, and others) work today via the `openai`
-provider with a custom `baseURL` — no new provider needed.
+provider with a custom `baseURL` - no new provider needed.
 :::
 
 ```ts
+// OpenAI extraction
+extraction: {
+  provider: "openai",
+  model: "gpt-4.1-mini",
+  apiKey: process.env.OPENAI_API_KEY,
+}
+
 // Native Google extraction
 extraction: {
   provider: "google",
-  model: "gemini-2.5-flash",
+  model: "gemini-3.5-flash",
   apiKey: process.env.GEMINI_API_KEY,
 }
 
@@ -136,7 +152,7 @@ extraction: {
 // Anthropic extraction - needs npm install @anthropic-ai/sdk
 extraction: {
   provider: "anthropic",
-  model: "claude-3-5-haiku-latest",
+  model: "claude-haiku-4-5",
   apiKey: process.env.ANTHROPIC_API_KEY,
 }
 ```

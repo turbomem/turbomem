@@ -13,7 +13,7 @@ const MODEL_DIMENSIONS: Record<string, number> = {
   "voyage-code-3": 1024,
 };
 
-const DEFAULT_MODEL = "voyage-3.5";
+const DEFAULT_MODEL = "voyage-4";
 const DEFAULT_ENDPOINT = "https://api.voyageai.com/v1/embeddings";
 const MAX_BATCH = 128;
 
@@ -42,7 +42,7 @@ export interface VoyageEmbeddingOptions {
   apiKey?: string;
   /** Full endpoint URL. Defaults to the public Voyage embeddings endpoint. */
   baseURL?: string;
-  /** Defaults to `voyage-3.5`. */
+  /** Defaults to `voyage-4`. */
   model?: VoyageEmbeddingModel;
   /** Override the dimension count (sent as `output_dimension`; default 1024). */
   dimensions?: number;

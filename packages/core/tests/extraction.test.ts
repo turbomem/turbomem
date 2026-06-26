@@ -38,7 +38,7 @@ describe("Extractor (google provider)", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const extractor = new Extractor({
-      config: { provider: "google", model: "gemini-2.5-flash", apiKey: "k" },
+      config: { provider: "google", model: "gemini-3.5-flash", apiKey: "k" },
     });
 
     const facts = await extractor.extract([{ role: "user", content: "I drink tea daily" }]);
@@ -48,7 +48,7 @@ describe("Extractor (google provider)", () => {
       string,
       { headers: Record<string, string> },
     ];
-    expect(call[0]).toContain("gemini-2.5-flash:generateContent");
+    expect(call[0]).toContain("gemini-3.5-flash:generateContent");
     expect(call[1].headers["x-goog-api-key"]).toBe("k");
   });
 
@@ -63,7 +63,7 @@ describe("Extractor (google provider)", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     const extractor = new Extractor({
-      config: { provider: "google", model: "gemini-2.5-flash", apiKey: "k" },
+      config: { provider: "google", model: "gemini-3.5-flash", apiKey: "k" },
     });
 
     const facts = await extractor.extract([{ role: "user", content: "hi" }]);

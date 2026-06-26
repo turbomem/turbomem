@@ -95,7 +95,7 @@ describe("VoyageEmbeddingAdapter", () => {
     vi.restoreAllMocks();
   });
 
-  it("defaults to voyage-3.5 with 1024 dimensions", async () => {
+  it("defaults to voyage-4 with 1024 dimensions", async () => {
     const fetchImpl = makeVoyageFetch(1024);
     const adapter = new VoyageEmbeddingAdapter({ apiKey: "k", fetchImpl });
 
