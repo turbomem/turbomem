@@ -1,5 +1,13 @@
 # @turbomem/mastra
 
+## 0.2.9
+
+### Patch Changes
+
+- d298417: Minor readme updates
+- Updated dependencies [d298417]
+  - turbomem@0.6.1
+
 ## 0.2.8
 
 ### Patch Changes
