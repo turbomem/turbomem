@@ -43,8 +43,8 @@ See [Architecture](/guide/architecture) for the full pipeline.
 
 Before writing code:
 
-- [ ] An embedding provider API key - [Google](/guide/providers) or [Voyage](/guide/providers) recommended
-- [ ] An extraction provider API key - Google recommended
+- [ ] An embedding provider API key — [Google](/guide/providers) (`gemini-embedding-001`) or [Voyage](/guide/providers) (`voyage-4`) recommended; OpenAI (`text-embedding-3-small`) also works. See [Providers](/guide/providers) for the full model list.
+- [ ] An extraction provider API key — [Google](/guide/providers) (`gemini-3.5-flash`) recommended (same key as Google embeddings). OpenAI also works. See [Providers](/guide/providers) for the full model list.
 - [ ] A client-side app (React, Vue, Svelte, vanilla TS) bundled with Vite, webpack, etc.
 
 ## Step 1: Install
@@ -73,7 +73,7 @@ const memory = new TurboMemory({
   },
   extraction: {
     provider: "google",
-    model: "gemini-2.0-flash",
+    model: "gemini-3.5-flash",
     apiKey: "...",
   },
 });
@@ -101,11 +101,11 @@ const memory = new TurboMemory({
 
 ## Recommended provider stack
 
-| Component  | Recommended            | Avoid in browser                   |
-| ---------- | ---------------------- | ---------------------------------- |
-| Storage    | `"pglite"` + `idb://`  | `"sqlite-vec"`, `"upstash-vector"` |
-| Embeddings | `"google"`, `"voyage"` | `"local"` (heavy WASM cold start)  |
-| Extraction | `"google"`             | -                                  |
+| Component  | Recommended                         | Also works                         | Avoid in browser                   |
+| ---------- | ----------------------------------- | ---------------------------------- | ---------------------------------- |
+| Storage    | `"pglite"` + `idb://`               | custom adapter                     | `"sqlite-vec"`, `"upstash-vector"` |
+| Embeddings | `"google"`, `"voyage"`              | `"openai"` (proxy keys in prod)    | `"local"` (heavy WASM cold start)  |
+| Extraction | `"google"` (single key with above)  | `"openai"`                         | -                                  |
 
 ## API keys and security
 

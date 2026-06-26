@@ -21,14 +21,14 @@ import { createMemoryTools } from "@turbomem/vercel-ai";
 const memory = new TurboMemory({
   embeddings: "openai",
   storage: "pglite",
-  extraction: { provider: "openai", model: "gpt-4o-mini" },
+  extraction: { provider: "openai", model: "gpt-4.1-mini" },
   openai: { apiKey: process.env.OPENAI_API_KEY },
 });
 
 await memory.init();
 
 const result = await generateText({
-  model: openai("gpt-4o-mini"),
+  model: openai("gpt-4.1-mini"),
   tools: createMemoryTools(memory, { userId: "user_123" }),
   prompt: "Remember that I prefer dark mode, then tell me my preferences.",
   maxSteps: 5,

@@ -55,9 +55,9 @@ export interface ConfigOverrides {
 }
 
 const DEFAULT_EXTRACTION_MODEL: Record<ExtractionProvider, string> = {
-  openai: "gpt-4o-mini",
-  anthropic: "claude-3-5-haiku-latest",
-  google: "gemini-2.5-flash",
+  openai: "gpt-4.1-mini",
+  anthropic: "claude-haiku-4-5",
+  google: "gemini-3.5-flash",
 };
 
 /** Read the saved config file, returning an empty object when none exists. */

@@ -21,7 +21,7 @@ import { createMastraMemory } from "@turbomem/mastra";
 const memory = new TurboMemory({
   embeddings: "openai",
   storage: "pglite",
-  extraction: { provider: "openai", model: "gpt-4o-mini" },
+  extraction: { provider: "openai", model: "gpt-4.1-mini" },
   openai: { apiKey: process.env.OPENAI_API_KEY },
 });
 

@@ -40,8 +40,8 @@ Before writing code:
 
 - [ ] An [Upstash](https://upstash.com/) account (free tier available)
 - [ ] A Vector index created in the console (see below)
-- [ ] An embedding provider API key - [Google](/guide/providers) or [Voyage](/guide/providers) recommended
-- [ ] An extraction provider API key - Google recommended for edge
+- [ ] An embedding provider API key - [Google](/guide/providers) (`gemini-embedding-001`) or [Voyage](/guide/providers) (`voyage-4`) recommended. See [Providers](/guide/providers) for the full model list.
+- [ ] An extraction provider API key - [Google](/guide/providers) (`gemini-3.5-flash`) recommended for edge. See [Providers](/guide/providers) for the full model list.
 
 ## Step 1: Create an Upstash Vector index
 
@@ -115,7 +115,7 @@ const memory = new TurboMemory({
   },
   extraction: {
     provider: "google",
-    model: "gemini-2.0-flash",
+    model: "gemini-3.5-flash",
     apiKey: process.env.GEMINI_API_KEY,
   },
 });

@@ -28,7 +28,7 @@ const memory = new TurboMemory({
   storage: "pglite", // or "sqlite-vec" | "upstash-vector" | StorageAdapter (default: "pglite")
   extraction: {
     provider: "openai", // or "anthropic" | "google"
-    model: "gpt-4o-mini",
+    model: "gpt-4.1-mini",
     apiKey: process.env.OPENAI_API_KEY, // optional if openai.apiKey is set
     baseURL: undefined, // optional custom endpoint
   },
@@ -38,7 +38,7 @@ const memory = new TurboMemory({
   },
   voyage: {
     apiKey: process.env.VOYAGE_API_KEY, // used when embeddings: "voyage"
-    model: "voyage-3.5",
+    model: "voyage-4",
   },
   google: {
     apiKey: process.env.GEMINI_API_KEY, // used when embeddings/extraction is "google"
@@ -100,7 +100,7 @@ The model (~25MB) downloads on first use and is cached for the rest of the proce
 ### Voyage AI (optional)
 
 Hosted embeddings via plain `fetch` (no extra dependency). Defaults to
-`voyage-3.5` at 1024 dimensions:
+`voyage-4` at 1024 dimensions:
 
 ```ts
 new TurboMemory({
@@ -159,7 +159,7 @@ endpoint (Groq, OpenRouter, Together, Mistral, Ollama, …) also works via the
 ```ts
 extraction: {
   provider: "openai", // or "anthropic" | "google"
-  model: "gpt-4o-mini",
+  model: "gpt-4.1-mini",
 }
 ```
 

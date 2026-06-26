@@ -29,7 +29,7 @@ export function registerInit(program: Command): void {
         options: [
           { value: "openai", label: "OpenAI", hint: "text-embedding-3-small, needs an API key" },
           { value: "local", label: "Local (transformers)", hint: "runs on-device, no API key" },
-          { value: "voyage", label: "Voyage AI", hint: "voyage-3.5 / voyage-4, needs an API key" },
+          { value: "voyage", label: "Voyage AI", hint: "voyage-4, needs an API key" },
           { value: "google", label: "Google Gemini", hint: "gemini-embedding-001, needs an API key" },
         ],
       })) as EmbeddingsProvider;
@@ -48,7 +48,7 @@ export function registerInit(program: Command): void {
 
       let embeddingModel = existing.embeddingModel;
       if (embeddings === "voyage" || embeddings === "google") {
-        const placeholder = embeddings === "voyage" ? "voyage-3.5" : "gemini-embedding-001";
+        const placeholder = embeddings === "voyage" ? "voyage-4" : "gemini-embedding-001";
         const model = await text({
           message: `Embedding model (leave blank for default)`,
           initialValue: existing.embeddingModel ?? "",
@@ -62,17 +62,17 @@ export function registerInit(program: Command): void {
         message: "Fact-extraction provider",
         initialValue: existing.extractionProvider ?? "openai",
         options: [
-          { value: "openai", label: "OpenAI", hint: "e.g. gpt-4o-mini" },
-          { value: "anthropic", label: "Anthropic", hint: "e.g. claude-3-5-haiku-latest" },
-          { value: "google", label: "Google Gemini", hint: "e.g. gemini-2.5-flash" },
+          { value: "openai", label: "OpenAI", hint: "e.g. gpt-4.1-mini" },
+          { value: "anthropic", label: "Anthropic", hint: "e.g. claude-haiku-4-5" },
+          { value: "google", label: "Google Gemini", hint: "e.g. gemini-3.5-flash" },
         ],
       })) as ExtractionProvider;
       if (isCancel(extractionProvider)) bail();
 
       const defaultExtractionModel: Record<ExtractionProvider, string> = {
-        openai: "gpt-4o-mini",
-        anthropic: "claude-3-5-haiku-latest",
-        google: "gemini-2.5-flash",
+        openai: "gpt-4.1-mini",
+        anthropic: "claude-haiku-4-5",
+        google: "gemini-3.5-flash",
       };
       const defaultModel = existing.extractionModel ?? defaultExtractionModel[extractionProvider];
       const extractionModel = await text({

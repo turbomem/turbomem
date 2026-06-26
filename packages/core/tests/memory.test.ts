@@ -43,7 +43,7 @@ function newMemory() {
   return new TurboMemory({
     embeddings: new FakeEmbeddingAdapter(),
     storage: new PGliteStorageAdapter({ inMemory: true }),
-    extraction: { provider: "openai", model: "gpt-4o-mini", apiKey: "test-key" },
+    extraction: { provider: "openai", model: "gpt-4.1-mini", apiKey: "test-key" },
   });
 }
 
@@ -156,7 +156,7 @@ describe("TurboMemory with sqlite-vec storage", () => {
       embeddings: new FakeEmbeddingAdapter(),
       storage: "sqlite-vec",
       sqliteVec: { inMemory: true },
-      extraction: { provider: "openai", model: "gpt-4o-mini", apiKey: "test-key" },
+      extraction: { provider: "openai", model: "gpt-4.1-mini", apiKey: "test-key" },
     });
     await memory.init();
   });
@@ -254,7 +254,7 @@ describe("TurboMemory with upstash-vector storage", () => {
     memory = new TurboMemory({
       embeddings: new FakeEmbeddingAdapter(),
       storage: new UpstashVectorStorageAdapter({ index: new MockUpstashIndex() as never }),
-      extraction: { provider: "openai", model: "gpt-4o-mini", apiKey: "test-key" },
+      extraction: { provider: "openai", model: "gpt-4.1-mini", apiKey: "test-key" },
     });
     await memory.init();
   });
