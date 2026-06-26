@@ -20,16 +20,19 @@ hero:
 
 features:
   - title: Fully embedded
-    details: Runs inside your Node or Bun process. No sidecar server, no HTTP hop per memory call.
+    details: Runs inside your Node, Bun, or browser process. No sidecar server, no HTTP hop per memory call.
   - title: Semantic search
-    details: LLM fact extraction plus vector embeddings. Local PGlite/pgvector by default, or remote Upstash on edge.
+    details: LLM fact extraction plus vector embeddings. Local PGlite/pgvector by default, IndexedDB in the browser, or remote Upstash on edge.
   - title: Adapter-based
     details: Swap embeddings (OpenAI, local WASM, Voyage, Gemini), storage (PGlite, sqlite-vec, Upstash), and Mastra or Vercel AI SDK adapters.
   - title: Type-safe
-    details: Strict TypeScript with Zod-validated inputs. Works in Node 20+, Bun, and serverless.
+    details: Strict TypeScript with Zod-validated inputs. Works in Node 20+, Bun, the browser, and serverless.
   - title: Terminal CLI
     details: Add, search, and manage memories from your shell with one-shot commands or an interactive REPL.
     link: /cli
+  - title: Browser-ready
+    details: Run in React and other SPAs with IndexedDB-backed PGlite — client-side persistence, no remote database required.
+    link: /guide/browser
   - title: Edge-ready
     details: Deploy on Cloudflare Workers and Vercel Edge with Upstash Vector over HTTP, no local filesystem required.
     link: /guide/edge
@@ -52,8 +55,8 @@ an HTTP hop on every memory call. **turbomem runs entirely in-process** as a lib
 | Runtime     | TypeScript, in-process                  | Separate server / hosted API    |
 | Deployment  | `npm install`                           | Run or host a service           |
 | Network hop | None (local)                            | HTTP per call                   |
-| Storage     | PGlite (WASM Postgres)                  | External vector store           |
-| Best for    | TS apps, edge, embedding into a product | Multi-language or managed infra |
+| Storage     | PGlite (disk or IndexedDB)              | External vector store           |
+| Best for    | TS apps, browser, edge, in-product embed | Multi-language or managed infra |
 
 If you need a cross-language managed platform, a dedicated memory service may fit better.
 If you're shipping a TypeScript app and want memory as a _library_, that's turbomem.
@@ -76,9 +79,9 @@ See [Architecture](/guide/architecture) for the pipeline and [API reference](/ap
 
 ## When turbomem fits
 
-- **[TypeScript agents](/guide/getting-started)** (Node, Bun, serverless) that need memory without a sidecar
+- **[TypeScript agents](/guide/getting-started)** (Node, Bun, browser, serverless) that need memory without a sidecar
 - **Products embedding memory** into an app, not operating a memory platform
-- **[Local-first / edge](/guide/configuration)** where PGlite on disk beats a remote vector DB
+- **[Local-first / browser / edge](/guide/configuration)** where PGlite on disk or IndexedDB beats a remote vector DB
 - **Framework integrations** via [`@turbomem/mastra`](/adapters/mastra) or [`@turbomem/vercel-ai`](/adapters/vercel-ai) when you already use those stacks
 
 ## Quick example
@@ -114,6 +117,7 @@ await memory.close();
 
 - [Getting started](/guide/getting-started) - install, env setup, and first memory
 - [Configuration](/guide/configuration) - embeddings, storage, extraction, and scoping
+- [Browser](/guide/browser) - IndexedDB persistence in client apps
 - [Architecture](/guide/architecture) - pipeline, adapters, and error handling
 - [CLI](/cli) - manage memories from your terminal
 - [Examples](/examples) - runnable projects in the repo
