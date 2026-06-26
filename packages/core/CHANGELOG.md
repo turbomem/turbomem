@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.6.1
+
+### Patch Changes
+
+- d298417: Minor readme updates
+
 ## 0.6.0
 
 ### Minor Changes

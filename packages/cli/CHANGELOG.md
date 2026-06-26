@@ -1,5 +1,13 @@
 # @turbomem/cli
 
+## 0.5.2
+
+### Patch Changes
+
+- d298417: Minor readme updates
+- Updated dependencies [d298417]
+  - turbomem@0.6.1
+
 ## 0.5.1
 
 ### Patch Changes
