@@ -1,6 +1,6 @@
 # @turbomem/vercel-ai
 
-[![npm version](https://img.shields.io/npm/v/@turbomem/vercel-ai)](https://www.npmjs.com/package/@turbomem/vercel-ai)
+[![npm version](https://img.shields.io/npm/v/@turbomem/vercel-ai)](https://www.npmjs.com/package/@turbomem/vercel-ai) · [Documentation](https://turbomem.dev/adapters/vercel-ai)
 
 Vercel AI SDK tools backed by [turbomem](https://www.npmjs.com/package/turbomem). Exposes `rememberFact` and `recallMemories` tools the model can call during `generateText` or `streamText`.
 

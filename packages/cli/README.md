@@ -1,6 +1,6 @@
 # @turbomem/cli
 
-[![npm version](https://img.shields.io/npm/v/@turbomem/cli)](https://www.npmjs.com/package/@turbomem/cli)
+[![npm version](https://img.shields.io/npm/v/@turbomem/cli)](https://www.npmjs.com/package/@turbomem/cli) · [Documentation](https://turbomem.dev/cli)
 
 Command-line interface for [turbomem](https://www.npmjs.com/package/turbomem) local-first agent memory. Add, search, and manage memories directly from your terminal, with one-shot commands and an interactive shell.
 
