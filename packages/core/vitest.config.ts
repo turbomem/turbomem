@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["tests/**/*.test.ts"],
+    setupFiles: ["tests/setup-indexeddb.ts"],
     testTimeout: 30_000,
   },
 });

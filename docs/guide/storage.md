@@ -14,15 +14,15 @@ adapter instance.
 
 ## Quick comparison
 
-|                | PGlite (default)                                                 | sqlite-vec                                                  | Upstash Vector (edge)                                       |
-| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
-| Preset         | `"pglite"`                                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          |
-| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) |
-| Native compile | No                                                               | Yes (`better-sqlite3`)                                      | No                                                          |
-| Extra install  | None (bundled)                                                   | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               |
-| Default path   | `.turbomem/` (directory)                                         | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        |
-| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            |
-| Best for       | Default, zero native deps, broad Node compatibility              | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               |
+|                | PGlite (default)                                                 | PGlite (browser)                                            | sqlite-vec                                                  | Upstash Vector (edge)                                       |
+| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| Preset         | `"pglite"`                                                       | `"pglite"` + `idb://`                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          |
+| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | Same (IndexedDB VFS)                                        | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) |
+| Native compile | No                                                               | No                                                          | Yes (`better-sqlite3`)                                      | No                                                          |
+| Extra install  | None (bundled)                                                   | None (import `turbomem/browser`)                            | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               |
+| Default path   | `.turbomem/` (directory)                                         | `idb://turbomem`                                            | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        |
+| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | Same                                                        | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            |
+| Best for       | Default, zero native deps, broad Node compatibility              | React/SPA apps, offline-first, client-side persistence      | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               |
 
 Both backends share the same API surface: scoped insert/search/delete, dimension
 guards at `init()`, and cosine similarity scores in the 0–1 range.
@@ -62,7 +62,9 @@ PGlite ships as a dependency of `turbomem`. No extra install step.
 new TurboMemory({
   storage: "pglite",
   pglite: {
-    dataDir: "./my-memory", // default: .turbomem in process.cwd()
+    dataDir: "./my-memory", // default: .turbomem in process.cwd(); use idb:// in browser
+    inMemory: false,
+    relaxedDurability: undefined, // defaults to true for idb:// paths
   },
   // ...
 });
@@ -70,6 +72,9 @@ new TurboMemory({
 
 Data is written to a directory on disk (Postgres data files). Point `dataDir` at
 any path your process can write to.
+
+For browser apps, prefix with `idb://` and import from `turbomem/browser`. See
+the [Browser guide](/guide/browser).
 
 For tests or ephemeral usage, pass a custom adapter with in-memory mode:
 
@@ -266,6 +271,7 @@ vector column or index can be created with a matching size.
 ## Next steps
 
 - [Configuration](/guide/configuration) - full config object
+- [Browser](/guide/browser) - IndexedDB persistence in client apps
 - [Edge](/guide/edge) - deploy on Workers and Vercel Edge
 - [Architecture](/guide/architecture) - how storage fits in the pipeline
 - [Providers](/guide/providers) - embedding models and dimensions

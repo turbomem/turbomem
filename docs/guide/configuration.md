@@ -17,6 +17,7 @@ API keys.
 ::: tip Choosing a storage backend?
 See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec vs Upstash Vector,
 install steps, and custom adapters. Deploying to edge? See the [Edge guide](/guide/edge).
+Running in the browser? See the [Browser guide](/guide/browser).
 :::
 
 ## Full config shape
@@ -44,7 +45,9 @@ const memory = new TurboMemory({
     model: "gemini-embedding-001",
   },
   pglite: {
-    dataDir: ".turbomem", // defaults to .turbomem in process.cwd()
+    dataDir: ".turbomem", // or "idb://my-db" in the browser
+    inMemory: false, // set true for ephemeral storage (tests)
+    relaxedDurability: undefined, // defaults to true for idb:// paths
   },
   sqliteVec: {
     dbPath: ".turbomem.sqlite", // defaults to .turbomem.sqlite in process.cwd()

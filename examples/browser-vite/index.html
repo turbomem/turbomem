@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>turbomem browser demo</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>turbomem browser demo</h1>
+      <p class="lead">
+        Client-side memory with IndexedDB-backed PGlite. Reload the page — your facts
+        persist in this browser.
+      </p>
+
+      <section class="panel">
+        <label for="api-key">Google API key (Gemini)</label>
+        <input id="api-key" type="password" placeholder="AIza..." autocomplete="off" />
+        <p class="hint">
+          Demo only: the key stays in this tab and is sent directly to Google. In
+          production, proxy API calls through your backend.
+        </p>
+        <button id="init-btn" type="button">Connect</button>
+        <p id="status" class="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" id="memory-panel" hidden>
+        <label for="fact">Add a fact</label>
+        <div class="row">
+          <input id="fact" type="text" placeholder="The user prefers dark mode" />
+          <button id="add-btn" type="button">Add fact</button>
+        </div>
+
+        <label for="query">Search memories</label>
+        <div class="row">
+          <input id="query" type="text" placeholder="UI preferences" />
+          <button id="search-btn" type="button">Search</button>
+        </div>
+
+        <ul id="results"></ul>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

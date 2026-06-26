@@ -1,0 +1,110 @@
+:root {
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  background: #0f1115;
+  color: #e8eaed;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+}
+
+.lead {
+  margin: 0 0 2rem;
+  color: #9aa0a6;
+}
+
+.panel {
+  background: #1a1d24;
+  border: 1px solid #2a2f3a;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #3c4043;
+  background: #0f1115;
+  color: inherit;
+  font: inherit;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.row input {
+  flex: 1;
+}
+
+button {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #8ab4f8;
+  color: #0f1115;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint,
+.status {
+  font-size: 0.875rem;
+  color: #9aa0a6;
+}
+
+.status {
+  margin-top: 0.75rem;
+}
+
+#results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#results li {
+  padding: 0.75rem 0;
+  border-top: 1px solid #2a2f3a;
+}
+
+#results li:first-child {
+  border-top: none;
+}
+
+.score {
+  color: #8ab4f8;
+  font-size: 0.875rem;
+}

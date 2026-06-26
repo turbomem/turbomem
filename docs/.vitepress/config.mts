@@ -70,6 +70,7 @@ export default defineConfig({
           { text: "Configuration", link: "/guide/configuration" },
           { text: "Storage", link: "/guide/storage" },
           { text: "Edge", link: "/guide/edge" },
+          { text: "Browser", link: "/guide/browser" },
           { text: "Providers", link: "/guide/providers" },
           { text: "Architecture", link: "/guide/architecture" },
         ],
