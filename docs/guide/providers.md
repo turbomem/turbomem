@@ -21,12 +21,12 @@ Select with `embeddings: "openai" | "local" | "voyage" | "google"`.
 **OpenAI** - `text-embedding-3-small` (1536d) · **Voyage** - `voyage-4` (1024d) · **Google** - `gemini-embedding-001` (3072d, recommend truncating to 768 / 1536)
 :::
 
-| Provider             | Preset     | Models                                                                                                            | Default dims     | Supported dims                         | API key / env var                      |
-| -------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------- | ---------------- | -------------------------------------- | -------------------------------------- |
-| OpenAI               | `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002` (legacy)                             | 1536 (`3-small`) | 1536 / 3072                            | `OPENAI_API_KEY`                       |
-| Local (transformers) | `"local"`  | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5`                                                             | 384              | 384                                    | none (runs on-device)                  |
-| Voyage AI            | `"voyage"` | `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3`, `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large` | 1024             | 256 / 512 / 1024 / 2048                | `VOYAGE_API_KEY`                       |
-| Google Gemini        | `"google"` | `gemini-embedding-001`                                                                                            | 3072             | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+| Provider | Models | Default dims | Supported dims | API key / env var |
+| -------- | ------ | ------------ | -------------- | ----------------- |
+| OpenAI<br>Preset: `"openai"` | `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002` (legacy) | 1536 (`3-small`) | 1536 / 3072 | `OPENAI_API_KEY` |
+| Local (transformers)<br>Preset: `"local"` | `Xenova/all-MiniLM-L6-v2`, `Xenova/bge-small-en-v1.5` | 384 | 384 | none (runs on-device) |
+| Voyage AI<br>Preset: `"voyage"` | `voyage-4`, `voyage-4-large`, `voyage-4-lite`, `voyage-code-3`, `voyage-3.5`, `voyage-3.5-lite`, `voyage-3-large` | 1024 | 256 / 512 / 1024 / 2048 | `VOYAGE_API_KEY` |
+| Google Gemini<br>Preset: `"google"` | `gemini-embedding-001` | 3072 | 128–3072 (recommend 768 / 1536 / 3072) | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ::: tip Dimensions are fixed per store
 The vector column dimension is derived from your embedding adapter at `init()`.
