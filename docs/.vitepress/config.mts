@@ -15,6 +15,7 @@ export default defineConfig({
   base: "/",
   cleanUrls: true,
   lastUpdated: true,
+  appearance: "dark",
   sitemap: {
     hostname: SITE,
   },
