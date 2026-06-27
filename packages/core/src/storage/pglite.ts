@@ -190,6 +190,48 @@ export class PGliteStorageAdapter implements StorageAdapter {
     return this.db;
   }
 
+  async update(
+    id: string,
+    patch: {
+      content: string;
+      embedding: number[];
+      metadata?: Record<string, unknown>;
+    },
+  ): Promise<Memory> {
+    const db = this.requireDb();
+    if (patch.embedding.length !== this.dimensions) {
+      throw new DimensionMismatchError(
+        `Embedding has ${patch.embedding.length} dimensions but store expects ${this.dimensions}.`,
+      );
+    }
+    try {
+      const result = await db.query<MemoryRow>(
+        `UPDATE memories
+         SET content = $1,
+             embedding = $2::vector,
+             metadata = COALESCE($3::jsonb, metadata),
+             updated_at = now()
+         WHERE id = $4
+         RETURNING *`,
+        [
+          patch.content,
+          toVectorLiteral(patch.embedding),
+          patch.metadata != null ? JSON.stringify(patch.metadata) : null,
+          id,
+        ],
+      );
+      if (result.rows.length === 0) {
+        throw new StorageError(`Memory not found: ${id}`);
+      }
+      return rowToMemory(result.rows[0]);
+    } catch (error) {
+      if (error instanceof StorageError) throw error;
+      throw new StorageError(`Failed to update memory: ${(error as Error).message}`, {
+        cause: error,
+      });
+    }
+  }
+
   async insert(memory: Omit<Memory, "id" | "createdAt" | "updatedAt">): Promise<Memory> {
     const db = this.requireDb();
     if (memory.embedding.length !== this.dimensions) {

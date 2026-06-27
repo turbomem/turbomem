@@ -262,6 +262,84 @@ export class SqliteVecStorageAdapter implements StorageAdapter {
     }
   }
 
+  async update(
+    id: string,
+    patch: {
+      content: string;
+      embedding: number[];
+      metadata?: Record<string, unknown>;
+    },
+  ): Promise<Memory> {
+    const db = this.requireDb();
+    if (patch.embedding.length !== this.dimensions) {
+      throw new DimensionMismatchError(
+        `Embedding has ${patch.embedding.length} dimensions but store expects ${this.dimensions}.`,
+      );
+    }
+
+    try {
+      const now = new Date().toISOString();
+      const metadataJson =
+        patch.metadata != null ? JSON.stringify(patch.metadata) : undefined;
+
+      const runUpdate = db.transaction(() => {
+        const row = db.prepare(`SELECT rowid FROM memories WHERE id = ?`).get(id) as
+          | { rowid: number }
+          | undefined;
+        if (row == null) {
+          throw new StorageError(`Memory not found: ${id}`);
+        }
+
+        if (metadataJson != null) {
+          db.prepare(
+            `UPDATE memories SET content = ?, metadata = ?, updated_at = ? WHERE id = ?`,
+          ).run(patch.content, metadataJson, now, id);
+        } else {
+          db.prepare(`UPDATE memories SET content = ?, updated_at = ? WHERE id = ?`).run(
+            patch.content,
+            now,
+            id,
+          );
+        }
+
+        db.prepare(`UPDATE memory_embeddings SET embedding = ? WHERE rowid = ?`).run(
+          toFloat32Array(patch.embedding),
+          row.rowid,
+        );
+
+        const updated = db
+          .prepare(
+            `SELECT
+               m.id,
+               m.content,
+               m.user_id,
+               m.agent_id,
+               m.session_id,
+               m.metadata,
+               m.created_at,
+               m.updated_at,
+               v.embedding
+             FROM memories m
+             JOIN memory_embeddings v ON m.rowid = v.rowid
+             WHERE m.id = ?`,
+          )
+          .get(id) as MemoryRow | undefined;
+
+        if (updated == null) {
+          throw new StorageError(`Memory not found after update: ${id}`);
+        }
+        return updated;
+      });
+
+      return rowToMemory(runUpdate());
+    } catch (error) {
+      if (error instanceof DimensionMismatchError || error instanceof StorageError) throw error;
+      throw new StorageError(`Failed to update memory: ${(error as Error).message}`, {
+        cause: error,
+      });
+    }
+  }
+
   async search(
     embedding: number[],
     scope: MemoryScope,

@@ -16,6 +16,7 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 - **sqlite-vec storage**: optional SQLite backend via `better-sqlite3` + `sqlite-vec`
 - **Upstash Vector storage**: optional HTTP backend for edge runtimes (Cloudflare Workers, Vercel Edge)
 - **Scoped by user, agent, or session**: multi-tenant friendly out of the box
+- **Memory deduplication**: merge, smart replace, or skip overlapping facts on write (enabled by default)
 - **Framework adapters**: Mastra and Vercel AI SDK integrations ship as separate packages
 
 ## Install
@@ -58,6 +59,8 @@ for (const { memory: m, score } of results) {
 
 await memory.close();
 ```
+
+When similar facts are added again, turbomem deduplicates by default — merging with an LLM, smart-replacing when the new fact is more specific, or skipping duplicates. Configure via `deduplication` or disable with `{ enabled: false }`. See [Configuration](https://turbomem.dev/guide/configuration#deduplication).
 
 ## Adapters
 

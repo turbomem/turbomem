@@ -193,6 +193,65 @@ export class UpstashVectorStorageAdapter implements StorageAdapter {
     }
   }
 
+  async update(
+    id: string,
+    patch: {
+      content: string;
+      embedding: number[];
+      metadata?: Record<string, unknown>;
+    },
+  ): Promise<Memory> {
+    const index = this.requireIndex();
+    if (patch.embedding.length !== this.dimensions) {
+      throw new DimensionMismatchError(
+        `Embedding has ${patch.embedding.length} dimensions but store expects ${this.dimensions}.`,
+      );
+    }
+
+    const now = new Date().toISOString();
+    let existingMeta: UpstashMemoryMetadata | undefined;
+
+    try {
+      let cursor: number | string = 0;
+      for (;;) {
+        const page = await index.range(
+          { cursor, limit: RANGE_PAGE_SIZE, includeMetadata: true, includeVectors: true },
+          this.namespaceOptions(),
+        );
+        for (const row of page.vectors) {
+          if (String(row.id) === id && row.metadata) {
+            existingMeta = row.metadata;
+            break;
+          }
+        }
+        if (existingMeta || !page.nextCursor || page.vectors.length === 0) break;
+        cursor = page.nextCursor;
+      }
+
+      if (!existingMeta) {
+        throw new StorageError(`Memory not found: ${id}`);
+      }
+
+      const metadata: UpstashMemoryMetadata = {
+        content: patch.content,
+        userId: existingMeta.userId,
+        agentId: existingMeta.agentId,
+        sessionId: existingMeta.sessionId,
+        metadata: patch.metadata ?? existingMeta.metadata ?? {},
+        createdAt: existingMeta.createdAt,
+        updatedAt: now,
+      };
+
+      await index.upsert({ id, vector: patch.embedding, metadata }, this.namespaceOptions());
+      return metadataToMemory(id, patch.embedding, metadata);
+    } catch (error) {
+      if (error instanceof StorageError) throw error;
+      throw new StorageError(`Failed to update memory: ${(error as Error).message}`, {
+        cause: error,
+      });
+    }
+  }
+
   async insert(memory: Omit<Memory, "id" | "createdAt" | "updatedAt">): Promise<Memory> {
     const index = this.requireIndex();
     if (memory.embedding.length !== this.dimensions) {

@@ -225,6 +225,10 @@ Qdrant, an hosted Postgres instance, or an in-memory mock for tests:
 interface StorageAdapter {
   init(dimensions: number): Promise<void>;
   insert(memory: Omit<Memory, "id" | "createdAt" | "updatedAt">): Promise<Memory>;
+  update(
+    id: string,
+    patch: { content: string; embedding: number[]; metadata?: Record<string, unknown> },
+  ): Promise<Memory>;
   search(embedding: number[], scope: MemoryScope, limit: number): Promise<MemorySearchResult[]>;
   getAll(scope: MemoryScope): Promise<Memory[]>;
   delete(id: string): Promise<void>;

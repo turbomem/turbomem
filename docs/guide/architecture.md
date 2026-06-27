@@ -13,13 +13,14 @@ SQLite.
 ## High-level flow
 
 ```
-messages ──► Extractor (LLM) ──► facts ──► EmbeddingAdapter ──► vectors ──► StorageAdapter
+messages ──► Extractor (LLM) ──► facts ──► EmbeddingAdapter ──► vectors ──► dedup check ──► StorageAdapter
                                                                                   │
 query ──────────────► EmbeddingAdapter ──► query vector ──► StorageAdapter.search ┘ ──► ranked results
 ```
 
 1. **`add(messages, scope)`** runs LLM-based fact extraction, embeds each fact in
-   a batch, and inserts the fact + vector + scope into storage.
+   a batch, and upserts each fact + vector + scope into storage (with deduplication
+   when enabled).
 2. **`search(query, scope)`** embeds the query and performs a vector similarity
    search filtered by scope.
 
@@ -44,7 +45,7 @@ Implement `EmbeddingAdapter` (`embed`, `embedBatch`, `dimensions`):
 
 ### Storage adapters
 
-Implement `StorageAdapter` (`init`, `insert`, `search`, `getAll`, `delete`,
+Implement `StorageAdapter` (`init`, `insert`, `update`, `search`, `getAll`, `delete`,
 `deleteAll`):
 
 - **PGlite** (default), WASM Postgres + `pgvector`. See [Storage](/guide/storage)
@@ -60,6 +61,19 @@ Implement `StorageAdapter` (`init`, `insert`, `search`, `getAll`, `delete`,
 Turns a conversation into discrete, third-person facts about the user using an
 LLM (OpenAI or Anthropic). Extraction is **non-fatal**: parse/transport failures
 log a warning and yield `[]` rather than throwing.
+
+### Deduplication
+
+On write, turbomem searches for semantically similar memories in the same scope.
+When matches exceed the configured threshold:
+
+- **`merge`** (default): consolidates all matches plus the new fact in one LLM call,
+  updates the best match, and deletes duplicates.
+- **`replace`**: smart replace using a zero-cost specificity heuristic — updates
+  only when the new fact adds more detail.
+- **`skip`**: keeps the existing memory unchanged.
+
+See [Configuration - Deduplication](/guide/configuration#deduplication) for options.
 
 ## Scoping
 
