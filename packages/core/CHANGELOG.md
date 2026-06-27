@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.7.0
+
+### Minor Changes
+
+- fc79f4c: Added memory deduplication functionality across the project
+
 ## 0.6.1
 
 ### Patch Changes

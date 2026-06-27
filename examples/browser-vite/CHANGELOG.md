@@ -1,5 +1,12 @@
 # @turbomem/example-browser-vite
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [fc79f4c]
+  - turbomem@0.7.0
+
 ## 0.1.1
 
 ### Patch Changes
