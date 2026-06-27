@@ -73,7 +73,7 @@ When matches exceed the configured threshold:
   only when the new fact adds more detail.
 - **`skip`**: keeps the existing memory unchanged.
 
-See [Configuration — Deduplication](/guide/configuration#deduplication) for options.
+See [Configuration - Deduplication](/guide/configuration#deduplication) for options.
 
 ## Scoping
 
