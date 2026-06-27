@@ -71,6 +71,14 @@ export interface StorageAdapter {
    */
   init(dimensions: number): Promise<void>;
   insert(memory: Omit<Memory, "id" | "createdAt" | "updatedAt">): Promise<Memory>;
+  update(
+    id: string,
+    patch: {
+      content: string;
+      embedding: number[];
+      metadata?: Record<string, unknown>;
+    },
+  ): Promise<Memory>;
   search(embedding: number[], scope: MemoryScope, limit: number): Promise<MemorySearchResult[]>;
   getAll(scope: MemoryScope): Promise<Memory[]>;
   delete(id: string): Promise<void>;
@@ -108,6 +116,21 @@ export interface GoogleConfig {
   baseURL?: string;
   model?: string;
   dimensions?: number;
+}
+
+/** How overlapping memories are handled on write. */
+export type DeduplicationStrategy = "replace" | "skip" | "merge";
+
+/** Controls semantic deduplication during {@link TurboMemory.add} / {@link TurboMemory.addFacts}. */
+export interface DeduplicationConfig {
+  /** Default true. Set false to always insert new rows. */
+  enabled?: boolean;
+  /** Cosine similarity threshold (0–1). Default 0.92. */
+  threshold?: number;
+  /** Default "merge". */
+  strategy?: DeduplicationStrategy;
+  /** Max similar memories to retrieve for merge / consolidation. Default 5. */
+  mergeTopK?: number;
 }
 
 /**
@@ -154,4 +177,6 @@ export interface TurboMemoryConfig {
   local?: {
     model?: string;
   };
+  /** Semantic deduplication on write. Enabled by default. */
+  deduplication?: DeduplicationConfig;
 }

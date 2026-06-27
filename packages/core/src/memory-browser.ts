@@ -13,6 +13,9 @@ import { OpenAIEmbeddingAdapter } from "./embeddings/openai.js";
 import { VoyageEmbeddingAdapter } from "./embeddings/voyage.js";
 import { GoogleEmbeddingAdapter } from "./embeddings/google.js";
 import { Extractor } from "./extraction/extractor.js";
+import { Merger } from "./deduplication/merger.js";
+import { resolveDeduplicationConfig } from "./deduplication/resolve-config.js";
+import { upsertFact } from "./deduplication/upsert-fact.js";
 import { PGliteStorageAdapter } from "./storage/pglite.js";
 
 const DEFAULT_SEARCH_LIMIT = 10;
@@ -26,6 +29,8 @@ export class TurboMemory {
   private readonly embeddingAdapter: EmbeddingAdapter;
   private storageAdapter: StorageAdapter | null = null;
   private readonly extractor: Extractor;
+  private readonly merger: Merger;
+  private readonly deduplicationConfig: ReturnType<typeof resolveDeduplicationConfig>;
   private initialised = false;
   private initPromise: Promise<void> | null = null;
 
@@ -42,6 +47,14 @@ export class TurboMemory {
         baseURL: config.extraction.baseURL ?? config.openai?.baseURL,
       },
     });
+    this.merger = new Merger({
+      config: {
+        ...config.extraction,
+        apiKey: config.extraction.apiKey ?? TurboMemory.fallbackExtractionKey(config),
+        baseURL: config.extraction.baseURL ?? config.openai?.baseURL,
+      },
+    });
+    this.deduplicationConfig = resolveDeduplicationConfig(config.deduplication);
   }
 
   private static fallbackExtractionKey(config: TurboMemoryConfig): string | undefined {
@@ -141,15 +154,17 @@ export class TurboMemory {
     const storage = this.requireStorageAdapter();
     const created: Memory[] = [];
     for (let i = 0; i < facts.length; i++) {
-      const memory = await storage.insert({
-        content: facts[i],
-        embedding: embeddings[i],
-        userId: scope.userId,
-        agentId: scope.agentId,
-        sessionId: scope.sessionId,
-        metadata: {},
-      });
-      created.push(memory);
+      created.push(
+        await upsertFact(
+          storage,
+          this.embeddingAdapter,
+          this.merger,
+          this.deduplicationConfig,
+          facts[i],
+          embeddings[i],
+          scope,
+        ),
+      );
     }
     return created;
   }
@@ -164,14 +179,15 @@ export class TurboMemory {
     const created: Memory[] = [];
     for (let i = 0; i < cleaned.length; i++) {
       created.push(
-        await storage.insert({
-          content: cleaned[i],
-          embedding: embeddings[i],
-          userId: scope.userId,
-          agentId: scope.agentId,
-          sessionId: scope.sessionId,
-          metadata: {},
-        }),
+        await upsertFact(
+          storage,
+          this.embeddingAdapter,
+          this.merger,
+          this.deduplicationConfig,
+          cleaned[i],
+          embeddings[i],
+          scope,
+        ),
       );
     }
     return created;

@@ -44,6 +44,7 @@ function newMemory() {
     embeddings: new FakeEmbeddingAdapter(),
     storage: new PGliteStorageAdapter({ inMemory: true }),
     extraction: { provider: "openai", model: "gpt-4.1-mini", apiKey: "test-key" },
+    deduplication: { enabled: false },
   });
 }
 

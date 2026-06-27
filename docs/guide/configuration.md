@@ -61,6 +61,12 @@ const memory = new TurboMemory({
   local: {
     model: undefined, // defaults to Xenova/all-MiniLM-L6-v2
   },
+  deduplication: {
+    enabled: true, // default; set false to always insert new rows
+    threshold: 0.92, // cosine similarity (0–1)
+    strategy: "merge", // "replace" | "skip" | "merge"
+    mergeTopK: 5, // similar memories fetched for merge / consolidation
+  },
 });
 ```
 
@@ -166,6 +172,35 @@ extraction: {
 Extraction is **non-fatal**: parse or transport failures log a warning and yield
 `[]` rather than throwing. Use `addFacts()` to store explicit strings without
 extraction.
+
+## Deduplication
+
+By default, `add()` and `addFacts()` deduplicate semantically similar memories
+within the same scope before inserting. When a new fact's embedding matches an
+existing memory above the similarity threshold, turbomem applies the configured
+strategy instead of creating a duplicate row.
+
+```ts
+deduplication: {
+  enabled: true,     // default
+  threshold: 0.92,   // cosine similarity (0–1)
+  strategy: "merge", // "replace" | "skip" | "merge"
+  mergeTopK: 5,      // how many similar memories to consider
+}
+```
+
+### Strategies
+
+| Strategy | Behavior |
+| -------- | -------- |
+| `merge` (default) | Pass all similar memories plus the new fact to a single LLM merge call, update the best match, and delete the rest. Falls back to smart replace on LLM failure. |
+| `replace` | Smart replace: update only when the new fact is more specific (more unique tokens / higher information density) than the existing one. Zero LLM cost. |
+| `skip` | Return the existing memory unchanged. |
+
+Disable deduplication entirely with `deduplication: { enabled: false }`.
+
+The merge strategy reuses the same LLM provider configured for fact extraction.
+Lower `threshold` for more aggressive deduplication; raise it to only merge near-identical facts.
 
 ## Scoping
 

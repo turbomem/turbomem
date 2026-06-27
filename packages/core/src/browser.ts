@@ -17,6 +17,8 @@ export type {
   OpenAIConfig,
   VoyageConfig,
   GoogleConfig,
+  DeduplicationConfig,
+  DeduplicationStrategy,
 } from "./types.js";
 export { MessageSchema, MessagesSchema, MemoryScopeSchema } from "./types.js";
 
@@ -49,6 +51,15 @@ export type { PGliteStorageOptions } from "./storage/pglite.js";
 
 export { Extractor, EXTRACTION_SYSTEM_PROMPT, parseFacts } from "./extraction/index.js";
 export type { ExtractorOptions } from "./extraction/index.js";
+
+export {
+  Merger,
+  MERGE_SYSTEM_PROMPT,
+  isMoreSpecific,
+  specificityScore,
+  resolveDeduplicationConfig,
+} from "./deduplication/index.js";
+export type { MergerOptions, ResolvedDeduplicationConfig } from "./deduplication/index.js";
 
 export { cosineSimilarity } from "./utils/cosine.js";
 export { chunkArray, formatTranscript } from "./utils/chunking.js";

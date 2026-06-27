@@ -248,6 +248,31 @@ function runStorageAdapterTests(
         storage.insert({ content: "x", embedding: [1, 2, 3], userId: "u", metadata: {} }),
       ).rejects.toBeInstanceOf(DimensionMismatchError);
     });
+
+    it("updates content and embedding in place", async () => {
+      const inserted = await storage.insert({
+        content: "original fact",
+        embedding: vec(1),
+        userId: "user_1",
+        metadata: { source: "test" },
+      });
+
+      const updated = await storage.update(inserted.id, {
+        content: "updated fact",
+        embedding: vec(2),
+      });
+
+      expect(updated.id).toBe(inserted.id);
+      expect(updated.content).toBe("updated fact");
+      expect(updated.embedding).toHaveLength(DIM);
+      expect(updated.embedding[0]).toBeCloseTo(vec(2)[0], 5);
+      expect(updated.createdAt.getTime()).toBe(inserted.createdAt.getTime());
+      expect(updated.updatedAt.getTime()).toBeGreaterThanOrEqual(inserted.updatedAt.getTime());
+
+      const all = await storage.getAll({ userId: "user_1" });
+      expect(all).toHaveLength(1);
+      expect(all[0].content).toBe("updated fact");
+    });
   });
 }
 

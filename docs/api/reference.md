@@ -18,8 +18,8 @@ const memory = new TurboMemory(config);
 | Method | Description |
 | ------ | ----------- |
 | `init()` | Run migrations / load models. Idempotent. Required before other calls. |
-| `add(messages, scope)` | Extract facts from conversation, embed, store. Returns `Memory[]`. |
-| `addFacts(facts, scope)` | Store explicit fact strings (no extraction). Returns `Memory[]`. |
+| `add(messages, scope)` | Extract facts from conversation, embed, store (with deduplication). Returns `Memory[]`. |
+| `addFacts(facts, scope)` | Store explicit fact strings (no extraction, with deduplication). Returns `Memory[]`. |
 | `search(query, options)` | Semantic search. Returns `MemorySearchResult[]` sorted by score (desc). |
 | `getAll(scope)` | List all memories for a scope. Returns `Memory[]`. |
 | `delete(id)` | Delete one memory by ID. |
@@ -88,6 +88,7 @@ Extends `MemoryScope` with:
 {
   init(dimensions: number): Promise<void>;
   insert(memory): Promise<Memory>;
+  update(id, patch): Promise<Memory>;
   search(embedding, scope, limit): Promise<MemorySearchResult[]>;
   getAll(scope): Promise<Memory[]>;
   delete(id): Promise<void>;
@@ -95,6 +96,23 @@ Extends `MemoryScope` with:
   close?(): Promise<void>;
 }
 ```
+
+`update()` preserves `id` and `createdAt`, refreshes `content`, `embedding`, and
+`updatedAt`.
+
+### `DeduplicationConfig`
+
+```ts
+{
+  enabled?: boolean;                // default true
+  threshold?: number;               // default 0.92, cosine similarity 0–1
+  strategy?: "replace" | "skip" | "merge"; // default "merge"
+  mergeTopK?: number;               // default 5
+}
+```
+
+Passed as `deduplication` on `TurboMemoryConfig`. See
+[Configuration — Deduplication](/guide/configuration#deduplication).
 
 ## Errors
 
