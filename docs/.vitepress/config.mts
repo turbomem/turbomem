@@ -58,6 +58,7 @@ export default defineConfig({
       { text: "Adapters", link: "/adapters/mastra", activeMatch: "/adapters/" },
       { text: "API", link: "/api/reference" },
       { text: "Examples", link: "/examples" },
+      { text: "Blog", link: "https://blog.turbomem.dev" },
       {
         text: "npm",
         link: "https://www.npmjs.com/package/turbomem",
