@@ -64,16 +64,19 @@ When similar facts are added again, turbomem deduplicates by default — merging
 
 ## Adapters
 
-| Package                                                                    | Use case                                       |
-| -------------------------------------------------------------------------- | ---------------------------------------------- |
-| [`turbomem`](https://www.npmjs.com/package/turbomem)                       | Core library                                   |
-| [`@turbomem/mastra`](https://www.npmjs.com/package/@turbomem/mastra)       | Mastra memory provider (`remember` / `recall`) |
-| [`@turbomem/vercel-ai`](https://www.npmjs.com/package/@turbomem/vercel-ai) | Vercel AI SDK tools for agent-driven memory    |
+| Package                                                                    | Use case                                                        |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [`turbomem`](https://www.npmjs.com/package/turbomem)                       | Core library                                                    |
+| [`@turbomem/mastra`](https://www.npmjs.com/package/@turbomem/mastra)       | Mastra memory provider (`remember` / `recall`)                  |
+| [`@turbomem/vercel-ai`](https://www.npmjs.com/package/@turbomem/vercel-ai) | Vercel AI SDK tools for agent-driven memory                     |
+| [`@turbomem/okf`](https://www.npmjs.com/package/@turbomem/okf)             | Open Knowledge Format parser and turbomem bridge (Experimental) |
 
 ```bash
 npm install @turbomem/mastra turbomem
 # or
 npm install @turbomem/vercel-ai turbomem ai
+# or
+npm install @turbomem/okf
 ```
 
 ## Documentation

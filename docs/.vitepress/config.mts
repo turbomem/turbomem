@@ -86,6 +86,7 @@ export default defineConfig({
         items: [
           { text: "Mastra", link: "/adapters/mastra" },
           { text: "Vercel AI SDK", link: "/adapters/vercel-ai" },
+          { text: "OKF (Experimental)", link: "/adapters/okf" },
         ],
       },
       {
