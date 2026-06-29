@@ -1,0 +1,65 @@
+{
+  "name": "@turbomem/okf",
+  "version": "0.1.0",
+  "description": "Open Knowledge Format (OKF) parser, validator, and writer for Node.js",
+  "homepage": "https://turbomem.dev",
+  "license": "Apache-2.0",
+  "author": "arneesh aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git",
+    "directory": "packages/okf"
+  },
+  "keywords": [
+    "okf",
+    "open-knowledge-format",
+    "knowledge",
+    "markdown",
+    "agent",
+    "turbomem"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": {
+    "okf": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "remark": "^15.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
+    "zod": "^3.22.0"
+  },
+  "peerDependencies": {
+    "turbomem": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "turbomem": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "turbomem": "workspace:*"
+  }
+}
