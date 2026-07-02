@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.7.1
+
+### Patch Changes
+
+- 409b867: Docs update. Added reference to new landing site
+
 ## 0.7.0
 
 ### Minor Changes
