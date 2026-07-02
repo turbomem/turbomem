@@ -1,5 +1,13 @@
 # @turbomem/cli
 
+## 0.5.4
+
+### Patch Changes
+
+- 409b867: Docs update. Added reference to new landing site
+- Updated dependencies [409b867]
+  - turbomem@0.7.1
+
 ## 0.5.3
 
 ### Patch Changes

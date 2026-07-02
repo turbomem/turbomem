@@ -1,5 +1,13 @@
 # @turbomem/mastra
 
+## 0.2.11
+
+### Patch Changes
+
+- 409b867: Docs update. Added reference to new landing site
+- Updated dependencies [409b867]
+  - turbomem@0.7.1
+
 ## 0.2.10
 
 ### Patch Changes
