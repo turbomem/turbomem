@@ -2,7 +2,7 @@
   "name": "@turbomem/okf",
   "version": "0.2.0",
   "description": "Open Knowledge Format (OKF) parser, validator, and writer for Node.js",
-  "homepage": "https://turbomem.dev",
+  "homepage": "https://docs.turbomem.dev",
   "license": "Apache-2.0",
   "author": "arneesh aima",
   "repository": {

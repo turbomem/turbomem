@@ -1,6 +1,6 @@
 # @turbomem/mastra
 
-[![npm version](https://img.shields.io/npm/v/@turbomem/mastra)](https://www.npmjs.com/package/@turbomem/mastra) · [Documentation](https://turbomem.dev/adapters/mastra)
+[![npm version](https://img.shields.io/npm/v/@turbomem/mastra)](https://www.npmjs.com/package/@turbomem/mastra) · [Documentation](https://docs.turbomem.dev/adapters/mastra)
 
 Mastra memory provider backed by [turbomem](https://www.npmjs.com/package/turbomem). Wraps a `TurboMemory` instance with `remember` and `recall` methods for Mastra agents.
 
@@ -40,7 +40,7 @@ Check your installed `@mastra/core` version's `MastraMemoryProvider` interface, 
 
 Adapter guide and examples:
 
-**https://turbomem.dev/adapters/mastra**
+**https://docs.turbomem.dev/adapters/mastra**
 
 ## License
 

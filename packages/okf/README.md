@@ -1,6 +1,6 @@
 # @turbomem/okf
 
-[![npm version](https://img.shields.io/npm/v/@turbomem/okf)](https://www.npmjs.com/package/@turbomem/okf) · [Documentation](https://turbomem.dev/adapters/okf)
+[![npm version](https://img.shields.io/npm/v/@turbomem/okf)](https://www.npmjs.com/package/@turbomem/okf) · [Documentation](https://docs.turbomem.dev/adapters/okf)
 
 Open Knowledge Format (OKF) v0.1 parser, validator, writer, and concept graph for Node.js. Optionally seed [turbomem](https://www.npmjs.com/package/turbomem) agent memory from OKF bundles.
 
@@ -59,7 +59,7 @@ const results = await memory.search("How do I compute weekly active users?", {
 
 ## Documentation
 
-**https://turbomem.dev/adapters/okf**
+**https://docs.turbomem.dev/adapters/okf**
 
 ## License
 

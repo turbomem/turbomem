@@ -4,7 +4,7 @@
 
 # turbomem
 
-[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem)
+[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem) · [Documentation](https://docs.turbomem.dev) · [Site](https://turbomem.dev)
 
 Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process, no separate memory server, no Python sidecar.
 
@@ -25,9 +25,9 @@ Local-first agent memory for TypeScript. Persistent, semantically searchable mem
 npm install turbomem
 ```
 
-Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`. For edge: `npm install @upstash/vector` — see the [Edge guide](https://turbomem.dev/guide/edge).
+Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included, no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`. For edge: `npm install @upstash/vector` — see the [Edge guide](https://docs.turbomem.dev/guide/edge).
 
-Prefer another provider? Embeddings support OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), and Google Gemini (`GEMINI_API_KEY`); fact extraction supports OpenAI, Anthropic, and Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://turbomem.dev/guide/providers).
+Prefer another provider? Embeddings support OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), and Google Gemini (`GEMINI_API_KEY`); fact extraction supports OpenAI, Anthropic, and Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://docs.turbomem.dev/guide/providers).
 
 ## Quick start
 
@@ -60,7 +60,7 @@ for (const { memory: m, score } of results) {
 await memory.close();
 ```
 
-When similar facts are added again, turbomem deduplicates by default — merging with an LLM, smart-replacing when the new fact is more specific, or skipping duplicates. Configure via `deduplication` or disable with `{ enabled: false }`. See [Configuration](https://turbomem.dev/guide/configuration#deduplication).
+When similar facts are added again, turbomem deduplicates by default - merging with an LLM, smart-replacing when the new fact is more specific, or skipping duplicates. Configure via `deduplication` or disable with `{ enabled: false }`. See [Configuration](https://docs.turbomem.dev/guide/configuration#deduplication).
 
 ## Adapters
 
@@ -79,11 +79,12 @@ npm install @turbomem/vercel-ai turbomem ai
 npm install @turbomem/okf
 ```
 
-## Documentation
+## Links
 
 Full guides, configuration reference, and runnable examples:
 
-**https://turbomem.dev**
+**Site: https://turbomem.dev**
+**Docs: https://docs.turbomem.dev**
 
 ## Requirements
 

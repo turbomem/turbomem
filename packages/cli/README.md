@@ -1,6 +1,6 @@
 # @turbomem/cli
 
-[![npm version](https://img.shields.io/npm/v/@turbomem/cli)](https://www.npmjs.com/package/@turbomem/cli) · [Documentation](https://turbomem.dev/cli)
+[![npm version](https://img.shields.io/npm/v/@turbomem/cli)](https://www.npmjs.com/package/@turbomem/cli) · [Documentation](https://docs.turbomem.dev/cli)
 
 Command-line interface for [turbomem](https://www.npmjs.com/package/turbomem) local-first agent memory. Add, search, and manage memories directly from your terminal, with one-shot commands and an interactive shell.
 
@@ -20,7 +20,7 @@ turbomem init
 
 This interactive wizard writes `~/.turbomem/config.json` (embeddings + extraction providers, API keys, data directory). Environment variables (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `TURBOMEM_DATA_DIR`) and command flags override the saved config.
 
-The CLI always uses **PGlite** storage on disk (default: `~/.turbomem/data`). For edge deployments or [Upstash Vector](https://turbomem.dev/guide/edge) storage, use the turbomem SDK instead of the CLI.
+The CLI always uses **PGlite** storage on disk (default: `~/.turbomem/data`). For edge deployments or [Upstash Vector](https://docs.turbomem.dev/guide/edge) storage, use the turbomem SDK instead of the CLI.
 
 ## Commands
 
@@ -80,7 +80,7 @@ Inside the shell:
 
 Adapter guide and Next.js example:
 
-**https://turbomem.dev/cli**
+**https://docs.turbomem.dev/cli**
 
 ## License
 
