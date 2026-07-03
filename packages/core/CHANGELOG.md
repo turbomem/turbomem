@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.8.1
+
+### Patch Changes
+
+- f0f53a2: pinecone lib bump
+
 ## 0.8.0
 
 ### Minor Changes
