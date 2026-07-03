@@ -6,7 +6,17 @@
 
 [![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem) · [Documentation](https://docs.turbomem.dev) · [Site](https://turbomem.dev)
 
-Local-first agent memory for TypeScript. Persistent, semantically searchable memory that runs inside your Node or Bun process, no separate memory server, no Python sidecar.
+Embedded agent memory for TypeScript. Local-first by default — PGlite on disk or IndexedDB in the browser. Pluggable to edge and serverless with Upstash Vector or Pinecone. Runs in-process, no separate memory server, no Python sidecar.
+
+## Deployment
+
+| Runtime | Storage |
+| ------- | ------- |
+| Node / Bun (local dev) | PGlite (default) or sqlite-vec |
+| Browser | PGlite + IndexedDB via `turbomem/browser` |
+| Vercel / serverless / edge | Upstash Vector or Pinecone |
+
+See the [Edge guide](https://docs.turbomem.dev/guide/edge) for serverless setup.
 
 ## Features
 
