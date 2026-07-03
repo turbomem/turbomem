@@ -6,7 +6,7 @@ description: Runnable turbomem examples for Node.js, Mastra agents, and a Next.j
 # Examples
 
 Runnable examples live in the
-[examples/](https://github.com/turbomem/turbomem/tree/main/examples) directory.
+[examples/](https://github.com/turbomem/turbomem/tree/master/examples) directory.
 Clone the repo and run with pnpm from the monorepo root.
 
 All examples require `OPENAI_API_KEY`:
@@ -48,12 +48,10 @@ pnpm --filter @turbomem/example-vercel-ai-chatbot dev
 Key files:
 
 - `app/api/chat/route.ts` — streams a response and wires in the memory tools
-- `lib/memory.ts` — a lazily-initialised shared `TurboMemory` instance
+- `lib/memory.ts` — lazily-initialised `TurboMemory`; PGlite locally, Upstash on Vercel via `TURBOMEM_STORAGE`
 - `app/page.tsx` — minimal chat UI using `useChat`
 
-> PGlite writes to a local directory. On serverless platforms, point
-> `TURBOMEM_DATA_DIR` at a writable, persistent volume (or swap in a hosted
-> storage adapter).
+**Local dev:** PGlite on disk (default). **Vercel deploy:** set `TURBOMEM_STORAGE=upstash-vector` plus Upstash env vars. See the [example README](https://github.com/turbomem/turbomem/blob/main/examples/vercel-ai-chatbot/README.md).
 
 ## browser-vite {#browser-vite}
 
@@ -90,4 +88,4 @@ Key files:
 - `src/routes/api/chat.ts` — streaming tutor with memory search / add
 - `vite.config.ts` — `ssr.external` for `@pinecone-database/pinecone`
 
-Source: [turbomem-tanstack-pinecone-starter/](https://github.com/turbomem/turbomem/tree/main/turbomem-tanstack-pinecone-starter)
+Source: [turbomem-tanstack-pinecone-starter/](https://github.com/turbomem/turbomem/tree/master/turbomem-tanstack-pinecone-starter)

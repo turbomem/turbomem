@@ -101,11 +101,11 @@ const memory = new TurboMemory({
 
 ## Recommended provider stack
 
-| Component  | Recommended                         | Also works                         | Avoid in browser                   |
-| ---------- | ----------------------------------- | ---------------------------------- | ---------------------------------- |
-| Storage    | `"pglite"` + `idb://`               | custom adapter                     | `"sqlite-vec"`, `"upstash-vector"`, `"pinecone"` |
-| Embeddings | `"google"`, `"voyage"`              | `"openai"` (proxy keys in prod)    | `"local"` (heavy WASM cold start)  |
-| Extraction | `"google"` (single key with above)  | `"openai"`                         | -                                  |
+| Component  | Recommended                        | Also works                      | Avoid in browser                                 |
+| ---------- | ---------------------------------- | ------------------------------- | ------------------------------------------------ |
+| Storage    | `"pglite"` + `idb://`              | custom adapter                  | `"sqlite-vec"`, `"upstash-vector"`, `"pinecone"` |
+| Embeddings | `"google"`, `"voyage"`             | `"openai"` (proxy keys in prod) | `"local"` (heavy WASM cold start)                |
+| Extraction | `"google"` (single key with above) | `"openai"`                      | -                                                |
 
 ## API keys and security
 
@@ -113,7 +113,7 @@ Browsers have no `process.env`. Pass API keys explicitly in your config.
 
 **Do not ship provider API keys in production client bundles.** For production
 apps, proxy embedding and extraction calls through your backend and keep secrets
-server-side. The [browser-vite example](https://github.com/turbomem/turbomem/tree/main/examples/browser-vite)
+server-side. The [browser-vite example](https://github.com/turbomem/turbomem/tree/master/examples/browser-vite)
 accepts a key in the UI for demo purposes only.
 
 ## Framework notes
@@ -164,11 +164,11 @@ against an existing IndexedDB store throws `DimensionMismatchError`. Use a new
 
 ## Troubleshooting
 
-| Error                      | Cause                                  | Fix                                                                |
-| -------------------------- | -------------------------------------- | ------------------------------------------------------------------ |
-| `DimensionMismatchError`   | Store dimensions ≠ embedding model     | Use a new `idb://` name or clear IndexedDB for the origin          |
-| Bundler fails on `node:fs` | Imported main entry in browser         | Switch to `import { TurboMemory } from "turbomem/browser"`         |
-| Empty results after reload | Wrong `idb://` name or cleared storage | Verify `dataDir` matches; check DevTools → Application → IndexedDB |
+| Error                      | Cause                                              | Fix                                                                |
+| -------------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| `DimensionMismatchError`   | Store dimensions ≠ embedding model                 | Use a new `idb://` name or clear IndexedDB for the origin          |
+| Bundler fails on `node:fs` | Imported main entry in browser                     | Switch to `import { TurboMemory } from "turbomem/browser"`         |
+| Empty results after reload | Wrong `idb://` name or cleared storage             | Verify `dataDir` matches; check DevTools → Application → IndexedDB |
 | `ConfigError` for storage  | Used `sqlite-vec`, `upstash-vector`, or `pinecone` | Use `storage: "pglite"` with `idb://` in the browser               |
 
 ## Next steps

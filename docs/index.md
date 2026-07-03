@@ -1,15 +1,15 @@
 ---
 layout: home
 title: turbomem
-description: Local-first agent memory for TypeScript. No Python. No servers. Just npm install.
+description: Embedded agent memory for TypeScript. Local-first by default. Pluggable to edge and serverless.
 
 hero:
   image:
     src: /logo.svg
     alt: turbomem
   name: turbomem
-  text: Local-first agent memory for TypeScript
-  tagline: No Python. No servers. Just npm install.
+  text: Embedded agent memory for TypeScript
+  tagline: Local-first by default. Pluggable to edge and serverless.
   actions:
     - theme: brand
       text: Get started
@@ -22,9 +22,9 @@ features:
   - title: Fully embedded
     details: Runs inside your Node, Bun, or browser process. No sidecar server, no HTTP hop per memory call.
   - title: Semantic search
-    details: LLM fact extraction plus vector embeddings. Local PGlite/pgvector by default, IndexedDB in the browser, or remote Upstash on edge.
+    details: LLM fact extraction plus vector embeddings. Local PGlite/pgvector by default, IndexedDB in the browser, or remote Upstash/Pinecone on edge and serverless.
   - title: Adapter-based
-    details: Swap embeddings (OpenAI, local WASM, Voyage, Gemini), storage (PGlite, sqlite-vec, Upstash), and Mastra or Vercel AI SDK adapters.
+    details: Swap embeddings (OpenAI, local WASM, Voyage, Gemini), storage (PGlite, sqlite-vec, Upstash, Pinecone), and Mastra or Vercel AI SDK adapters.
   - title: Type-safe
     details: Strict TypeScript with Zod-validated inputs. Works in Node 20+, Bun, the browser, and serverless.
   - title: Terminal CLI
@@ -34,7 +34,7 @@ features:
     details: Run in React and other SPAs with IndexedDB-backed PGlite — client-side persistence, no remote database required.
     link: /guide/browser
   - title: Edge-ready
-    details: Deploy on Cloudflare Workers and Vercel Edge with Upstash Vector over HTTP, no local filesystem required.
+    details: Deploy on Cloudflare Workers, Vercel Edge, and serverless with Upstash Vector or Pinecone over HTTP, no local filesystem required.
     link: /guide/edge
   - title: Multi-tenant scoping
     details: Tag memories with userId, agentId, or sessionId. Search, list, and delete respect scope out of the box.
@@ -50,13 +50,13 @@ an HTTP hop on every memory call. **turbomem runs entirely in-process** as a lib
 
 ## Embedded vs server-based
 
-|             | turbomem (embedded)                     | Server-based memory             |
-| ----------- | --------------------------------------- | ------------------------------- |
-| Runtime     | TypeScript, in-process                  | Separate server / hosted API    |
-| Deployment  | `npm install`                           | Run or host a service           |
-| Network hop | None (local)                            | HTTP per call                   |
-| Storage     | PGlite (disk or IndexedDB)              | External vector store           |
-| Best for    | TS apps, browser, edge, in-product embed | Multi-language or managed infra |
+|             | turbomem (embedded)                                               | Server-based memory             |
+| ----------- | ----------------------------------------------------------------- | ------------------------------- |
+| Runtime     | TypeScript, in-process                                            | Separate server / hosted API    |
+| Deployment  | `npm install`                                                     | Run or host a service           |
+| Network hop | None for local storage; HTTP to your vector store on edge         | HTTP per call to their platform |
+| Storage     | PGlite (default), IndexedDB (browser), or Upstash/Pinecone (edge) | External vector store           |
+| Best for    | TS apps, browser, edge, serverless, in-product embed              | Multi-language or managed infra |
 
 If you need a cross-language managed platform, a dedicated memory service may fit better.
 If you're shipping a TypeScript app and want memory as a _library_, that's turbomem.
@@ -81,10 +81,12 @@ See [Architecture](/guide/architecture) for the pipeline and [API reference](/ap
 
 - **[TypeScript agents](/guide/getting-started)** (Node, Bun, browser, serverless) that need memory without a sidecar
 - **Products embedding memory** into an app, not operating a memory platform
-- **[Local-first / browser / edge](/guide/configuration)** where PGlite on disk or IndexedDB beats a remote vector DB
+- **[Node, browser, edge, or serverless](/guide/configuration)** — PGlite locally, Upstash/Pinecone on Vercel and Workers
 - **Framework integrations** via [`@turbomem/mastra`](/adapters/mastra) or [`@turbomem/vercel-ai`](/adapters/vercel-ai) when you already use those stacks
 
 ## Quick example
+
+### Local (default)
 
 ```ts
 import { TurboMemory } from "turbomem";
@@ -112,6 +114,39 @@ console.log(results.map((r) => r.memory.content));
 
 await memory.close();
 ```
+
+### Vercel / serverless
+
+```ts
+import { TurboMemory } from "turbomem";
+
+const memory = new TurboMemory({
+  storage: "upstash-vector",
+  upstashVector: {
+    url: process.env.UPSTASH_VECTOR_REST_URL,
+    token: process.env.UPSTASH_VECTOR_REST_TOKEN,
+  },
+  embeddings: "openai",
+  extraction: { provider: "openai", model: "gpt-4.1-mini" },
+  openai: { apiKey: process.env.OPENAI_API_KEY },
+});
+
+await memory.init();
+// same add / search API — see the Edge guide for provider recommendations on edge runtimes
+```
+
+See [Edge](/guide/edge) for full setup. Pinecone is also supported — see [Storage](/guide/storage).
+
+## Deploy on Vercel / Next.js
+
+```
+Next.js on Vercel?
+├── Edge runtime → upstash-vector or pinecone (see Edge guide)
+├── Node serverless → upstash-vector or pinecone recommended; pglite only with persistent volume
+└── Client-side → turbomem/browser with idb://
+```
+
+The [vercel-ai-chatbot example](https://github.com/turbomem/turbomem/tree/master/examples/vercel-ai-chatbot) switches between PGlite (local dev) and Upstash (production) via `TURBOMEM_STORAGE`.
 
 ## Explore the docs
 

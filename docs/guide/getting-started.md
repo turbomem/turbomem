@@ -7,10 +7,10 @@ description: Install turbomem, set up OpenAI, and store your first agent memory 
 
 turbomem gives your LLM agents persistent, semantically-searchable memory that runs
 entirely inside your Node/Bun process. Type-safe, adapter-based, and dependency-light.
-No separate memory server required.
+No separate memory server required. Local-first by default; pluggable to edge and serverless.
 
-::: tip Deploying to edge?
-See the [Edge guide](/guide/edge) for Upstash Vector setup on Cloudflare Workers, Vercel Edge, and other stateless runtimes.
+::: tip Deploying to Vercel or edge?
+Use `upstash-vector` or `pinecone` storage on serverless and edge runtimes. See the [Edge guide](/guide/edge) for setup on Cloudflare Workers, Vercel Edge, and Next.js serverless.
 :::
 
 ## Install
@@ -93,6 +93,17 @@ If you're shipping a TypeScript app and want memory as a _library_, that's turbo
 
 - [Configuration](/guide/configuration) - embeddings, extraction, scoping
 - [Storage](/guide/storage) - PGlite, sqlite-vec, Upstash Vector, and Pinecone
-- [Edge](/guide/edge) - deploy on Workers and Vercel Edge
+- [Edge](/guide/edge) - deploy on Workers, Vercel Edge, and Next.js serverless
 - [Architecture](/guide/architecture) - how the pipeline works
 - [Examples](/examples) - runnable projects in the repo
+
+## Deploy on Vercel / Next.js
+
+```
+Next.js on Vercel?
+├── Edge runtime → upstash-vector or pinecone (see Edge guide)
+├── Node serverless → upstash-vector or pinecone recommended; pglite only with persistent volume
+└── Client-side → turbomem/browser with idb://
+```
+
+The [vercel-ai-chatbot example](/examples) switches between PGlite (local dev) and Upstash (production) via `TURBOMEM_STORAGE`.

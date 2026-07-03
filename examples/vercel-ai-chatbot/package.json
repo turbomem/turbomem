@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",
+    "@upstash/vector": "^1.2.3",
     "turbomem": "workspace:*",
     "@turbomem/vercel-ai": "workspace:*",
     "ai": "^3.4.0",
