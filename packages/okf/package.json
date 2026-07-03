@@ -52,7 +52,7 @@
     "zod": "^3.22.0"
   },
   "peerDependencies": {
-    "turbomem": ">=0.8.0"
+    "turbomem": ">=0.8.1"
   },
   "peerDependenciesMeta": {
     "turbomem": {
