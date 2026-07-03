@@ -138,7 +138,7 @@ export interface DeduplicationConfig {
  */
 export interface TurboMemoryConfig {
   embeddings: "openai" | "local" | "voyage" | "google" | EmbeddingAdapter;
-  storage?: "pglite" | "sqlite-vec" | "upstash-vector" | StorageAdapter;
+  storage?: "pglite" | "sqlite-vec" | "upstash-vector" | "pinecone" | StorageAdapter;
   extraction: ExtractionConfig;
   openai?: OpenAIConfig;
   /** Options forwarded to the Voyage embedding adapter. */
@@ -171,6 +171,16 @@ export interface TurboMemoryConfig {
     /** Upstash Vector REST token. Falls back to `UPSTASH_VECTOR_REST_TOKEN`. */
     token?: string;
     /** Optional Upstash namespace. */
+    namespace?: string;
+  };
+  pinecone?: {
+    /** Pinecone API key. Falls back to `PINECONE_API_KEY`. */
+    apiKey?: string;
+    /** Pinecone index name. Falls back to `PINECONE_INDEX`. */
+    index?: string;
+    /** Direct index host (skips `describeIndex` lookup). Falls back to `PINECONE_INDEX_HOST`. */
+    host?: string;
+    /** Optional Pinecone namespace. */
     namespace?: string;
   };
   /** Options forwarded to the local (transformers) embedding adapter. */

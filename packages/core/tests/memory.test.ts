@@ -276,3 +276,125 @@ describe("TurboMemory with upstash-vector storage", () => {
     expect(results[0].memory.content).toBe("The user deploys to Cloudflare Workers");
   });
 });
+
+describe("TurboMemory with pinecone storage", () => {
+  let memory: TurboMemory;
+
+  beforeEach(async () => {
+    chatCreate.mockReset();
+    const { PineconeStorageAdapter } = await import("../src/storage/pinecone.js");
+
+    class MockPineconeIndex {
+      readonly dimension = DIM;
+      private readonly store = new Map<
+        string,
+        { vector: number[]; metadata: import("../src/storage/pinecone.js").PineconeMemoryMetadata }
+      >();
+
+      async describeIndexStats() {
+        return { dimension: this.dimension };
+      }
+
+      async upsert(args: {
+        records: Array<{
+          id: string;
+          values: number[];
+          metadata?: import("../src/storage/pinecone.js").PineconeMemoryMetadata;
+        }>;
+      }) {
+        for (const record of args.records) {
+          if (record.metadata) {
+            this.store.set(record.id, { vector: record.values, metadata: record.metadata });
+          }
+        }
+      }
+
+      async fetch(args: { ids: string[] }) {
+        const records: Record<
+          string,
+          {
+            id: string;
+            values?: number[];
+            metadata?: import("../src/storage/pinecone.js").PineconeMemoryMetadata;
+          }
+        > = {};
+        for (const id of args.ids) {
+          const row = this.store.get(id);
+          if (row) records[id] = { id, values: row.vector, metadata: row.metadata };
+        }
+        return { records };
+      }
+
+      async query(args: { vector: number[]; topK: number; filter?: Record<string, unknown> }) {
+        const userId =
+          args.filter && "userId" in args.filter
+            ? (args.filter.userId as { $eq: string }).$eq
+            : undefined;
+        return {
+          matches: [...this.store.entries()]
+            .filter(([, row]) => !userId || row.metadata.userId === userId)
+            .map(([id, row]) => ({
+              id,
+              score: 0.9,
+              values: row.vector,
+              metadata: row.metadata,
+            }))
+            .slice(0, args.topK),
+        };
+      }
+
+      async fetchByMetadata(args: { filter: Record<string, unknown> }) {
+        const userId =
+          "userId" in args.filter ? (args.filter.userId as { $eq: string }).$eq : undefined;
+        return {
+          records: [...this.store.entries()]
+            .filter(([, row]) => !userId || row.metadata.userId === userId)
+            .map(([id, row]) => ({ id, values: row.vector, metadata: row.metadata })),
+        };
+      }
+
+      async deleteOne(args: { id: string }) {
+        this.store.delete(args.id);
+      }
+
+      async deleteMany(args: { filter: Record<string, unknown> }) {
+        const userId =
+          "userId" in args.filter ? (args.filter.userId as { $eq: string }).$eq : undefined;
+        for (const [id, row] of this.store.entries()) {
+          if (!userId || row.metadata.userId === userId) {
+            this.store.delete(id);
+          }
+        }
+      }
+
+      async listPaginated() {
+        return {
+          vectors: [...this.store.keys()].map((id) => ({ id })),
+        };
+      }
+    }
+
+    memory = new TurboMemory({
+      embeddings: new FakeEmbeddingAdapter(),
+      storage: new PineconeStorageAdapter({ indexClient: new MockPineconeIndex() as never }),
+      extraction: { provider: "openai", model: "gpt-4.1-mini", apiKey: "test-key" },
+    });
+    await memory.init();
+  });
+
+  afterEach(async () => {
+    await memory.close();
+  });
+
+  it("addFacts() stores and searches memories", async () => {
+    await memory.addFacts(["The user deploys to Vercel Edge"], { userId: "user_pinecone" });
+
+    const results = await memory.search("edge deployment", {
+      userId: "user_pinecone",
+      limit: 5,
+    });
+
+    expect(results.length).toBe(1);
+    expect(results[0].memory.content).toBe("The user deploys to Vercel Edge");
+  });
+});

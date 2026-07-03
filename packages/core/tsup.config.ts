@@ -12,7 +12,7 @@ export default defineConfig([
     clean: true,
     sourcemap: true,
     treeshake: true,
-    external: ["better-sqlite3", "sqlite-vec", "@upstash/vector"],
+    external: ["better-sqlite3", "sqlite-vec", "@upstash/vector", "@pinecone-database/pinecone"],
   },
   {
     entry: ["src/browser.ts"],
@@ -21,7 +21,7 @@ export default defineConfig([
     clean: false,
     sourcemap: true,
     treeshake: true,
-    external: ["better-sqlite3", "sqlite-vec", "@upstash/vector"],
+    external: ["better-sqlite3", "sqlite-vec", "@upstash/vector", "@pinecone-database/pinecone"],
     esbuildPlugins: [
       {
         name: "pglite-disk-browser-stub",

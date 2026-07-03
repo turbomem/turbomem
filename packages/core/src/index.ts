@@ -54,6 +54,12 @@ export type {
   UpstashMemoryMetadata,
   UpstashVectorIndex,
 } from "./storage/index.js";
+export { PineconeStorageAdapter, buildPineconeScopeFilter } from "./storage/index.js";
+export type {
+  PineconeStorageOptions,
+  PineconeMemoryMetadata,
+  PineconeIndexClient,
+} from "./storage/index.js";
 
 export { Extractor, EXTRACTION_SYSTEM_PROMPT, parseFacts } from "./extraction/index.js";
 export type { ExtractorOptions } from "./extraction/index.js";

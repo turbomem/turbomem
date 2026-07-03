@@ -2,7 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "@upstash/vector": ["./node_modules/@upstash/vector/dist/nodejs.d.ts"],
+      "@pinecone-database/pinecone": ["./node_modules/@pinecone-database/pinecone/dist/pinecone.d.ts"],
+      "sqlite-vec": ["./node_modules/sqlite-vec/index.d.ts"]
+    }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["dist", "node_modules"]

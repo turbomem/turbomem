@@ -126,6 +126,16 @@ export class TurboMemory {
       });
       return this.storageAdapter;
     }
+    if (storage === "pinecone") {
+      const { PineconeStorageAdapter } = await import("./storage/pinecone.js");
+      this.storageAdapter = new PineconeStorageAdapter({
+        apiKey: this.config.pinecone?.apiKey,
+        index: this.config.pinecone?.index,
+        host: this.config.pinecone?.host,
+        namespace: this.config.pinecone?.namespace,
+      });
+      return this.storageAdapter;
+    }
     throw new ConfigError(`Invalid storage config: ${String(storage)}`);
   }
 
