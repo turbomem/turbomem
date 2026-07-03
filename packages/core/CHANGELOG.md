@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.8.0
+
+### Minor Changes
+
+- dbd001e: Added pinecone storage adapter
+
 ## 0.7.1
 
 ### Patch Changes

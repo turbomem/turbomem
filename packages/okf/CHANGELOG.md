@@ -1,5 +1,12 @@
 # @turbomem/okf
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [dbd001e]
+  - turbomem@0.8.0
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "turbomem",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Local-first agent memory for TypeScript. No Python. No servers. Just npm install.",
   "homepage": "https://docs.turbomem.dev",
   "license": "Apache-2.0",
