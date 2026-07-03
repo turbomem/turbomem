@@ -64,7 +64,7 @@
     "@anthropic-ai/sdk": "^0.24.0",
     "@huggingface/transformers": "^3.0.0",
     "@upstash/vector": "^1.0.0",
-    "@pinecone-database/pinecone": "^5.0.0",
+    "@pinecone-database/pinecone": "^8.0.0",
     "better-sqlite3": "^11.0.0",
     "sqlite-vec": "^0.1.0"
   },
@@ -92,7 +92,7 @@
     "@anthropic-ai/sdk": "^0.24.0",
     "@huggingface/transformers": "^3.0.0",
     "@upstash/vector": "^1.2.3",
-    "@pinecone-database/pinecone": "^5.1.2",
+    "@pinecone-database/pinecone": "^8.0.0",
     "@types/better-sqlite3": "^7.6.0",
     "better-sqlite3": "^11.0.0",
     "fake-indexeddb": "^6.0.0",
