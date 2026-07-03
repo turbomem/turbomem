@@ -14,15 +14,15 @@ adapter instance.
 
 ## Quick comparison
 
-|                | PGlite (default)                                                 | PGlite (browser)                                            | sqlite-vec                                                  | Upstash Vector (edge)                                       | Pinecone (edge)                                             |
-| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
-| Preset         | `"pglite"`                                                       | `"pglite"` + `idb://`                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          | `"pinecone"`                                                |
-| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | Same (IndexedDB VFS)                                        | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) | [Pinecone](https://docs.pinecone.io/) (HTTP)                |
-| Native compile | No                                                               | No                                                          | Yes (`better-sqlite3`)                                      | No                                                          | No                                                          |
-| Extra install  | None (bundled)                                                   | None (import `turbomem/browser`)                            | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               | `npm install @pinecone-database/pinecone`                   |
-| Default path   | `.turbomem/` (directory)                                         | `idb://turbomem`                                            | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        | Remote Pinecone index                                       |
-| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | Same                                                        | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            | Pinecone KNN, cosine (scores 0–1)                           |
-| Best for       | Default, zero native deps, broad Node compatibility              | React/SPA apps, offline-first, client-side persistence      | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               | Edge Workers, Vercel Edge, stateless serverless               |
+|                | PGlite (default)                                                 | PGlite (browser)                                       | sqlite-vec                                                  | Upstash Vector (edge)                                                       | Pinecone (edge)                                 |
+| -------------- | ---------------------------------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- |
+| Preset         | `"pglite"`                                                       | `"pglite"` + `idb://`                                  | `"sqlite-vec"`                                              | `"upstash-vector"`                                                          | `"pinecone"`                                    |
+| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | Same (IndexedDB VFS)                                   | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) | [Pinecone](https://docs.pinecone.io/) (HTTP)    |
+| Native compile | No                                                               | No                                                     | Yes (`better-sqlite3`)                                      | No                                                                          | No                                              |
+| Extra install  | None (bundled)                                                   | None (import `turbomem/browser`)                       | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                                               | `npm install @pinecone-database/pinecone@^8`    |
+| Default path   | `.turbomem/` (directory)                                         | `idb://turbomem`                                       | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                                        | Remote Pinecone index                           |
+| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | Same                                                   | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                                            | Pinecone KNN, cosine (scores 0–1)               |
+| Best for       | Default, zero native deps, broad Node compatibility              | React/SPA apps, offline-first, client-side persistence | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless                             | Edge Workers, Vercel Edge, stateless serverless |
 
 Both backends share the same API surface: scoped insert/search/delete, dimension
 guards at `init()`, and cosine similarity scores in the 0–1 range.
@@ -223,35 +223,84 @@ Use it on edge runtimes where local disk is unavailable.
 
 ### Setup
 
-Install the optional peer dependency:
+Install the optional peer dependency (requires **v8+** for metadata filter APIs used by `getAll()`):
 
 ```bash
-npm install @pinecone-database/pinecone
+npm install @pinecone-database/pinecone@^8
 ```
 
 Create a **serverless** Pinecone index in the [Pinecone Console](https://app.pinecone.io/) with
 dimensions matching your embedding model and **cosine** similarity. See the
 [Edge guide](/guide/edge) for the full step-by-step walkthrough.
 
-### Configuration
+### Integration patterns
+
+Choose based on your runtime and bundler — not on whether you deploy to edge.
+
+#### Simple (Node, Bun, Next.js Node runtime)
+
+Use the built-in preset. turbomem dynamically loads `@pinecone-database/pinecone` at runtime.
+This is the default for scripts, Express, and Next.js App Router routes on the **Node.js runtime**.
 
 ```ts
+import { TurboMemory } from "turbomem";
+
 new TurboMemory({
   storage: "pinecone",
   pinecone: {
     apiKey: process.env.PINECONE_API_KEY,
     index: process.env.PINECONE_INDEX,
+    host: process.env.PINECONE_INDEX_HOST, // optional — skips describeIndex
     namespace: "my-app", // optional
   },
   // ...
 });
 ```
 
-Credentials fall back to `PINECONE_API_KEY`, `PINECONE_INDEX`, and `PINECONE_INDEX_HOST` when
-omitted. If `@pinecone-database/pinecone` is not installed, turbomem throws a `ConfigError` with
-install instructions.
+#### Explicit client (bundled SSR — Vite, TanStack Start)
 
-Or pass the adapter directly:
+When your server bundle inlines turbomem source (common with Vite SSR), the dynamic import
+inside `storage: "pinecone"` can fail even though the package is installed. **Statically import**
+Pinecone in your app and pass a pre-built index client via `indexClient`:
+
+```ts
+import { Pinecone } from "@pinecone-database/pinecone";
+import { TurboMemory, PineconeStorageAdapter } from "turbomem";
+
+const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+let index = pc.index({
+  name: process.env.PINECONE_INDEX!,
+  host: process.env.PINECONE_INDEX_HOST, // optional
+});
+if (process.env.PINECONE_NAMESPACE) {
+  index = index.namespace(process.env.PINECONE_NAMESPACE);
+}
+
+new TurboMemory({
+  storage: new PineconeStorageAdapter({ indexClient: index }),
+  // ...
+});
+```
+
+For Vite-based apps, also externalize Pinecone in your SSR config:
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  ssr: {
+    external: ["@pinecone-database/pinecone"],
+  },
+});
+```
+
+See the [TanStack Start + Pinecone starter](https://github.com/turbomem/turbomem/tree/master/turbomem-tanstack-pinecone-starter)
+for a full working example (`src/lib/pinecone.ts`).
+
+#### Adapter with credentials (either runtime)
+
+You can also pass `PineconeStorageAdapter` with `apiKey` and `index` instead of using the
+`storage: "pinecone"` preset. turbomem still loads the SDK dynamically — use the
+**explicit client** pattern above when bundlers break that import.
 
 ```ts
 import { TurboMemory, PineconeStorageAdapter } from "turbomem";
@@ -264,6 +313,10 @@ new TurboMemory({
   // ...
 });
 ```
+
+Credentials fall back to `PINECONE_API_KEY`, `PINECONE_INDEX`, and `PINECONE_INDEX_HOST` when
+omitted. If `@pinecone-database/pinecone` is not installed, turbomem throws a `ConfigError` with
+install instructions.
 
 ### How it works
 
