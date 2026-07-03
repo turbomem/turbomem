@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.8.2
+
+### Patch Changes
+
+- a1c9cdc: Pinecone integrations pattern updates for v8 and ssr
+
 ## 0.8.1
 
 ### Patch Changes
