@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.8.3
+
+### Patch Changes
+
+- 5423ecd: Product positioning copy update
+
 ## 0.8.2
 
 ### Patch Changes
