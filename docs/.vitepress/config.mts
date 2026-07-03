@@ -54,7 +54,7 @@ export default defineConfig({
   themeConfig: {
     logo: "/logo.svg",
     nav: [
-      { text: "Home", link: MARKETING_SITE },
+      { text: "Site", link: MARKETING_SITE },
       { text: "Guide", link: "/guide/getting-started", activeMatch: "/guide/" },
       { text: "CLI", link: "/cli" },
       { text: "Adapters", link: "/adapters/mastra", activeMatch: "/adapters/" },
