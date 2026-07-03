@@ -9,3 +9,9 @@ export type {
   UpstashMemoryMetadata,
   UpstashVectorIndex,
 } from "./upstash-vector.js";
+export { PineconeStorageAdapter, buildPineconeScopeFilter } from "./pinecone.js";
+export type {
+  PineconeStorageOptions,
+  PineconeMemoryMetadata,
+  PineconeIndexClient,
+} from "./pinecone.js";

@@ -14,15 +14,15 @@ adapter instance.
 
 ## Quick comparison
 
-|                | PGlite (default)                                                 | PGlite (browser)                                            | sqlite-vec                                                  | Upstash Vector (edge)                                       |
-| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
-| Preset         | `"pglite"`                                                       | `"pglite"` + `idb://`                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          |
-| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | Same (IndexedDB VFS)                                        | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) |
-| Native compile | No                                                               | No                                                          | Yes (`better-sqlite3`)                                      | No                                                          |
-| Extra install  | None (bundled)                                                   | None (import `turbomem/browser`)                            | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               |
-| Default path   | `.turbomem/` (directory)                                         | `idb://turbomem`                                            | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        |
-| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | Same                                                        | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            |
-| Best for       | Default, zero native deps, broad Node compatibility              | React/SPA apps, offline-first, client-side persistence      | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               |
+|                | PGlite (default)                                                 | PGlite (browser)                                            | sqlite-vec                                                  | Upstash Vector (edge)                                       | Pinecone (edge)                                             |
+| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| Preset         | `"pglite"`                                                       | `"pglite"` + `idb://`                                       | `"sqlite-vec"`                                              | `"upstash-vector"`                                          | `"pinecone"`                                                |
+| Engine         | WASM Postgres + [pgvector](https://github.com/pgvector/pgvector) | Same (IndexedDB VFS)                                        | SQLite + [sqlite-vec](https://github.com/asg017/sqlite-vec) | [Upstash Vector](https://upstash.com/docs/vector/overall/getstarted) (HTTP) | [Pinecone](https://docs.pinecone.io/) (HTTP)                |
+| Native compile | No                                                               | No                                                          | Yes (`better-sqlite3`)                                      | No                                                          | No                                                          |
+| Extra install  | None (bundled)                                                   | None (import `turbomem/browser`)                            | `npm install better-sqlite3 sqlite-vec`                     | `npm install @upstash/vector`                               | `npm install @pinecone-database/pinecone`                   |
+| Default path   | `.turbomem/` (directory)                                         | `idb://turbomem`                                            | `.turbomem.sqlite` (file)                                   | Remote Upstash index                                        | Remote Pinecone index                                       |
+| Vector search  | pgvector HNSW, cosine (`<=>`)                                    | Same                                                        | `vec0` KNN, cosine distance                                 | Upstash KNN, cosine (scores 0–1)                            | Pinecone KNN, cosine (scores 0–1)                           |
+| Best for       | Default, zero native deps, broad Node compatibility              | React/SPA apps, offline-first, client-side persistence      | Teams already on SQLite, familiar `.db` files               | Edge Workers, Vercel Edge, stateless serverless               | Edge Workers, Vercel Edge, stateless serverless               |
 
 Both backends share the same API surface: scoped insert/search/delete, dimension
 guards at `init()`, and cosine similarity scores in the 0–1 range.
@@ -31,13 +31,13 @@ guards at `init()`, and cosine similarity scores in the 0–1 range.
 
 ```ts
 new TurboMemory({
-  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | StorageAdapter
+  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | "pinecone" | StorageAdapter
   // ...
 });
 ```
 
-Omit `storage` to use PGlite. Backend-specific options live under `pglite`, `sqliteVec`, or
-`upstashVector` in the config object; they are ignored when another backend is selected.
+Omit `storage` to use PGlite. Backend-specific options live under `pglite`, `sqliteVec`,
+`upstashVector`, or `pinecone` in the config object; they are ignored when another backend is selected.
 
 ::: tip Dimensions are fixed per store
 The vector column dimension is set from your embedding adapter at `init()`. A
@@ -216,10 +216,73 @@ Upstash metadata filter deletes, which perform a full index scan. See
 [Edge limitations](/guide/edge#limitations) for details.
 :::
 
+## Pinecone (edge, optional)
+
+[Pinecone](https://docs.pinecone.io/) stores vectors in a remote serverless index over HTTP.
+Use it on edge runtimes where local disk is unavailable.
+
+### Setup
+
+Install the optional peer dependency:
+
+```bash
+npm install @pinecone-database/pinecone
+```
+
+Create a **serverless** Pinecone index in the [Pinecone Console](https://app.pinecone.io/) with
+dimensions matching your embedding model and **cosine** similarity. See the
+[Edge guide](/guide/edge) for the full step-by-step walkthrough.
+
+### Configuration
+
+```ts
+new TurboMemory({
+  storage: "pinecone",
+  pinecone: {
+    apiKey: process.env.PINECONE_API_KEY,
+    index: process.env.PINECONE_INDEX,
+    namespace: "my-app", // optional
+  },
+  // ...
+});
+```
+
+Credentials fall back to `PINECONE_API_KEY`, `PINECONE_INDEX`, and `PINECONE_INDEX_HOST` when
+omitted. If `@pinecone-database/pinecone` is not installed, turbomem throws a `ConfigError` with
+install instructions.
+
+Or pass the adapter directly:
+
+```ts
+import { TurboMemory, PineconeStorageAdapter } from "turbomem";
+
+new TurboMemory({
+  storage: new PineconeStorageAdapter({
+    apiKey: process.env.PINECONE_API_KEY,
+    index: "my-index",
+  }),
+  // ...
+});
+```
+
+### How it works
+
+On `init()`, turbomem verifies the Pinecone index dimension count matches your embedding
+adapter. Each memory is upserted as a vector with flat metadata fields for content, scope,
+timestamps, and a JSON-serialised `metadataJson` field for user metadata (Pinecone does not
+support nested metadata objects). Search uses Pinecone metadata filters for scoping and
+returns cosine similarity scores in the 0–1 range.
+
+::: warning Operational notes
+`getAll()` uses metadata filter fetches or paginated list + fetch. `deleteAll()` uses
+Pinecone metadata filter deletes. Both can be costly on large indexes. Requires a
+**serverless** Pinecone index. See [Edge limitations](/guide/edge#limitations) for details.
+:::
+
 ## Custom adapter
 
-Implement the `StorageAdapter` interface to plug in any vector store - Pinecone,
-Qdrant, an hosted Postgres instance, or an in-memory mock for tests:
+Implement the `StorageAdapter` interface to plug in any vector store - Qdrant,
+an hosted Postgres instance, or an in-memory mock for tests:
 
 ```ts
 interface StorageAdapter {
@@ -264,6 +327,12 @@ vector column or index can be created with a matching size.
 **Use Upstash Vector when:**
 
 - You deploy to edge runtimes (Cloudflare Workers, Vercel Edge, Deno Deploy).
+- You need shared remote storage across stateless serverless instances.
+- See the [Edge guide](/guide/edge) for setup.
+
+**Use Pinecone when:**
+
+- You deploy to edge runtimes and already use Pinecone for vector search.
 - You need shared remote storage across stateless serverless instances.
 - See the [Edge guide](/guide/edge) for setup.
 

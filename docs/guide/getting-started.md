@@ -92,7 +92,7 @@ If you're shipping a TypeScript app and want memory as a _library_, that's turbo
 ## Next steps
 
 - [Configuration](/guide/configuration) - embeddings, extraction, scoping
-- [Storage](/guide/storage) - PGlite, sqlite-vec, and Upstash Vector
+- [Storage](/guide/storage) - PGlite, sqlite-vec, Upstash Vector, and Pinecone
 - [Edge](/guide/edge) - deploy on Workers and Vercel Edge
 - [Architecture](/guide/architecture) - how the pipeline works
 - [Examples](/examples) - runnable projects in the repo

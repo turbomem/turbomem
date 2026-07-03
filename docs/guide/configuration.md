@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Configure embeddings, PGlite, sqlite-vec, or Upstash Vector storage, LLM fact extraction, and memory scoping in turbomem.
+description: Configure embeddings, PGlite, sqlite-vec, Upstash Vector, or Pinecone storage, LLM fact extraction, and memory scoping in turbomem.
 ---
 
 # Configuration
@@ -15,7 +15,7 @@ API keys.
 :::
 
 ::: tip Choosing a storage backend?
-See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec vs Upstash Vector,
+See the [Storage guide](/guide/storage) for PGlite vs sqlite-vec vs Upstash Vector vs Pinecone,
 install steps, and custom adapters. Deploying to edge? See the [Edge guide](/guide/edge).
 Running in the browser? See the [Browser guide](/guide/browser).
 :::
@@ -25,7 +25,7 @@ Running in the browser? See the [Browser guide](/guide/browser).
 ```ts
 const memory = new TurboMemory({
   embeddings: "openai", // or "local" | "voyage" | "google" | EmbeddingAdapter
-  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | StorageAdapter (default: "pglite")
+  storage: "pglite", // or "sqlite-vec" | "upstash-vector" | "pinecone" | StorageAdapter (default: "pglite")
   extraction: {
     provider: "openai", // or "anthropic" | "google"
     model: "gpt-4.1-mini",
@@ -57,6 +57,12 @@ const memory = new TurboMemory({
     url: process.env.UPSTASH_VECTOR_REST_URL, // or UPSTASH_VECTOR_REST_URL env var
     token: process.env.UPSTASH_VECTOR_REST_TOKEN,
     namespace: undefined, // optional Upstash namespace
+  },
+  pinecone: {
+    apiKey: process.env.PINECONE_API_KEY, // or PINECONE_API_KEY env var
+    index: process.env.PINECONE_INDEX, // or PINECONE_INDEX env var
+    host: undefined, // optional; skips describeIndex lookup (PINECONE_INDEX_HOST)
+    namespace: undefined, // optional Pinecone namespace
   },
   local: {
     model: undefined, // defaults to Xenova/all-MiniLM-L6-v2
@@ -145,11 +151,11 @@ new TurboMemory({
 
 ## Storage adapters
 
-Select with `storage: "pglite" | "sqlite-vec" | "upstash-vector"` or pass a custom
+Select with `storage: "pglite" | "sqlite-vec" | "upstash-vector" | "pinecone"` or pass a custom
 `StorageAdapter`. PGlite (WASM Postgres + pgvector) is the default and requires no extra
 install. sqlite-vec (SQLite + native extension) is optional and needs `better-sqlite3`
-and `sqlite-vec` as peer dependencies. Upstash Vector (HTTP) is optional for edge
-deployments and needs `@upstash/vector` as a peer dependency.
+and `sqlite-vec` as peer dependencies. Upstash Vector and Pinecone (HTTP) are optional for edge
+deployments and need `@upstash/vector` or `@pinecone-database/pinecone` as peer dependencies.
 
 See the [Storage guide](/guide/storage) for a full comparison, setup steps, and when to
 use each backend. For edge deployment, see the [Edge guide](/guide/edge).

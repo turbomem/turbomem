@@ -14,10 +14,10 @@ filesystem (`idb://`). No remote database, no Node.js server required.
 | ------------------------------- | ----------------------------------- |
 | Browser (React, Vite, SPA)      | `"pglite"` with `idb://`            |
 | Node, Bun, local-first apps     | `"pglite"` (disk) or `"sqlite-vec"` |
-| Cloudflare Workers, Vercel Edge | `"upstash-vector"`                  |
+| Cloudflare Workers, Vercel Edge | `"upstash-vector"` or `"pinecone"`  |
 
 The browser path keeps memories in **IndexedDB** on the user's device. Edge
-runtimes are stateless, use [Upstash Vector](/guide/edge) instead.
+runtimes are stateless, use [Upstash Vector or Pinecone](/guide/edge) instead.
 
 ::: tip Import from `turbomem/browser`
 Browser apps should import from `turbomem/browser`, not the main `turbomem` entry.
@@ -103,7 +103,7 @@ const memory = new TurboMemory({
 
 | Component  | Recommended                         | Also works                         | Avoid in browser                   |
 | ---------- | ----------------------------------- | ---------------------------------- | ---------------------------------- |
-| Storage    | `"pglite"` + `idb://`               | custom adapter                     | `"sqlite-vec"`, `"upstash-vector"` |
+| Storage    | `"pglite"` + `idb://`               | custom adapter                     | `"sqlite-vec"`, `"upstash-vector"`, `"pinecone"` |
 | Embeddings | `"google"`, `"voyage"`              | `"openai"` (proxy keys in prod)    | `"local"` (heavy WASM cold start)  |
 | Extraction | `"google"` (single key with above)  | `"openai"`                         | -                                  |
 
@@ -169,7 +169,7 @@ against an existing IndexedDB store throws `DimensionMismatchError`. Use a new
 | `DimensionMismatchError`   | Store dimensions ≠ embedding model     | Use a new `idb://` name or clear IndexedDB for the origin          |
 | Bundler fails on `node:fs` | Imported main entry in browser         | Switch to `import { TurboMemory } from "turbomem/browser"`         |
 | Empty results after reload | Wrong `idb://` name or cleared storage | Verify `dataDir` matches; check DevTools → Application → IndexedDB |
-| `ConfigError` for storage  | Used `sqlite-vec` or `upstash-vector`  | Use `storage: "pglite"` with `idb://` in the browser               |
+| `ConfigError` for storage  | Used `sqlite-vec`, `upstash-vector`, or `pinecone` | Use `storage: "pglite"` with `idb://` in the browser               |
 
 ## Next steps
 
