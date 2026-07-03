@@ -155,7 +155,12 @@ Select with `storage: "pglite" | "sqlite-vec" | "upstash-vector" | "pinecone"` o
 `StorageAdapter`. PGlite (WASM Postgres + pgvector) is the default and requires no extra
 install. sqlite-vec (SQLite + native extension) is optional and needs `better-sqlite3`
 and `sqlite-vec` as peer dependencies. Upstash Vector and Pinecone (HTTP) are optional for edge
-deployments and need `@upstash/vector` or `@pinecone-database/pinecone` as peer dependencies.
+deployments and need `@upstash/vector` or `@pinecone-database/pinecone` **^8.0.0** as peer
+dependencies. Pinecone v8+ is required for metadata filter APIs used by `getAll()`.
+
+For Pinecone on **Node / Next.js**, use `storage: "pinecone"`. On **Vite SSR / TanStack Start**,
+use `PineconeStorageAdapter` with a static `indexClient` import — see
+[Pinecone integration patterns](/guide/storage#integration-patterns).
 
 See the [Storage guide](/guide/storage) for a full comparison, setup steps, and when to
 use each backend. For edge deployment, see the [Edge guide](/guide/edge).

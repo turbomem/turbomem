@@ -496,4 +496,37 @@ describe("PineconeStorageAdapter dimension guard", () => {
     const storage = new PineconeStorageAdapter({ indexClient: new MockPineconeIndex(4) });
     await expect(storage.init(DIM)).rejects.toBeInstanceOf(DimensionMismatchError);
   });
+
+  it("getAll handles fetchByMetadata record maps (Pinecone SDK v8)", async () => {
+    const vector = Array.from({ length: DIM }, (_, i) => i / DIM);
+    const metadata: PineconeMemoryMetadata = {
+      content: "Scoped fact",
+      userId: "user_map",
+      agentId: "agent_map",
+      metadataJson: "{}",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const indexClient = {
+      describeIndexStats: async () => ({ dimension: DIM }),
+      upsert: async () => {},
+      fetch: async () => ({ records: {} }),
+      query: async () => ({ matches: [] }),
+      fetchByMetadata: async () => ({
+        records: {
+          mem_1: { id: "mem_1", values: vector, metadata },
+        },
+      }),
+      deleteOne: async () => {},
+      deleteMany: async () => {},
+      listPaginated: async () => ({ vectors: [] }),
+    };
+
+    const storage = new PineconeStorageAdapter({ indexClient: indexClient as never });
+    await storage.init(DIM);
+    const all = await storage.getAll({ userId: "user_map", agentId: "agent_map" });
+
+    expect(all).toHaveLength(1);
+    expect(all[0]?.content).toBe("Scoped fact");
+  });
 });

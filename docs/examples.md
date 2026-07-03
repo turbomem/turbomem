@@ -69,3 +69,25 @@ You'll need a [Google AI API key](https://aistudio.google.com/apikey) for Gemini
 embeddings. The demo stores the key in `sessionStorage` for convenience only.
 
 Source: [examples/browser-vite/src/main.ts](https://github.com/turbomem/turbomem/blob/main/examples/browser-vite/src/main.ts)
+
+## tanstack-pinecone-starter {#tanstack-pinecone-starter}
+
+A TanStack Start CS tutoring app with long-term learner memory backed by Pinecone. Demonstrates
+the **explicit `indexClient`** pattern required for Vite SSR (see
+[Pinecone integration patterns](/guide/storage#integration-patterns)).
+
+```bash
+cd turbomem-tanstack-pinecone-starter
+cp .env.example .env   # add OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_INDEX
+npm install
+npm run dev
+```
+
+Key files:
+
+- `src/lib/pinecone.ts` — static Pinecone import + `PineconeStorageAdapter({ indexClient })`
+- `src/lib/memory.ts` — shared `TurboMemory` instance
+- `src/routes/api/chat.ts` — streaming tutor with memory search / add
+- `vite.config.ts` — `ssr.external` for `@pinecone-database/pinecone`
+
+Source: [turbomem-tanstack-pinecone-starter/](https://github.com/turbomem/turbomem/tree/main/turbomem-tanstack-pinecone-starter)

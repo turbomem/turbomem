@@ -45,7 +45,10 @@ export interface PineconeIndexClient {
     limit?: number;
     paginationToken?: string;
   }): Promise<{
-    records: Array<{ id: string; values?: number[]; metadata?: PineconeMemoryMetadata }>;
+    /** Pinecone SDK v8 returns a record map; older mocks may use an array. */
+    records:
+      | Array<{ id: string; values?: number[]; metadata?: PineconeMemoryMetadata }>
+      | Record<string, { id?: string; values?: number[]; metadata?: PineconeMemoryMetadata }>;
     pagination?: { next?: string };
   }>;
   deleteOne(args: { id: string }): Promise<void>;
@@ -131,6 +134,27 @@ function memoryToMetadata(
   };
 }
 
+type FetchByMetadataRecord = {
+  id: string;
+  values?: number[];
+  metadata?: PineconeMemoryMetadata;
+};
+
+function normalizeFetchByMetadataRecords(
+  records:
+    | Array<{ id: string; values?: number[]; metadata?: PineconeMemoryMetadata }>
+    | Record<string, { id?: string; values?: number[]; metadata?: PineconeMemoryMetadata }>,
+): FetchByMetadataRecord[] {
+  if (Array.isArray(records)) {
+    return records;
+  }
+  return Object.entries(records).map(([key, record]) => ({
+    id: record.id ?? key,
+    values: record.values,
+    metadata: record.metadata,
+  }));
+}
+
 function metadataToMemory(
   id: string,
   vector: number[] | undefined,
@@ -191,7 +215,8 @@ async function loadPineconeIndex(options: PineconeStorageOptions): Promise<Pinec
     return index;
   } catch (error) {
     if (error instanceof ConfigError) throw error;
-    throw new ConfigError(PEER_DEPS_MESSAGE);
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new ConfigError(`${PEER_DEPS_MESSAGE} (${detail})`);
   }
 }
 
@@ -356,7 +381,7 @@ export class PineconeStorageAdapter implements StorageAdapter {
             limit: PAGE_SIZE,
             paginationToken,
           });
-          for (const record of page.records) {
+          for (const record of normalizeFetchByMetadataRecords(page.records)) {
             if (!record.metadata) continue;
             memories.push(metadataToMemory(record.id, record.values, record.metadata));
           }

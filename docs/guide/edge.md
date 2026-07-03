@@ -97,10 +97,12 @@ npm install turbomem @upstash/vector
 **Pinecone:**
 
 ```bash
-npm install turbomem @pinecone-database/pinecone
+npm install turbomem @pinecone-database/pinecone@^8
 ```
 
-`@pinecone-database/pinecone` is an optional peer dependency - only required when using `storage: "pinecone"`.
+`@pinecone-database/pinecone` v8+ is an optional peer dependency — required when using
+`storage: "pinecone"`. For Vite SSR / TanStack Start, see
+[Pinecone integration patterns](/guide/storage#integration-patterns) (explicit `indexClient`).
 
 ## Step 3: Environment variables
 
@@ -205,7 +207,7 @@ const memory = new TurboMemory({
   // ...
 });
 
-// Pinecone
+// Pinecone — see Storage guide for the explicit indexClient pattern (Vite SSR)
 const memory = new TurboMemory({
   storage: new PineconeStorageAdapter({
     apiKey: process.env.PINECONE_API_KEY,
@@ -254,7 +256,9 @@ optional here too, useful when you want shared remote storage across serverless 
 | ----------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------- |
 | `DimensionMismatchError`                              | Index dimensions ≠ embedding model | Create a new index with correct dimensions, or adjust `google.dimensions` |
 | `ConfigError` (missing `@upstash/vector`)             | Peer not installed                 | `npm install @upstash/vector`                                             |
-| `ConfigError` (missing `@pinecone-database/pinecone`) | Peer not installed                 | `npm install @pinecone-database/pinecone`                                 |
+| `ConfigError` (missing `@pinecone-database/pinecone`) | Peer not installed                 | `npm install @pinecone-database/pinecone@^8`                              |
+| `fetchByMetadata is not a function`                   | Pinecone SDK older than v8         | `npm install @pinecone-database/pinecone@^8`                              |
+| `ConfigError` for Pinecone despite package installed  | Vite SSR bundled dynamic import    | Use explicit `indexClient` — [Storage patterns](/guide/storage#integration-patterns) |
 | Upsert/query fails (401)                              | Wrong credentials                  | Re-copy credentials from provider console                                 |
 | Empty search results right after insert               | Eventual consistency               | Retry after a brief delay                                                 |
 
