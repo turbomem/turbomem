@@ -4,9 +4,9 @@
 
 # turbomem
 
-[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem) · [Documentation](https://docs.turbomem.dev) · [Site](https://turbomem.dev)
+[![npm version](https://img.shields.io/npm/v/turbomem)](https://www.npmjs.com/package/turbomem) · [Website](https://turbomem.dev) · [Documentation](https://docs.turbomem.dev)
 
-Embedded agent memory for TypeScript. Local-first by default — runs inside your Node or Bun process or in the browser with IndexedDB-backed PGlite. Pluggable to edge and serverless with Upstash Vector or Pinecone. No separate memory server, no Python sidecar.
+Embedded agent memory for TypeScript. Local-first by default, runs inside your Node or Bun process or in the browser with IndexedDB-backed PGlite. Pluggable to edge and serverless with Upstash Vector or Pinecone. No separate memory server, no Python sidecar.
 
 ## Install
 
@@ -14,7 +14,7 @@ Embedded agent memory for TypeScript. Local-first by default — runs inside you
 npm install turbomem
 ```
 
-Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included; no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`. For edge deployment with Upstash Vector: `npm install @upstash/vector` — see the [Edge guide](https://docs.turbomem.dev/guide/edge). For Pinecone: `npm install @pinecone-database/pinecone@^8` — see the [Storage guide](https://docs.turbomem.dev/guide/storage#pinecone-edge-optional). For browser apps, import from `turbomem/browser` — see the [Browser guide](https://docs.turbomem.dev/guide/browser).
+Set `OPENAI_API_KEY` for the default OpenAI embeddings and fact-extraction stack. PGlite is included; no extra database setup. For the optional sqlite-vec backend: `npm install better-sqlite3 sqlite-vec`. For edge deployment with Upstash Vector: `npm install @upstash/vector` - see the [Edge guide](https://docs.turbomem.dev/guide/edge). For Pinecone: `npm install @pinecone-database/pinecone@^8` see the [Storage guide](https://docs.turbomem.dev/guide/storage#pinecone-edge-optional). For browser apps, import from `turbomem/browser` see the [Browser guide](https://docs.turbomem.dev/guide/browser).
 
 **Providers:** embeddings via OpenAI, local (transformers), Voyage AI (`VOYAGE_API_KEY`), or Google Gemini (`GEMINI_API_KEY`); fact extraction via OpenAI, Anthropic, or Google Gemini (plus any OpenAI-compatible endpoint via a custom `baseURL`). See the [Providers reference](https://docs.turbomem.dev/guide/providers).
 
@@ -49,7 +49,7 @@ for (const { memory: m, score } of results) {
 await memory.close();
 ```
 
-The example above uses OpenAI (`text-embedding-3-small` by default). You can also use local transformers, Voyage AI, or Google Gemini via the `embeddings` preset, or pass a custom adapter for a specific model — see the [Providers reference](https://docs.turbomem.dev/guide/providers).
+The example above uses OpenAI (`text-embedding-3-small` by default). You can also use local transformers, Voyage AI, or Google Gemini via the `embeddings` preset, or pass a custom adapter for a specific model, see the [Providers reference](https://docs.turbomem.dev/guide/providers).
 
 ## Framework adapters
 
@@ -68,7 +68,7 @@ The example above uses OpenAI (`text-embedding-3-small` by default). You can als
 
 Full guides, configuration reference, and runnable examples:
 
-**https://docs.turbomem.dev** · **https://turbomem.dev**
+**https://turbomem.dev** · **https://docs.turbomem.dev**
 
 ## Requirements
 

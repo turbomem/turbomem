@@ -1,7 +1,7 @@
 {
   "name": "turbomem",
   "version": "0.8.3",
-  "description": "Local-first agent memory for TypeScript. No Python. No servers. Just npm install.",
+  "description": "Embedded memory for TypeScript agents. Local-first by default. Pluggable to edge and serverless. Extract facts, embed them, and recall scoped memories from your app process, with pluggable vector storage and framework adapters.",
   "homepage": "https://turbomem.dev",
   "license": "Apache-2.0",
   "author": "arneesh aima",
