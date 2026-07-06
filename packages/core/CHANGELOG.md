@@ -1,5 +1,11 @@
 # turbomem
 
+## 0.8.4
+
+### Patch Changes
+
+- f8ce394: Minor readme updates
+
 ## 0.8.3
 
 ### Patch Changes
