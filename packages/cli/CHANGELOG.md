@@ -1,5 +1,12 @@
 # @turbomem/cli
 
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies [f8ce394]
+  - turbomem@0.8.4
+
 ## 0.5.8
 
 ### Patch Changes
