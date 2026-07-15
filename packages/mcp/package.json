@@ -1,0 +1,66 @@
+{
+  "name": "@turbomem/mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for turbomem. Gives Claude Desktop local, private long-term memory in one click.",
+  "homepage": "https://docs.turbomem.dev",
+  "license": "Apache-2.0",
+  "author": "Arneesh Aima",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbomem/turbomem.git",
+    "directory": "packages/mcp"
+  },
+  "keywords": [
+    "turbomem",
+    "memory",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "claude-desktop",
+    "mcpb",
+    "ai",
+    "llm"
+  ],
+  "type": "module",
+  "bin": {
+    "turbomem-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "manifest.json"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run --passWithNoTests",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "pack:mcpb": "node scripts/pack.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "turbomem": "workspace:*",
+    "zod": "^3.22.0"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@huggingface/transformers": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@huggingface/transformers": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@huggingface/transformers": "^3.0.0",
+    "@types/node": "^20.14.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
