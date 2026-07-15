@@ -30,6 +30,9 @@ features:
   - title: Terminal CLI
     details: Add, search, and manage memories from your shell with one-shot commands or an interactive REPL.
     link: /cli
+  - title: Claude Desktop memory
+    details: A one-click .mcpb extension gives Claude a private, local long-term memory via the Model Context Protocol.
+    link: /mcp
   - title: Browser-ready
     details: Run in React and other SPAs with IndexedDB-backed PGlite — client-side persistence, no remote database required.
     link: /guide/browser
@@ -155,6 +158,7 @@ The [vercel-ai-chatbot example](https://github.com/turbomem/turbomem/tree/master
 - [Browser](/guide/browser) - IndexedDB persistence in client apps
 - [Architecture](/guide/architecture) - pipeline, adapters, and error handling
 - [CLI](/cli) - manage memories from your terminal
+- [MCP](/mcp) - give Claude Desktop a local long-term memory
 - [Examples](/examples) - runnable projects in the repo
 - [API reference](/api/reference) - types, methods, and error codes
 - [Contact](/contact) - questions, feedback, and bug reports

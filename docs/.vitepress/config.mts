@@ -57,6 +57,7 @@ export default defineConfig({
       { text: "Site", link: MARKETING_SITE },
       { text: "Guide", link: "/guide/getting-started", activeMatch: "/guide/" },
       { text: "CLI", link: "/cli" },
+      { text: "MCP", link: "/mcp" },
       { text: "Adapters", link: "/adapters/mastra", activeMatch: "/adapters/" },
       { text: "API", link: "/api/reference" },
       { text: "Examples", link: "/examples" },
@@ -82,6 +83,10 @@ export default defineConfig({
       {
         text: "CLI",
         items: [{ text: "Overview", link: "/cli" }],
+      },
+      {
+        text: "MCP",
+        items: [{ text: "Claude Desktop", link: "/mcp" }],
       },
       {
         text: "Adapters",
