@@ -23,6 +23,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: pnpm install --frozen-lockfile
       - name: Create Release Pull Request or Publish
+        id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm release
@@ -31,3 +32,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Attach turbomem.mcpb to the @turbomem/mcp release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+        run: |
+          MCP_VERSION=$(echo "$PUBLISHED_PACKAGES" | jq -r '.[] | select(.name == "@turbomem/mcp") | .version')
+          if [ -z "$MCP_VERSION" ]; then
+            echo "@turbomem/mcp was not published in this run; skipping .mcpb upload."
+            exit 0
+          fi
+          echo "Packing @turbomem/mcp@$MCP_VERSION..."
+          pnpm --filter @turbomem/mcp pack:mcpb
+          gh release upload "@turbomem/mcp@$MCP_VERSION" packages/mcp/turbomem.mcpb --clobber
