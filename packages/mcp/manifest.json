@@ -4,7 +4,7 @@
   "display_name": "turbomem — personal memory",
   "version": "0.1.0",
   "description": "Give Claude a private, local long-term memory that remembers things about you across conversations.",
-  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you — your preferences, projects, and goals — and recall them in future chats. Everything is stored locally on your computer in a database on disk; nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, just pick a provider (OpenAI, Google Gemini, or Anthropic) and paste one API key. Then talk to Claude normally — it will save and recall memories on its own.",
+  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you like your preferences, projects, and goals. And recall them in future chats. Everything is stored locally on your computer in a database on disk, nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, just pick a provider (OpenAI, Google Gemini, or Anthropic) and paste one API key. Then talk to Claude normally, it will save and recall memories on its own.",
   "author": {
     "name": "arneesh aima",
     "url": "https://turbomem.dev"
@@ -35,11 +35,20 @@
     }
   },
   "tools": [
-    { "name": "remember", "description": "Save durable information about the user to long-term memory." },
-    { "name": "recall", "description": "Search long-term memory for information relevant to a query." },
+    {
+      "name": "remember",
+      "description": "Save durable information about the user to long-term memory."
+    },
+    {
+      "name": "recall",
+      "description": "Search long-term memory for information relevant to a query."
+    },
     { "name": "list_memories", "description": "List every stored memory." },
     { "name": "forget", "description": "Delete a single memory by id." },
-    { "name": "forget_everything", "description": "Permanently delete all stored memories (requires confirmation)." }
+    {
+      "name": "forget_everything",
+      "description": "Permanently delete all stored memories (requires confirmation)."
+    }
   ],
   "privacy_policies": [
     "https://openai.com/policies/privacy-policy",
