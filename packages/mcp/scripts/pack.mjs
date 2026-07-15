@@ -47,12 +47,19 @@ cpSync(join(packageDir, "manifest.json"), join(buildDir, "manifest.json"));
 
 // Resolve runtime dependency versions. turbomem is a workspace package, so pin
 // it to the current core version instead of the unresolvable "workspace:*".
+//
+// The bundle ships @anthropic-ai/sdk (small, HTTP-only) so the OpenAI, Google,
+// and Anthropic extraction providers all work out of the box. It deliberately
+// omits @huggingface/transformers (large, native onnxruntime/sharp deps): OpenAI
+// and Google handle their own embeddings over HTTP, so the bundle stays small.
+// Anthropic has no embedding API, so semantic search with the Anthropic provider
+// needs the local WASM model, available via the manual `npm install
+// @huggingface/transformers` step documented in the README.
 const dependencies = {
   turbomem: `^${corePkg.version}`,
   "@modelcontextprotocol/sdk": pkg.dependencies["@modelcontextprotocol/sdk"],
   zod: pkg.dependencies.zod,
   "@anthropic-ai/sdk": pkg.peerDependencies["@anthropic-ai/sdk"],
-  "@huggingface/transformers": pkg.peerDependencies["@huggingface/transformers"],
 };
 
 writeFileSync(

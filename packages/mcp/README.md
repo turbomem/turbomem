@@ -26,11 +26,15 @@ then, in a **new** chat:
 
 You only need **one** key, matching the provider you typed:
 
-| Provider    | Where to get a key                          | What it powers                                         |
-| ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| `openai`    | https://platform.openai.com/api-keys        | Understanding + searching memories                     |
-| `google`    | https://aistudio.google.com/app/apikey      | Understanding + searching memories                     |
-| `anthropic` | https://console.anthropic.com/settings/keys | Understanding memories (search runs locally on-device) |
+| Provider    | Where to get a key                          | What it powers                      |
+| ----------- | ------------------------------------------- | ----------------------------------- |
+| `openai`    | https://platform.openai.com/api-keys        | Understanding + searching memories  |
+| `google`    | https://aistudio.google.com/app/apikey      | Understanding + searching memories  |
+| `anthropic` | https://console.anthropic.com/settings/keys | Understanding memories (extraction) |
+
+`openai` and `google` use a single key for both understanding and search.
+
+**Using Anthropic (Claude)?** Anthropic has no embedding model, so search needs a second provider. On the install screen set **AI provider** = `anthropic` (+ your Anthropic key), then **Search provider** = `openai` or `google` (+ that provider's key). Extraction runs on Claude and search runs on OpenAI/Google over HTTP — no local model needed.
 
 Your memories live on disk at `~/.turbomem/data` by default, the same store used by the [turbomem CLI](https://www.npmjs.com/package/@turbomem/cli).
 
@@ -63,9 +67,27 @@ Add it to your Claude Desktop config (`claude_desktop_config.json`):
       "command": "turbomem-mcp",
       "env": {
         "TURBOMEM_PROVIDER": "openai",
-        "OPENAI_API_KEY": "sk-...",
+        "TURBOMEM_API_KEY": "sk-...",
         "TURBOMEM_USER_ID": "me",
         "TURBOMEM_DATA_DIR": "/Users/you/.turbomem/data"
+      }
+    }
+  }
+}
+```
+
+Anthropic extraction with OpenAI search (no local model):
+
+```json
+{
+  "mcpServers": {
+    "turbomem": {
+      "command": "turbomem-mcp",
+      "env": {
+        "TURBOMEM_PROVIDER": "anthropic",
+        "TURBOMEM_API_KEY": "sk-ant-...",
+        "TURBOMEM_EMBEDDINGS_PROVIDER": "openai",
+        "TURBOMEM_EMBEDDINGS_API_KEY": "sk-..."
       }
     }
   }
@@ -78,20 +100,26 @@ Or run without installing:
 npx @turbomem/mcp
 ```
 
+Prefer Anthropic search fully on-device? Set `TURBOMEM_EMBEDDINGS_PROVIDER=local` and install the local model:
+
+```bash
+npm install -g @huggingface/transformers
+```
+
 ### Environment variables
 
-| Variable                    | Default            | Notes                                 |
-| --------------------------- | ------------------ | ------------------------------------- |
-| `TURBOMEM_PROVIDER`         | `openai`           | `openai`, `google`, or `anthropic`    |
-| `OPENAI_API_KEY`            | -                  | Required when provider is `openai`    |
-| `GEMINI_API_KEY`            | -                  | Required when provider is `google`    |
-| `ANTHROPIC_API_KEY`         | -                  | Required when provider is `anthropic` |
-| `TURBOMEM_USER_ID`          | `me`               | Label for this memory profile         |
-| `TURBOMEM_DATA_DIR`         | `~/.turbomem/data` | Where memories are stored on disk     |
-| `TURBOMEM_EXTRACTION_MODEL` | provider default   | Override the fact-extraction model    |
-| `TURBOMEM_EMBEDDING_MODEL`  | provider default   | Override the embedding model          |
+| Variable                       | Default            | Notes                                                           |
+| ------------------------------ | ------------------ | -------------------------------------------------------------- |
+| `TURBOMEM_PROVIDER`            | `openai`           | Extraction provider: `openai`, `google`, or `anthropic`        |
+| `TURBOMEM_API_KEY`             | -                  | API key for the extraction provider (required)                 |
+| `TURBOMEM_EMBEDDINGS_PROVIDER` | mirrors provider   | Search provider: `openai`, `google`, or `local`                |
+| `TURBOMEM_EMBEDDINGS_API_KEY`  | -                  | API key for the search provider (needed unless `local`)        |
+| `TURBOMEM_USER_ID`             | `me`               | Label for this memory profile                                  |
+| `TURBOMEM_DATA_DIR`            | `~/.turbomem/data` | Where memories are stored on disk                              |
+| `TURBOMEM_EXTRACTION_MODEL`    | provider default   | Override the fact-extraction model                             |
+| `TURBOMEM_EMBEDDING_MODEL`     | provider default   | Override the embedding model                                   |
 
-> `anthropic` has no embedding model, so search runs on a local WASM embedding model (downloaded once on first use). `openai` and `google` use a single key for both understanding and search.
+> Standard provider env vars (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`) are also honored as fallbacks. With `openai`/`google`, one key covers both extraction and search; `anthropic` needs a separate search provider (or `local`).
 
 ## Build the .mcpb yourself
 

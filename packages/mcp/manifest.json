@@ -4,7 +4,7 @@
   "display_name": "turbomem — personal memory",
   "version": "0.1.0",
   "description": "Give Claude a private, local long-term memory that remembers things about you across conversations.",
-  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you like your preferences, projects, and goals. And recall them in future chats. Everything is stored locally on your computer in a database on disk, nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, just pick a provider (OpenAI, Google Gemini, or Anthropic) and paste one API key. Then talk to Claude normally, it will save and recall memories on its own.",
+  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you like your preferences, projects, and goals. And recall them in future chats. Everything is stored locally on your computer in a database on disk, nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, just pick a provider (OpenAI or Google Gemini) and paste one API key. Then talk to Claude normally, it will save and recall memories on its own. Anthropic is also supported for fact extraction; see the docs for Anthropic search setup.",
   "author": {
     "name": "arneesh aima",
     "url": "https://turbomem.dev"
@@ -26,9 +26,9 @@
       "args": ["${__dirname}/server/index.js"],
       "env": {
         "TURBOMEM_PROVIDER": "${user_config.provider}",
-        "OPENAI_API_KEY": "${user_config.api_key}",
-        "ANTHROPIC_API_KEY": "${user_config.api_key}",
-        "GEMINI_API_KEY": "${user_config.api_key}",
+        "TURBOMEM_API_KEY": "${user_config.api_key}",
+        "TURBOMEM_EMBEDDINGS_PROVIDER": "${user_config.embeddings_provider}",
+        "TURBOMEM_EMBEDDINGS_API_KEY": "${user_config.embeddings_api_key}",
         "TURBOMEM_USER_ID": "${user_config.user_id}",
         "TURBOMEM_DATA_DIR": "${user_config.data_dir}"
       }
@@ -59,7 +59,7 @@
     "provider": {
       "type": "string",
       "title": "AI provider",
-      "description": "Which AI provider to use for reading and organizing your memories. Type one of: openai, google, anthropic.",
+      "description": "Which AI provider organizes your memories. Type one of: openai, google, anthropic. With openai or google you only need the one key below. With anthropic, also fill in the two 'embeddings' fields so search works.",
       "default": "openai",
       "required": true
     },
@@ -69,6 +69,20 @@
       "description": "Paste the API key for the provider you chose above (an OpenAI, Google Gemini, or Anthropic key).",
       "sensitive": true,
       "required": true
+    },
+    "embeddings_provider": {
+      "type": "string",
+      "title": "Search provider (optional)",
+      "description": "Only needed if you chose anthropic above: type openai or google to power memory search. Leave blank for openai/google.",
+      "default": "",
+      "required": false
+    },
+    "embeddings_api_key": {
+      "type": "string",
+      "title": "Search API key (optional)",
+      "description": "The API key for the search provider above (an OpenAI or Google Gemini key). Only needed when using anthropic.",
+      "sensitive": true,
+      "required": false
     },
     "user_id": {
       "type": "string",
