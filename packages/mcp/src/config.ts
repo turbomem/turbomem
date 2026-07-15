@@ -10,118 +10,183 @@ export const DEFAULT_DATA_DIR = join(TURBOMEM_HOME, "data");
 /** Default scope used when the user has not set one. */
 export const DEFAULT_USER_ID = "me";
 
-/**
- * The provider a user picks at install time. A single API key drives both
- * embeddings and fact extraction:
- * - `openai` / `google`: the same provider handles embeddings and extraction.
- * - `anthropic`: extraction runs on Anthropic; embeddings fall back to a local
- *   WASM model so no second key is required.
- */
-export type Provider = "openai" | "anthropic" | "google";
+/** Provider used for LLM fact extraction. */
+export type ExtractionProvider = "openai" | "anthropic" | "google";
+/** Provider used to embed memories for semantic search. */
+export type EmbeddingsProvider = "openai" | "google" | "local";
 
-const PROVIDERS: readonly Provider[] = ["openai", "anthropic", "google"];
+const EXTRACTION_PROVIDERS: readonly ExtractionProvider[] = ["openai", "anthropic", "google"];
+const EMBEDDINGS_PROVIDERS: readonly EmbeddingsProvider[] = ["openai", "google", "local"];
 
-const DEFAULT_EXTRACTION_MODEL: Record<Provider, string> = {
+const DEFAULT_EXTRACTION_MODEL: Record<ExtractionProvider, string> = {
   openai: "gpt-4.1-mini",
   anthropic: "claude-haiku-4-5",
   google: "gemini-3.5-flash",
 };
 
-/** Fully-resolved config with defaults applied. */
+/**
+ * Fully-resolved config with defaults applied.
+ *
+ * Extraction and embeddings are resolved independently so that, for example,
+ * Anthropic can handle extraction while OpenAI or Google handles embeddings
+ * (HTTP-only, no local model required).
+ */
 export interface ResolvedConfig {
-  provider: Provider;
-  apiKey?: string;
+  extractionProvider: ExtractionProvider;
+  extractionApiKey?: string;
   extractionModel: string;
+  embeddingsProvider: EmbeddingsProvider;
+  embeddingsApiKey?: string;
   embeddingModel?: string;
   localModel?: string;
   dataDir: string;
   userId: string;
 }
 
-function parseProvider(value: string | undefined): Provider {
+function clean(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  // Guard against hosts that leave optional "${user_config.x}" placeholders
+  // unsubstituted when a field is left blank.
+  if (!trimmed || trimmed.includes("${")) return undefined;
+  return trimmed;
+}
+
+function parseExtractionProvider(value: string | undefined): ExtractionProvider {
   const normalized = (value ?? "openai").trim().toLowerCase();
-  return PROVIDERS.includes(normalized as Provider) ? (normalized as Provider) : "openai";
+  return EXTRACTION_PROVIDERS.includes(normalized as ExtractionProvider)
+    ? (normalized as ExtractionProvider)
+    : "openai";
+}
+
+/** Standard env var key for a provider, matching the turbomem convention. */
+function envKeyFor(provider: ExtractionProvider | EmbeddingsProvider): string | undefined {
+  switch (provider) {
+    case "anthropic":
+      return clean(process.env.ANTHROPIC_API_KEY);
+    case "google":
+      return clean(process.env.GEMINI_API_KEY) ?? clean(process.env.GOOGLE_API_KEY);
+    case "openai":
+      return clean(process.env.OPENAI_API_KEY);
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Resolve the embeddings provider. Explicit `TURBOMEM_EMBEDDINGS_PROVIDER` wins;
+ * otherwise it mirrors the extraction provider for openai/google, and falls back
+ * to a local WASM model for anthropic (which has no embedding API).
+ */
+function resolveEmbeddingsProvider(
+  raw: string | undefined,
+  extractionProvider: ExtractionProvider,
+): EmbeddingsProvider {
+  const normalized = clean(raw)?.toLowerCase();
+  if (normalized && EMBEDDINGS_PROVIDERS.includes(normalized as EmbeddingsProvider)) {
+    return normalized as EmbeddingsProvider;
+  }
+  if (extractionProvider === "google") return "google";
+  if (extractionProvider === "anthropic") return "local";
+  return "openai";
 }
 
 /** Read the effective config from the environment (populated by the .mcpb host). */
 export function resolveConfig(): ResolvedConfig {
-  const provider = parseProvider(process.env.TURBOMEM_PROVIDER);
+  const extractionProvider = parseExtractionProvider(process.env.TURBOMEM_PROVIDER);
+  const extractionApiKey = clean(process.env.TURBOMEM_API_KEY) ?? envKeyFor(extractionProvider);
 
-  const apiKey =
-    provider === "anthropic"
-      ? process.env.ANTHROPIC_API_KEY
-      : provider === "google"
-        ? (process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY)
-        : process.env.OPENAI_API_KEY;
+  const embeddingsProvider = resolveEmbeddingsProvider(
+    process.env.TURBOMEM_EMBEDDINGS_PROVIDER,
+    extractionProvider,
+  );
+
+  let embeddingsApiKey: string | undefined;
+  if (embeddingsProvider !== "local") {
+    embeddingsApiKey =
+      clean(process.env.TURBOMEM_EMBEDDINGS_API_KEY) ??
+      // When embeddings and extraction share a provider, the single key covers both.
+      (embeddingsProvider === extractionProvider ? extractionApiKey : undefined) ??
+      envKeyFor(embeddingsProvider);
+  }
 
   return {
-    provider,
-    apiKey: apiKey?.trim() || undefined,
-    extractionModel: process.env.TURBOMEM_EXTRACTION_MODEL ?? DEFAULT_EXTRACTION_MODEL[provider],
-    embeddingModel: process.env.TURBOMEM_EMBEDDING_MODEL,
-    localModel: process.env.TURBOMEM_LOCAL_MODEL,
-    dataDir: process.env.TURBOMEM_DATA_DIR?.trim() || DEFAULT_DATA_DIR,
-    userId: process.env.TURBOMEM_USER_ID?.trim() || DEFAULT_USER_ID,
+    extractionProvider,
+    extractionApiKey,
+    extractionModel:
+      clean(process.env.TURBOMEM_EXTRACTION_MODEL) ?? DEFAULT_EXTRACTION_MODEL[extractionProvider],
+    embeddingsProvider,
+    embeddingsApiKey,
+    embeddingModel: clean(process.env.TURBOMEM_EMBEDDING_MODEL),
+    localModel: clean(process.env.TURBOMEM_LOCAL_MODEL),
+    dataDir: clean(process.env.TURBOMEM_DATA_DIR) ?? DEFAULT_DATA_DIR,
+    userId: clean(process.env.TURBOMEM_USER_ID) ?? DEFAULT_USER_ID,
   };
 }
 
 /** Map the resolved config to a core {@link TurboMemoryConfig}. */
 export function toMemoryConfig(resolved: ResolvedConfig): TurboMemoryConfig {
-  const base = {
-    storage: "pglite" as const,
+  const config: TurboMemoryConfig = {
+    storage: "pglite",
     pglite: { dataDir: resolved.dataDir },
+    embeddings: resolved.embeddingsProvider,
+    extraction: {
+      provider: resolved.extractionProvider,
+      model: resolved.extractionModel,
+      apiKey: resolved.extractionApiKey,
+    },
   };
 
-  if (resolved.provider === "google") {
-    return {
-      ...base,
-      embeddings: "google",
-      google: { apiKey: resolved.apiKey, model: resolved.embeddingModel },
-      extraction: { provider: "google", model: resolved.extractionModel, apiKey: resolved.apiKey },
+  if (resolved.embeddingsProvider === "openai") {
+    config.openai = { apiKey: resolved.embeddingsApiKey };
+  } else if (resolved.embeddingsProvider === "google") {
+    config.google = { apiKey: resolved.embeddingsApiKey, model: resolved.embeddingModel };
+  } else if (resolved.embeddingsProvider === "local") {
+    config.local = resolved.localModel ? { model: resolved.localModel } : undefined;
+  }
+
+  // Extraction may need its own provider config block for the API key.
+  if (resolved.extractionProvider === "openai") {
+    config.openai = { ...config.openai, apiKey: config.openai?.apiKey ?? resolved.extractionApiKey };
+  } else if (resolved.extractionProvider === "google") {
+    config.google = {
+      ...config.google,
+      apiKey: config.google?.apiKey ?? resolved.extractionApiKey,
     };
   }
 
-  if (resolved.provider === "anthropic") {
-    return {
-      ...base,
-      embeddings: "local",
-      local: resolved.localModel ? { model: resolved.localModel } : undefined,
-      extraction: {
-        provider: "anthropic",
-        model: resolved.extractionModel,
-        apiKey: resolved.apiKey,
-      },
-    };
-  }
+  return config;
+}
 
-  return {
-    ...base,
-    embeddings: "openai",
-    extraction: { provider: "openai", model: resolved.extractionModel, apiKey: resolved.apiKey },
-    openai: { apiKey: resolved.apiKey },
-  };
+function providerLabel(provider: ExtractionProvider | EmbeddingsProvider): string {
+  switch (provider) {
+    case "anthropic":
+      return "Anthropic";
+    case "google":
+      return "Google (Gemini)";
+    case "openai":
+      return "OpenAI";
+    default:
+      return provider;
+  }
 }
 
 /**
- * Validate that the credential required by the chosen provider is present,
+ * Validate that the credentials required by the resolved config are present,
  * returning a human-readable error message or `null` when everything is set.
  */
 export function checkCredentials(resolved: ResolvedConfig): string | null {
-  if (resolved.apiKey) return null;
-
-  switch (resolved.provider) {
-    case "anthropic":
-      return "No Anthropic API key found. Open Claude Desktop → Settings → Extensions → turbomem and paste your Anthropic API key.";
-    case "google":
-      return "No Google (Gemini) API key found. Open Claude Desktop → Settings → Extensions → turbomem and paste your Gemini API key.";
-    default:
-      return "No OpenAI API key found. Open Claude Desktop → Settings → Extensions → turbomem and paste your OpenAI API key.";
+  if (!resolved.extractionApiKey) {
+    return `No ${providerLabel(resolved.extractionProvider)} API key found. Open Claude Desktop → Settings → Extensions → turbomem and paste your ${providerLabel(resolved.extractionProvider)} API key.`;
   }
+  if (resolved.embeddingsProvider !== "local" && !resolved.embeddingsApiKey) {
+    return `No ${providerLabel(resolved.embeddingsProvider)} API key found for embeddings. Set the embeddings API key in Claude Desktop → Settings → Extensions → turbomem (search needs it).`;
+  }
+  return null;
 }
 
 /**
  * Build and initialise a {@link TurboMemory} instance from the environment.
- * Throws with a friendly message when the required credential is missing.
+ * Throws with a friendly message when a required credential is missing.
  */
 export async function buildMemory(): Promise<{ memory: TurboMemory; resolved: ResolvedConfig }> {
   const resolved = resolveConfig();

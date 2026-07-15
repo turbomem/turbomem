@@ -66,6 +66,7 @@ server.registerTool(
         .min(1)
         .describe("What to remember, in plain language (e.g. 'My dog is named Rex')."),
     },
+    annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
   },
   async ({ content }) => {
     try {
@@ -98,6 +99,7 @@ server.registerTool(
         .optional()
         .describe("Maximum number of memories to return (default 5)."),
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   async ({ query, limit }) => {
     try {
@@ -121,6 +123,7 @@ server.registerTool(
     description:
       "List every memory stored for the user, newest first. Useful for reviewing or before deciding what to forget.",
     inputSchema: {},
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   async () => {
     try {
@@ -146,6 +149,7 @@ server.registerTool(
     inputSchema: {
       id: z.string().min(1).describe("The id of the memory to delete."),
     },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   },
   async ({ id }) => {
     try {
@@ -169,6 +173,7 @@ server.registerTool(
         .boolean()
         .describe("Must be true to proceed. Confirm the user really wants to erase all memories."),
     },
+    annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
   },
   async ({ confirm }) => {
     if (!confirm) {
