@@ -121,6 +121,17 @@ npm install -g @huggingface/transformers
 
 > Standard provider env vars (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`) are also honored as fallbacks. With `openai`/`google`, one key covers both extraction and search; `anthropic` needs a separate search provider (or `local`).
 
+## Privacy Policy
+
+turbomem is local-first: memories stay on your machine at `~/.turbomem/data` by default. We do not receive your memories, chat content, or API keys. Text is sent only to the AI provider you choose (OpenAI, Google, or Anthropic) to extract facts and embed them for search.
+
+- [turbomem Privacy Policy](https://turbomem.dev/privacy)
+- [Documentation copy](https://docs.turbomem.dev/privacy)
+
+Third-party provider policies also apply to API traffic: [OpenAI](https://openai.com/policies/privacy-policy), [Google](https://policies.google.com/privacy), [Anthropic](https://www.anthropic.com/legal/privacy).
+
+You can delete memories with the `forget` and `forget_everything` tools, or by removing your data directory.
+
 ## License
 
 Apache License 2.0

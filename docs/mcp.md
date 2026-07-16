@@ -141,3 +141,7 @@ npm install -g @huggingface/transformers
 
 Standard provider env vars (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`)
 are also honored as fallbacks for the matching provider.
+
+## Privacy Policy
+
+turbomem is local-first. Memories stay on your machine; we do not receive your data or API keys. See the [Privacy Policy](/privacy) (also at [turbomem.dev/privacy](https://turbomem.dev/privacy)).

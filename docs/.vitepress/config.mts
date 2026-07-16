@@ -105,6 +105,7 @@ export default defineConfig({
         items: [
           { text: "Examples", link: "/examples" },
           { text: "Roadmap", link: "/roadmap" },
+          { text: "Privacy", link: "/privacy" },
           { text: "Contact", link: "/contact" },
         ],
       },
