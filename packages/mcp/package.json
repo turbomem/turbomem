@@ -1,6 +1,6 @@
 {
   "name": "@turbomem/mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Model Context Protocol server for turbomem. Gives Claude Desktop local, private long-term memory in one click.",
   "homepage": "https://docs.turbomem.dev",
   "license": "Apache-2.0",
@@ -35,7 +35,8 @@
     "dev": "tsup --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "pack:mcpb": "node scripts/pack.mjs"
+    "pack:mcpb": "node scripts/pack.mjs",
+    "verify:mcpb": "node scripts/verify-mcpb.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

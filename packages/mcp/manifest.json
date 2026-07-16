@@ -1,10 +1,10 @@
 {
   "manifest_version": "0.3",
   "name": "turbomem",
-  "display_name": "turbomem — personal memory",
-  "version": "0.1.0",
+  "display_name": "turbomem - personal memory",
+  "version": "0.2.3",
   "description": "Give Claude a private, local long-term memory that remembers things about you across conversations.",
-  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you like your preferences, projects, and goals. And recall them in future chats. Everything is stored locally on your computer in a database on disk, nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, just pick a provider (OpenAI or Google Gemini) and paste one API key. Then talk to Claude normally, it will save and recall memories on its own. Anthropic is also supported for fact extraction; see the docs for Anthropic search setup.",
+  "long_description": "turbomem adds a persistent memory to Claude Desktop. Claude can remember durable facts about you like your preferences, projects, and goals, and recall them in future chats. Everything is stored locally on your computer in a database on disk; nothing is uploaded anywhere except the AI provider you choose to extract and embed your notes.\n\nAfter installing, pick a provider (openai, google, or anthropic) and paste the matching API key. With openai or google, one key covers both understanding and search. With anthropic, also set the optional search provider fields (openai or google) so recall works over HTTP. Then talk to Claude normally — it saves and recalls memories on its own.",
   "author": {
     "name": "arneesh aima",
     "url": "https://turbomem.dev"
@@ -14,7 +14,8 @@
     "url": "https://github.com/turbomem/turbomem.git"
   },
   "homepage": "https://turbomem.dev",
-  "documentation": "https://docs.turbomem.dev",
+  "documentation": "https://docs.turbomem.dev/mcp",
+  "icon": "icon.png",
   "support": "https://github.com/turbomem/turbomem/issues",
   "license": "Apache-2.0",
   "keywords": ["memory", "personal", "recall", "notes", "assistant"],
@@ -51,6 +52,7 @@
     }
   ],
   "privacy_policies": [
+    "https://turbomem.dev/privacy",
     "https://openai.com/policies/privacy-policy",
     "https://policies.google.com/privacy",
     "https://www.anthropic.com/legal/privacy"

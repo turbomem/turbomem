@@ -44,6 +44,10 @@ mkdirSync(join(buildDir, "server"), { recursive: true });
 // Copy the whole compiled output so any sourcemaps travel with it.
 cpSync(join(packageDir, "dist"), join(buildDir, "server"), { recursive: true });
 cpSync(join(packageDir, "manifest.json"), join(buildDir, "manifest.json"));
+const iconPath = join(packageDir, "icon.png");
+if (existsSync(iconPath)) {
+  cpSync(iconPath, join(buildDir, "icon.png"));
+}
 
 // Resolve runtime dependency versions. turbomem is a workspace package, so pin
 // it to the current core version instead of the unresolvable "workspace:*".
