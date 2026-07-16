@@ -1,5 +1,11 @@
 # @turbomem/mcp
 
+## 0.2.2
+
+### Patch Changes
+
+- bb27484: Removed guide to self build mcp
+
 ## 0.2.1
 
 ### Patch Changes
