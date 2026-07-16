@@ -108,26 +108,18 @@ npm install -g @huggingface/transformers
 
 ### Environment variables
 
-| Variable                       | Default            | Notes                                                           |
-| ------------------------------ | ------------------ | -------------------------------------------------------------- |
-| `TURBOMEM_PROVIDER`            | `openai`           | Extraction provider: `openai`, `google`, or `anthropic`        |
-| `TURBOMEM_API_KEY`             | -                  | API key for the extraction provider (required)                 |
-| `TURBOMEM_EMBEDDINGS_PROVIDER` | mirrors provider   | Search provider: `openai`, `google`, or `local`                |
-| `TURBOMEM_EMBEDDINGS_API_KEY`  | -                  | API key for the search provider (needed unless `local`)        |
-| `TURBOMEM_USER_ID`             | `me`               | Label for this memory profile                                  |
-| `TURBOMEM_DATA_DIR`            | `~/.turbomem/data` | Where memories are stored on disk                              |
-| `TURBOMEM_EXTRACTION_MODEL`    | provider default   | Override the fact-extraction model                             |
-| `TURBOMEM_EMBEDDING_MODEL`     | provider default   | Override the embedding model                                   |
+| Variable                       | Default            | Notes                                                   |
+| ------------------------------ | ------------------ | ------------------------------------------------------- |
+| `TURBOMEM_PROVIDER`            | `openai`           | Extraction provider: `openai`, `google`, or `anthropic` |
+| `TURBOMEM_API_KEY`             | -                  | API key for the extraction provider (required)          |
+| `TURBOMEM_EMBEDDINGS_PROVIDER` | mirrors provider   | Search provider: `openai`, `google`, or `local`         |
+| `TURBOMEM_EMBEDDINGS_API_KEY`  | -                  | API key for the search provider (needed unless `local`) |
+| `TURBOMEM_USER_ID`             | `me`               | Label for this memory profile                           |
+| `TURBOMEM_DATA_DIR`            | `~/.turbomem/data` | Where memories are stored on disk                       |
+| `TURBOMEM_EXTRACTION_MODEL`    | provider default   | Override the fact-extraction model                      |
+| `TURBOMEM_EMBEDDING_MODEL`     | provider default   | Override the embedding model                            |
 
 > Standard provider env vars (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`) are also honored as fallbacks. With `openai`/`google`, one key covers both extraction and search; `anthropic` needs a separate search provider (or `local`).
-
-## Build the .mcpb yourself
-
-```bash
-pnpm --filter @turbomem/mcp pack:mcpb
-```
-
-This builds the server, installs its production dependencies into a bundle, and writes `turbomem.mcpb` in the package directory.
 
 ## License
 

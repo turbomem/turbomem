@@ -35,10 +35,10 @@ Then just chat. Claude saves and recalls memories on its own. Try
 
 You only need **one** key, matching the provider you chose:
 
-| Provider    | Get a key                                                            | What it powers                     |
-| ----------- | -------------------------------------------------------------------- | ---------------------------------- |
-| `openai`    | [platform.openai.com](https://platform.openai.com/api-keys)          | Understanding + searching memories |
-| `google`    | [aistudio.google.com](https://aistudio.google.com/app/apikey)        | Understanding + searching memories |
+| Provider    | Get a key                                                            | What it powers                      |
+| ----------- | -------------------------------------------------------------------- | ----------------------------------- |
+| `openai`    | [platform.openai.com](https://platform.openai.com/api-keys)          | Understanding + searching memories  |
+| `google`    | [aistudio.google.com](https://aistudio.google.com/app/apikey)        | Understanding + searching memories  |
 | `anthropic` | [console.anthropic.com](https://console.anthropic.com/settings/keys) | Understanding memories (extraction) |
 
 `openai` and `google` use a single key for both understanding and search. See the
@@ -128,28 +128,16 @@ npm install -g @huggingface/transformers
 
 ### Environment variables
 
-| Variable                       | Default            | Notes                                                              |
-| ------------------------------ | ------------------ | ----------------------------------------------------------------- |
-| `TURBOMEM_PROVIDER`            | `openai`           | Extraction provider: `openai`, `google`, or `anthropic`           |
-| `TURBOMEM_API_KEY`             | -                  | API key for the extraction provider (required)                    |
-| `TURBOMEM_EMBEDDINGS_PROVIDER` | mirrors provider   | Search provider: `openai`, `google`, or `local`                   |
-| `TURBOMEM_EMBEDDINGS_API_KEY`  | -                  | API key for the search provider (needed unless it is `local`)     |
-| `TURBOMEM_USER_ID`             | `me`               | Label for this memory profile                                     |
-| `TURBOMEM_DATA_DIR`            | `~/.turbomem/data` | Where memories are stored on disk                                 |
-| `TURBOMEM_EXTRACTION_MODEL`    | provider default   | Override the fact-extraction model                                |
-| `TURBOMEM_EMBEDDING_MODEL`     | provider default   | Override the embedding model                                      |
+| Variable                       | Default            | Notes                                                         |
+| ------------------------------ | ------------------ | ------------------------------------------------------------- |
+| `TURBOMEM_PROVIDER`            | `openai`           | Extraction provider: `openai`, `google`, or `anthropic`       |
+| `TURBOMEM_API_KEY`             | -                  | API key for the extraction provider (required)                |
+| `TURBOMEM_EMBEDDINGS_PROVIDER` | mirrors provider   | Search provider: `openai`, `google`, or `local`               |
+| `TURBOMEM_EMBEDDINGS_API_KEY`  | -                  | API key for the search provider (needed unless it is `local`) |
+| `TURBOMEM_USER_ID`             | `me`               | Label for this memory profile                                 |
+| `TURBOMEM_DATA_DIR`            | `~/.turbomem/data` | Where memories are stored on disk                             |
+| `TURBOMEM_EXTRACTION_MODEL`    | provider default   | Override the fact-extraction model                            |
+| `TURBOMEM_EMBEDDING_MODEL`     | provider default   | Override the embedding model                                  |
 
 Standard provider env vars (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`)
 are also honored as fallbacks for the matching provider.
-
-## Build the .mcpb yourself
-
-```bash
-pnpm --filter @turbomem/mcp pack:mcpb
-```
-
-This builds the server, installs its production dependencies into a bundle, and
-writes `turbomem.mcpb` in the package directory. Double-click it to install, or
-submit it to the
-[Claude Connectors Directory](https://claude.com/docs/connectors/directory) so
-users can install it from inside Claude Desktop.
