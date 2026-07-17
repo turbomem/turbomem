@@ -1,6 +1,6 @@
 ---
 title: OKF
-description: Parse, validate, and load Open Knowledge Format bundles into turbomem.
+description: Load Open Knowledge Format (OKF) bundles into turbomem agent memory. Parser, validator, and concept graph adapter.
 ---
 
 # OKF

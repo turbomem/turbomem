@@ -1,6 +1,6 @@
 ---
 title: Browser
-description: Run turbomem in the browser with IndexedDB-backed PGlite. Setup, configuration, and recommended providers.
+description: Client-side agent memory in the browser with IndexedDB-backed PGlite. No remote database or Node.js server required.
 ---
 
 # Browser
