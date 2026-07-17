@@ -1,6 +1,6 @@
 ---
 title: Architecture
-description: How turbomem's extraction, embedding, and storage pipeline works under the hood.
+description: How agent memory works - LLM fact extraction, embedding, and vector search. TurboMem pipeline explained for TypeScript agents.
 ---
 
 # Architecture

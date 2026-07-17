@@ -35,6 +35,7 @@ export default defineConfig({
     const url = pageUrl(pageData.relativePath);
 
     return [
+      ["link", { rel: "canonical", href: url }],
       ["meta", { property: "og:title", content: title }],
       ["meta", { property: "og:description", content: description }],
       ["meta", { property: "og:url", content: url }],
@@ -45,7 +46,7 @@ export default defineConfig({
       ["meta", { property: "og:image:height", content: "512" }],
       ["meta", { property: "og:image:type", content: "image/png" }],
       ["meta", { property: "og:image:alt", content: "turbomem logo" }],
-      ["meta", { name: "twitter:card", content: "summary" }],
+      ["meta", { name: "twitter:card", content: "summary_large_image" }],
       ["meta", { name: "twitter:title", content: title }],
       ["meta", { name: "twitter:description", content: description }],
       ["meta", { name: "twitter:image", content: OG_IMAGE }],

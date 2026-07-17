@@ -1,6 +1,6 @@
 ---
 title: Edge
-description: Deploy turbomem on edge runtimes with Upstash Vector or Pinecone storage - setup, configuration, and recommended providers.
+description: Deploy agent memory on Vercel Edge, Cloudflare Workers, and Next.js serverless. Upstash Vector or Pinecone setup for turbomem.
 ---
 
 # Edge
