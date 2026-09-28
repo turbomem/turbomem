@@ -32,11 +32,11 @@ Smoke runs may replace embeddings with a local hash vector. Those runs set `conf
 
 ## Scoring
 
-- **Retrieval** — recall@1, recall@5, MRR against gold fact strings (case-insensitive exact content match).
-- **Extraction** — LLM-as-judge precision/recall against gold facts, plus a cosine coverage score as a secondary number.
-- **Dedup** — final store size and required strings after sequential writes.
-- **Scoping** — leak rate across `userId` / `sessionId` (target 0).
-- **LoCoMo** — official category-aware token F1 (Porter stem + a/an/the/and stripping). **Not** LLM-as-judge. See [LoCoMo](/evals/locomo).
+- **Retrieval** - recall@1, recall@5, MRR against gold fact strings (case-insensitive exact content match).
+- **Extraction** - LLM-as-judge precision/recall against gold facts, plus a cosine coverage score as a secondary number.
+- **Dedup** - final store size and required strings after sequential writes.
+- **Scoping** - leak rate across `userId` / `sessionId` (target 0).
+- **LoCoMo** - official category-aware token F1 (Porter stem + a/an/the/and stripping). **Not** LLM-as-judge. See [LoCoMo](/evals/locomo).
 
 Latency is p50/p95 of `addFacts` / `search` on PGlite in this harness. It is an architecture measurement, not an SLA.
 
