@@ -1,0 +1,52 @@
+{
+  "cases": [
+    {
+      "id": "outdoor-activities",
+      "userId": "user_eval_1",
+      "facts": [
+        "The user loves hiking",
+        "The user is training for a half marathon this fall",
+        "The user is vegetarian",
+        "The user drives a red car"
+      ],
+      "queries": [
+        {
+          "query": "What outdoor activities is the user into?",
+          "smokeQuery": "hiking",
+          "relevant": ["The user loves hiking"]
+        },
+        {
+          "query": "What should meal prep skip?",
+          "smokeQuery": "vegetarian",
+          "relevant": ["The user is vegetarian"]
+        },
+        {
+          "query": "What race is the user training for?",
+          "smokeQuery": "half marathon",
+          "relevant": ["The user is training for a half marathon this fall"]
+        }
+      ]
+    },
+    {
+      "id": "dog-neighborhood",
+      "userId": "user_eval_2",
+      "facts": [
+        "The user's dog is named Maple",
+        "The user's dog is on a grain-free diet",
+        "The user is planning a trip to Japan"
+      ],
+      "queries": [
+        {
+          "query": "What is the user's dog called?",
+          "smokeQuery": "Maple",
+          "relevant": ["The user's dog is named Maple"]
+        },
+        {
+          "query": "diet and travel related to the pet",
+          "smokeQuery": "grain-free",
+          "relevant": ["The user's dog is on a grain-free diet"]
+        }
+      ]
+    }
+  ]
+}

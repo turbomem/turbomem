@@ -1,0 +1,78 @@
+name: Evals
+
+on:
+  push:
+    paths:
+      - "packages/evals/**"
+      - "packages/core/**"
+      - ".github/workflows/evals.yml"
+  pull_request:
+    paths:
+      - "packages/evals/**"
+      - "packages/core/**"
+      - ".github/workflows/evals.yml"
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Suite to run"
+        type: choice
+        options:
+          - product
+          - locomo
+          - all
+        default: all
+      smoke:
+        description: "Smoke (cheap) run"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  test:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter turbomem build
+      - run: pnpm --filter @turbomem/evals test
+      - run: pnpm --filter @turbomem/evals lint
+
+  live:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter turbomem build
+      - name: Download LoCoMo
+        if: github.event_name == 'schedule' || github.event.inputs.suite != 'product'
+        run: pnpm --filter @turbomem/evals download-locomo
+      - name: Run evals
+        run: |
+          SUITE="${{ github.event.inputs.suite || 'all' }}"
+          SMOKE="${{ github.event.inputs.smoke || 'false' }}"
+          ARGS=(--suite "$SUITE")
+          if [ "$SMOKE" = "true" ]; then
+            ARGS+=(--smoke)
+          fi
+          pnpm exec tsx src/cli.ts "${ARGS[@]}" --out results/latest.json
+        working-directory: packages/evals
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-snapshot
+          path: packages/evals/results/latest.json

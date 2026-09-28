@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "id": "hiking-marathon-vegetarian",
+      "messages": [
+        { "role": "user", "content": "I love hiking and I'm training for a half marathon this fall." },
+        { "role": "assistant", "content": "Nice. I'll remember your fitness goals." },
+        { "role": "user", "content": "Oh, and I'm vegetarian, so meal prep tips should skip meat." },
+        { "role": "assistant", "content": "Got it, plant based only." }
+      ],
+      "goldFacts": [
+        "The user loves hiking",
+        "The user is training for a half marathon this fall",
+        "The user is vegetarian"
+      ]
+    },
+    {
+      "id": "typescript-prefs",
+      "messages": [
+        { "role": "user", "content": "I like short answers and I code in TypeScript at a startup in Berlin." }
+      ],
+      "goldFacts": [
+        "The user prefers concise responses",
+        "The user works in TypeScript",
+        "The user works at a startup in Berlin"
+      ]
+    },
+    {
+      "id": "noise-only",
+      "messages": [
+        { "role": "user", "content": "Thanks!" },
+        { "role": "assistant", "content": "You're welcome." },
+        { "role": "user", "content": "Can you rephrase that?" }
+      ],
+      "goldFacts": []
+    },
+    {
+      "id": "dog-cross-session",
+      "messages": [
+        { "role": "user", "content": "My dog's name is Maple. She's a rescue and she's on a grain-free diet." }
+      ],
+      "goldFacts": [
+        "The user's dog is named Maple",
+        "The user's dog is a rescue",
+        "The user's dog is on a grain-free diet"
+      ]
+    }
+  ]
+}

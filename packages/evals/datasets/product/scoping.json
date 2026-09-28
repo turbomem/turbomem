@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "id": "user-isolation",
+      "writes": [
+        { "userId": "alice", "facts": ["Alice loves hiking"] },
+        { "userId": "bob", "facts": ["Bob loves swimming"] }
+      ],
+      "searches": [
+        {
+          "query": "hiking",
+          "scope": { "userId": "alice" },
+          "mustIncludeUserIds": ["alice"],
+          "mustExcludeUserIds": ["bob"]
+        },
+        {
+          "query": "swimming",
+          "scope": { "userId": "bob" },
+          "mustIncludeUserIds": ["bob"],
+          "mustExcludeUserIds": ["alice"]
+        }
+      ]
+    },
+    {
+      "id": "session-mismatch-empty",
+      "writes": [
+        { "userId": "casey", "sessionId": "s1", "facts": ["Casey plays piano"] }
+      ],
+      "searches": [
+        {
+          "query": "piano",
+          "scope": { "userId": "casey", "sessionId": "s2" },
+          "expectEmpty": true
+        },
+        {
+          "query": "piano",
+          "scope": { "userId": "casey", "sessionId": "s1" },
+          "mustIncludeUserIds": ["casey"],
+          "expectEmpty": false
+        }
+      ]
+    }
+  ]
+}
