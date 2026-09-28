@@ -1,6 +1,6 @@
 ---
 title: Product eval goldens
-description: Dataset cards for turbomem product evals — extraction, retrieval, dedup, scoping, latency.
+description: Dataset cards for turbomem product evals - extraction, retrieval, dedup, scoping, latency.
 ---
 
 # Product goldens

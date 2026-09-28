@@ -1,6 +1,6 @@
 ---
 title: Evals
-description: Public memory evals for turbomem — product goldens and LoCoMo, with a frozen snapshot you can reproduce.
+description: Public memory evals for turbomem - product goldens and LoCoMo, with a frozen snapshot you can reproduce.
 ---
 
 # Evals
@@ -16,9 +16,7 @@ Numbers live on [turbomem.dev/evals](https://turbomem.dev/evals). The snapshot f
 
 This page is the index. Read next:
 
-- [Methodology](/evals/methodology) — pipeline, models, `k`, what we do not claim
-- [LoCoMo protocol](/evals/locomo) — dataset IDs, scoring, ingest
-- [Product goldens](/evals/product) — dataset cards
-- [Running evals](/evals/running) — commands, cost, CI
-
-A snapshot with `"published": false` is a harness check, not a public score. Do not cite hash-embedding smoke runs as semantic recall.
+- [Methodology](/evals/methodology) - pipeline, models, `k`, what we do not claim
+- [LoCoMo protocol](/evals/locomo) - dataset IDs, scoring, ingest
+- [Product goldens](/evals/product) - dataset cards
+- [Running evals](/evals/running) - commands, cost, CI
