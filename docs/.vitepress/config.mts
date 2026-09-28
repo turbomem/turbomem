@@ -61,6 +61,7 @@ export default defineConfig({
       { text: "MCP", link: "/mcp" },
       { text: "Adapters", link: "/adapters/mastra", activeMatch: "/adapters/" },
       { text: "API", link: "/api/reference" },
+      { text: "Evals", link: "/evals/", activeMatch: "/evals" },
       { text: "Examples", link: "/examples" },
       { text: "Blog", link: "https://blog.turbomem.dev" },
       {
@@ -100,6 +101,16 @@ export default defineConfig({
       {
         text: "API",
         items: [{ text: "Reference", link: "/api/reference" }],
+      },
+      {
+        text: "Evals",
+        items: [
+          { text: "Overview", link: "/evals/" },
+          { text: "Methodology", link: "/evals/methodology" },
+          { text: "LoCoMo", link: "/evals/locomo" },
+          { text: "Product goldens", link: "/evals/product" },
+          { text: "Running evals", link: "/evals/running" },
+        ],
       },
       {
         text: "More",

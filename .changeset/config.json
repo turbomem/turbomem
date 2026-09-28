@@ -10,6 +10,7 @@
   "ignore": [
     "@turbomem/example-basic-node",
     "@turbomem/example-mastra-agent",
-    "@turbomem/example-vercel-ai-chatbot"
+    "@turbomem/example-vercel-ai-chatbot",
+    "@turbomem/evals"
   ]
 }

@@ -21,7 +21,9 @@
     "release": "turbo build --filter=\"./packages/*\" && changeset publish",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "evals": "pnpm --filter @turbomem/evals evals",
+    "evals:test": "pnpm --filter @turbomem/evals test"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",

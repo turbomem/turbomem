@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-28",
+  "gitSha": "c5088aa",
+  "published": true,
+  "config": {
+    "embeddings": "openai",
+    "embeddingModel": "text-embedding-3-small",
+    "extractionModel": "gpt-4.1-mini",
+    "answerModel": "gpt-4.1-mini",
+    "storage": "pglite",
+    "searchLimit": 10,
+    "judgeModel": "gpt-4.1-mini"
+  },
+  "suites": {
+    "product": {
+      "extraction": {
+        "n": 4,
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "cosinePrecision": 0.8333,
+        "cosineRecall": 0.8333,
+        "judgeModel": "gpt-4.1-mini"
+      },
+      "retrieval": {
+        "n": 5,
+        "recallAt1": 1,
+        "recallAt5": 1,
+        "mrr": 1
+      },
+      "dedup": {
+        "n": 3,
+        "accuracy": 0.6667
+      },
+      "scoping": {
+        "n": 4,
+        "leakRate": 0,
+        "isolationAccuracy": 1
+      },
+      "latency": {
+        "add": {
+          "n": 12,
+          "p50Ms": 464.76,
+          "p95Ms": 517.53,
+          "meanMs": 465.07
+        },
+        "search": {
+          "n": 5,
+          "p50Ms": 421.53,
+          "p95Ms": 537.87,
+          "meanMs": 455.51
+        }
+      }
+    },
+    "locomo": {
+      "dataset": "locomo10",
+      "overallF1": 0.2708,
+      "n": 1986,
+      "byCategory": [
+        {
+          "id": 1,
+          "name": "multi-hop",
+          "n": 282,
+          "f1": 0.1261
+        },
+        {
+          "id": 2,
+          "name": "temporal",
+          "n": 321,
+          "f1": 0.0178
+        },
+        {
+          "id": 3,
+          "name": "open-domain",
+          "n": 96,
+          "f1": 0.1149
+        },
+        {
+          "id": 4,
+          "name": "single-hop",
+          "n": 841,
+          "f1": 0.1444
+        },
+        {
+          "id": 5,
+          "name": "adversarial",
+          "n": 446,
+          "f1": 0.8161
+        }
+      ],
+      "tokensPerQuery": 250.6103,
+      "latencyMs": {
+        "n": 1986,
+        "p50Ms": 469.43,
+        "p95Ms": 760.73,
+        "meanMs": 503.29
+      },
+      "conversations": 10,
+      "smoke": false
+    }
+  },
+  "notes": "Public snapshot. Headline LoCoMo number is official category-aware token F1, not LLM-as-judge."
+}

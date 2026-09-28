@@ -187,6 +187,28 @@ importers:
         specifier: ^0.1.6
         version: 0.1.9
 
+  packages/evals:
+    dependencies:
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
+      openai:
+        specifier: ^4.0.0
+        version: 4.104.0(ws@8.21.0)(zod@3.25.76)
+      turbomem:
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: ^3.22.0
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.43
+      tsx:
+        specifier: ^4.19.0
+        version: 4.22.4
+
   packages/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':

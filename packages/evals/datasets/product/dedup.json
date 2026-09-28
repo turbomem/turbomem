@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "id": "exact-duplicate-skip",
+      "strategy": "skip",
+      "userId": "dedup_skip",
+      "writes": [
+        "The user drinks tea every morning",
+        "The user drinks tea every morning"
+      ],
+      "expectCount": 1,
+      "mustContain": ["The user drinks tea every morning"]
+    },
+    {
+      "id": "unrelated-kept",
+      "strategy": "skip",
+      "userId": "dedup_unrelated",
+      "writes": [
+        "The user drinks tea every morning",
+        "The user works as a civil engineer"
+      ],
+      "expectCount": 2,
+      "mustContain": [
+        "The user drinks tea every morning",
+        "The user works as a civil engineer"
+      ]
+    },
+    {
+      "id": "more-specific-replace",
+      "strategy": "replace",
+      "userId": "dedup_replace",
+      "writes": ["The user has a dog", "The user has a golden retriever named Max"],
+      "expectCount": 1,
+      "mustContain": ["The user has a golden retriever named Max"],
+      "liveOnly": true
+    }
+  ]
+}
